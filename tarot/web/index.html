@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="th"><head><meta charset="utf-8"><meta name="color-scheme" content="dark only">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>เปิดไพ่ทาโรต์ · AMATATHEWA</title>
+<style>
+/* กรอบของทุกฉาก: ฉากปัจจุบันอยู่หน้า · ฉากถัดไปโหลดอยู่ข้างหลังแบบมองไม่เห็น จนพร้อมครบแล้วค่อยสลับขึ้นมา
+   มือถือไม่ต้องเปลี่ยนหน้าเว็บจริง จึงไม่มีจังหวะล้างจอ/กระพริบ */
+:root{color-scheme:dark only}
+html,body{margin:0;height:100%;background:#05070E;overflow:hidden}
+iframe{position:fixed;inset:0;width:100%;height:100%;border:0;background:#05070E;opacity:0;z-index:1}
+iframe.cur{opacity:1;z-index:2}
+iframe.in{z-index:3;transition:opacity .25s ease}
+</style></head><body>
+<script>
+// cur = ฉากที่เห็นอยู่ · next = ฉากที่กำลังจะขึ้น · pre = ฉากที่โหลดเตรียมไว้ล่วงหน้า (ฉากกรีดไพ่ ตั้งแต่อยู่ฉากสับไพ่)
+let cur=null,next=null,pre=null,timer=0,ask=0,st={};
+const O=location.origin;
+function mk(src){const f=document.createElement('iframe');f.src=src;f.dataset.src=src;document.body.appendChild(f);return f}
+function load(src,hand){
+  if(pre&&pre.dataset.src===src){next=pre;pre=null}else next=mk(src);
+  const f=next;st={hand,moved:!hand,ready:!!f.readyData};
+  clearTimeout(timer);timer=setTimeout(()=>swap(f),4000); // สำรอง: ช้าเกิน 4 วิ ก็สลับเลย
+  if(hand){ // ส่งต่อสำรับ: ถามตำแหน่งจากฉากใหม่ซ้ำทุก 0.1 วิ จนได้คำตอบ (ไม่เกิน 1.5 วิ แล้วยอมสลับเลย)
+    let n=0;clearInterval(ask);
+    ask=setInterval(()=>{try{f.contentWindow.postMessage('getRect',O)}catch(e){}if(++n>15){clearInterval(ask);st.moved=true;maybe(f)}},100);
+    try{f.contentWindow.postMessage('getRect',O)}catch(e){}
+  }
+  maybe(f);
+}
+function maybe(f){if(f===next&&st.moved&&st.ready)swap(f)}
+function swap(f){
+  if(f!==next)return;clearTimeout(timer);clearInterval(ask);next=null;
+  const old=cur;cur=f;
+  if(!old){f.classList.add('cur');f.contentWindow.postMessage('show',O);return}
+  // ฉากใหม่ค่อยๆ ขึ้นทับ (ภาพแรกของฉากใหม่ต่อจากฉากเดิมอยู่แล้ว) แล้วเอาฉากเดิมออก
+  f.classList.add('in');f.getBoundingClientRect();f.style.opacity=1;
+  f.contentWindow.postMessage('show',O);
+  setTimeout(()=>{f.classList.remove('in');f.classList.add('cur');f.style.opacity='';if(old)old.remove()},300);
+}
+addEventListener('message',e=>{
+  if(e.origin!==O)return;const d=e.data||{};
+  if(d.preload){
+    if(pre&&pre.dataset.src!==d.preload){pre.remove();pre=null}
+    if(!pre&&!(next&&next.dataset.src===d.preload))pre=mk(d.preload);
+  }
+  if(d.go&&!next)load(d.go,!!d.hand);
+  if((d.rect!==undefined||d.rects!==undefined)&&next&&e.source===next.contentWindow&&ask){clearInterval(ask);ask=0;const t=d.rect||d.rects;
+    if(t&&cur){clearTimeout(timer);timer=setTimeout(()=>{st.moved=true;st.ready=true;swap(next)},3000);cur.contentWindow.postMessage({moveTo:t},O)}
+    else{st.moved=true;maybe(next)}}
+  if(d.ready){const f=[next,pre].find(x=>x&&e.source===x.contentWindow);if(f){f.readyData=d;if(f===next){st.ready=true;maybe(f)}}}
+  if(d.moved&&next&&cur&&e.source===cur.contentWindow){st.moved=true;maybe(next)}
+});
+load('spread.html'+location.search,false);
+</script>
+</body></html>

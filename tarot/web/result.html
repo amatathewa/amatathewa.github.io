@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="th"><head><meta charset="utf-8"><script>/* มาจากหน้าเลือกไพ่: ซ่อนหัวข้อ/ช่องไพ่ + โชว์หินอ่อนตั้งแต่ภาพแรก ให้ต่อจากหน้าเลือกไพ่ไม่มีรอย */
+try{if(sessionStorage.getItem('tarot-fly')){const r=document.documentElement;r.classList.add('fromPick');
+  const dk=new URLSearchParams(location.search).get('deck')==='sns'?'sns':'1909',mu=`../ภาพพื้นหลัง/marble-${dk}-blur.jpg`;
+  r.style.setProperty('--marble',`url("${mu}")`);
+  // ถอดรหัสภาพหินอ่อน+หลังไพ่ไว้ก่อน แล้วค่อยโชว์หน้า (ระหว่างนี้มือถือค้างภาพหน้าเลือกไพ่ไว้ให้)
+  const dec=u=>{const i=new Image();i.src=u;return i.decode?i.decode().catch(()=>{}):Promise.resolve()};
+  window.__imgsReady=Promise.all([dec(mu),dec(dk==='sns'?'https://raw.githubusercontent.com/amatathewa/tarot-collections/main/sns-deck/79.webp':'https://raw.githubusercontent.com/amatathewa/tarot-collections/main/rider-waite-1909/back.webp')])}}catch(e){}
+</script>
+<script>/* เปิดในกรอบ (index.html): รอกรอบสั่ง "show" (ฉากนี้ขึ้นจอแล้ว) ก่อนเริ่มแอนิเมชัน · เปิดหน้านี้ตรงๆ: เริ่มเลย */
+window.__inShell=parent!==window;window.__shown=!window.__inShell;window.__showCbs=[];
+addEventListener('message',e=>{if(e.data==='show'&&!window.__shown){window.__shown=true;window.__showCbs.splice(0).forEach(f=>f())}});
+function onShow(cb,ms){let done=false;const go=()=>{if(!done){done=true;cb()}};if(window.__shown)go();else{window.__showCbs.push(go);if(ms&&!window.__inShell)setTimeout(go,ms)}} // ในกรอบไม่ใช้ตัวสำรองนับเวลา: ฉากที่โหลดเตรียมไว้นานๆ จะเผลอเล่นแอนิเมชันไปก่อนขึ้นจอ
+</script>
+
+<meta name="color-scheme" content="dark only">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ผลไพ่ · AMATATHEWA</title>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;1,6..96,400&family=IBM+Plex+Sans+Thai:wght@300;400;500&family=Jost:wght@400;500&family=Trirong:wght@200;300;400&display=swap" rel="stylesheet">
+<style>
+/* ทุกหน้า: (ไม่ใช้ view transition — บางเบราว์เซอร์มือถือวางภาพเยื้อง) · ไม่มีแสงฟ้าตอนแตะ (มือถือ) · ไม่มีแท่งเลื่อนด้านขวา */
+*{-webkit-tap-highlight-color:transparent}
+html{scrollbar-width:none}html::-webkit-scrollbar,body::-webkit-scrollbar{display:none}
+</style>
+<style>
+:root{color-scheme:dark only;--gold:#C99B3C;--gold-light:#E8C987;--ivory:#F3EDE2;--dim:rgba(243,237,226,.62);--line:rgba(243,237,226,.16)}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#020204;color:var(--ivory);font-family:'IBM Plex Sans Thai',sans-serif;-webkit-font-smoothing:antialiased}
+/* เลื่อนด้วย body (ไม่ใช่ทั้งหน้า): หน้าที่อยู่ในกรอบ มือถือ Android วาดแท่งเลื่อนสีขาวให้เองและซ่อนไม่ได้ · กล่องเลื่อนแบบนี้ซ่อนได้ */
+html{height:100%;overflow:hidden}
+body{height:100%;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior:none;scrollbar-width:none}
+body::-webkit-scrollbar{display:none;width:0;height:0}
+/* ฉากหลัง: รุ่งอรุณเหนือทะเลเมฆ (ณัทกรเลือก 27 ต.ค.) — ภาพอยู่นิ่ง เนื้อหาเลื่อนทับ */
+.bg{position:fixed;inset:0;z-index:0;background:#05070E url("../ภาพพื้นหลัง/dawn-desktop.jpg") center 62%/cover no-repeat}
+@media(max-width:700px){.bg{background-image:url("../ภาพพื้นหลัง/dawn-mobile.jpg");background-position:center bottom}}
+.shade{position:fixed;inset:0;z-index:0;background:linear-gradient(180deg,rgba(2,2,4,.35),transparent 30%,transparent 62%,rgba(2,2,4,.85) 100%)}
+header{position:relative;z-index:2;display:flex;justify-content:space-between;align-items:center;padding:min(30px,3.4vh) 6vw}
+.brand{font-family:'Jost',sans-serif;letter-spacing:.42em;font-size:13px}
+.back{font-size:14px;color:var(--dim);cursor:pointer}
+.hero{position:relative;z-index:2;min-height:calc(100svh - 80px);display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 16px}
+.kicker{font-family:'Jost',sans-serif;font-size:16px;letter-spacing:.42em;color:var(--gold);margin-bottom:min(14px,1.6vh)}
+h1{font-family:'Trirong',serif;font-weight:200;font-size:clamp(28px,4.6vh,44px);white-space:nowrap}
+.q{font-family:'Trirong',serif;font-weight:300;font-style:italic;font-size:clamp(16px,2.2vh,20px);color:rgba(243,237,226,.78);max-width:min(620px,92vw);margin-top:min(10px,1.2vh);line-height:1.5}
+h1 em{font-style:normal;color:var(--gold-light)}
+.row{display:flex;gap:min(40px,3vw);justify-content:center;align-items:flex-start;margin-top:auto;margin-bottom:auto;padding:4vh 0}
+.slot{display:flex;flex-direction:column;align-items:center;gap:12px;width:var(--w);cursor:pointer}
+.pos{font-size:14px;color:rgba(243,237,226,.85);letter-spacing:.04em;text-shadow:0 0 12px #000,0 0 4px #000}
+.pos b{display:block;font-family:'Bodoni Moda',serif;font-style:italic;font-weight:400;font-size:20px;color:var(--gold);margin-bottom:2px}
+.frame{position:relative;width:var(--w);aspect-ratio:600/995;perspective:1200px}
+.inner{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .9s cubic-bezier(.4,0,.2,1)}
+.flip .inner{transform:rotateY(180deg)}
+.face,.backs{position:absolute;inset:0;backface-visibility:hidden;border-radius:calc(var(--w)*.055);background:center/cover;box-shadow:0 24px 60px rgba(0,0,0,.7)}
+.face{transform:rotateY(180deg)}
+.face.rev{transform:rotateY(180deg) rotate(180deg)}
+.nm{font-family:'Trirong',serif;font-size:16px;color:var(--ivory);text-shadow:0 0 14px #000,0 0 5px #000;opacity:0;transition:opacity .6s .5s}
+.nm small{display:block;font-family:'IBM Plex Sans Thai';font-size:12px;color:var(--gold);margin-top:2px}
+.flip~.nm,.slot.done .nm{opacity:1}
+.scrollhint{font-size:13px;color:var(--dim);letter-spacing:.02em;margin-bottom:3vh;opacity:0;transition:opacity .6s}
+.scrollhint.show{opacity:1}
+/* คำทำนาย */
+.read{position:relative;z-index:2;max-width:760px;margin:0 auto;padding:4vh 20px calc(10vh + 80px);display:flex;flex-direction:column;gap:18px}
+.mp{background:rgba(10,12,22,.55);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--line);padding:26px 28px;opacity:0;transform:translateY(16px);transition:opacity .6s,transform .6s}
+.mp.vis{opacity:1;transform:none}
+.mp .top{display:flex;align-items:baseline;gap:14px;margin-bottom:10px}
+.mp .no{font-family:'Bodoni Moda',serif;font-style:italic;font-size:26px;color:var(--gold)}
+.mp .p{font-size:13px;color:var(--dim);letter-spacing:.04em}
+.mp h2{font-family:'Trirong',serif;font-weight:300;font-size:24px;margin-bottom:4px}
+.mp .su{font-size:13px;color:var(--gold);margin-bottom:14px}
+.mp .rv{display:inline-block;font-size:12px;color:#F08A2C;border:1px solid rgba(240,138,44,.5);padding:2px 10px;margin-left:8px;vertical-align:middle}
+.mp .lb{font-family:'Jost';font-size:11.5px;letter-spacing:.14em;color:var(--dim);margin:12px 0 4px}
+.mp p{font-size:16px;line-height:1.85;font-weight:300}
+.mp p.muted{color:var(--dim)}
+.btns{display:flex;gap:14px;justify-content:center;margin-top:14px}
+.btn{background:rgba(243,237,226,.08);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(243,237,226,.28);color:var(--ivory);font-size:15px;letter-spacing:.04em;padding:15px 0;width:min(200px,42vw);text-align:center;cursor:pointer}
+.btn:hover{background:rgba(243,237,226,.16)}
+/* ปุ่มบันทึกภาพ (โผล่หลังพลิกไพ่ครบ) */
+.cam{display:inline-flex;align-items:center;justify-content:center;gap:10px;background:rgba(243,237,226,.08);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(243,237,226,.28);color:var(--ivory);font-family:inherit;font-size:15px;letter-spacing:.04em;padding:13px 26px;cursor:pointer;opacity:0;pointer-events:none;transition:opacity .6s,background .3s}
+.cam.show{opacity:1;pointer-events:all}
+.cam:hover{background:rgba(243,237,226,.16)}
+.cam svg{color:var(--gold-light)}
+.cam.busy{opacity:.6;pointer-events:none}
+.camnote{position:fixed;z-index:6;left:0;right:0;bottom:84px;text-align:center;font-size:13px;color:var(--ivory);text-shadow:0 0 8px #000;pointer-events:none;opacity:0;transition:opacity .5s}
+.camnote.on{opacity:1}
+/* แถบปุ่มติดล่างจอ: บันทึกภาพ · สับใหม่ · หน้าแรก — เลื่อนหน้าไปไหนก็กดได้เสมอ */
+.dock{position:fixed;z-index:5;left:0;right:0;bottom:0;display:flex;justify-content:center;gap:12px;padding:22px 16px calc(14px + env(safe-area-inset-bottom));background:linear-gradient(180deg,transparent,rgba(2,2,4,.88) 50%);opacity:0;pointer-events:none;transition:opacity .6s}
+.dock.show{opacity:1;pointer-events:all}
+.dock .cam,.dock .btn{opacity:1;pointer-events:all;width:min(200px,31vw);padding:14px 8px;font-size:15px}
+.dock .cam.busy{opacity:.6;pointer-events:none}
+/* มาจากหน้าเลือกไพ่: ฉากหินอ่อนค่อยๆ จางเป็นท้องฟ้า ไพ่ลอยเข้าที่ */
+/* ขนาดต้องเท่าฉากหินอ่อนหน้าเลือกไพ่เป๊ะ (ทั้งคู่ fixed เต็มจอ) ไม่งั้นตอนเปลี่ยนหน้าภาพจะกระตุกเปลี่ยนขนาดบนมือถือ */
+.bgfrom{position:fixed;inset:0;z-index:1;background:#05070E center 80%/cover no-repeat;transition:opacity 1.4s cubic-bezier(.45,0,.3,1);pointer-events:none;will-change:opacity}
+.bgfrom::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(5,7,14,.6) 0%,rgba(5,7,14,.3) 50%,rgba(5,7,14,.45) 100%)}
+.bgfrom.out{opacity:0}
+.fromPick .bgfrom[hidden]{display:block;background-image:var(--marble)}
+.fromPick .kicker,.fromPick h1,.fromPick .q,.fromPick .pos,.fromPick header .back{opacity:0}
+.fromPick .frame{visibility:hidden}
+/* ซ่อนทั้งหน้าจนไพ่+หินอ่อนพร้อม ไม่มีเฟรมว่าง/ดำแวบ */
+.fromPick:not(.ready) body{visibility:hidden}
+.flyin .kicker,.flyin h1,.flyin .q,.flyin .pos,.flyin header .back{opacity:0;transition:opacity .8s ease}
+.flyin.scene .kicker,.flyin.scene h1,.flyin.scene .q,.flyin.scene .pos,.flyin.scene header .back{opacity:1}
+.flyin .frame{visibility:hidden}
+.flyin .frame.here{visibility:visible}
+@keyframes fin{from{opacity:0}}
+.fly{position:fixed;z-index:4;border-radius:7%/4.2%;background:center/cover;box-shadow:0 0 0 1.5px var(--gold),0 0 22px rgba(201,155,60,.55);transition:box-shadow 1s;transform-origin:center;will-change:transform}
+/* เซลติกครอส 10 ใบ: ผังตาราง 4×4 แบบเว็บเดิม · ชื่อตำแหน่งบรรทัดเดียวเหนือไพ่ ไม่มีชื่อไพ่ใต้ใบ */
+.cc .slot{gap:5px}
+.cc .pos{font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:calc(var(--w) + 6px);letter-spacing:0}
+.cc .pos b{display:inline;font-size:12px;margin:0 3px 0 0}
+.cc .nm{display:none}
+/* มือถือ 10 ใบ: เอาพื้นที่ด้านบนคืน (ซ่อน YOUR READING, ผังไพ่ชิดใต้หัวข้อ) ให้ไพ่ทั้งผังอยู่เหนือแถบปุ่ม */
+@media(max-width:700px){.cc .row .scrollhint{grid-area:4/1/5/2;justify-self:end;align-self:center;text-align:right;width:118px;margin:0 6px 0 0;font-size:11.5px;line-height:1.55;white-space:normal}
+  .cc .hero .kicker{display:none}.cc .row{margin-top:2vh!important;margin-bottom:auto!important;padding:0!important}}
+.cc .ccq{grid-area:1/1/2/4;align-self:center;justify-self:stretch;text-align:left;margin:0;padding-right:10px;max-width:none;font-style:normal;font-weight:300;color:var(--ivory);font-size:clamp(14px,calc(var(--w)*.21),22px);line-height:1.5;max-height:calc(var(--w)*1.66 + 24px);overflow:hidden}
+/* มือถือ: ยกแถบปุ่มขึ้นพ้นปุ่ม "เลื่อนขึ้นบนสุด" ของเบราว์เซอร์ (Samsung Internet โผล่กลางล่างตอนไถ) */
+@media(max-width:700px){.dock{padding-bottom:calc(66px + env(safe-area-inset-bottom))}.camnote{bottom:140px}.read{padding-bottom:calc(10vh + 140px)}}
+@media(max-width:700px){header{padding:18px 20px}h1{font-size:min(7vw,30px)}.scrollhint{margin-bottom:calc(3vh + 140px)}.mp{padding:20px}.mp p{font-size:15.5px}.dock{gap:8px}.dock .cam,.dock .btn{flex:1;width:auto;font-size:14px;padding:13px 4px}.dock .cam svg{display:none}}
+</style></head><body>
+<div class="bg" id="bg"></div><div class="shade"></div><div class="bgfrom" id="bgfrom" hidden></div>
+<header><div class="brand">AMATATHEWA</div><div class="back" onclick="go('spread.html')">หน้าแรก</div></header>
+<section class="hero">
+  <div class="kicker">YOUR READING</div>
+  <h1>ไพ่ของคุณ <em>เปิดแล้ว</em></h1>
+  <p class="q" id="q" hidden></p>
+  <div class="row" id="row"></div>
+  <div class="scrollhint" id="sh">เลื่อนลงเพื่ออ่านคำทำนาย</div>
+</section>
+<section class="read" id="read"></section>
+<div class="camnote" id="camnote"></div>
+<div class="dock" id="dock"><button class="cam" id="cam"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg><span>บันทึกภาพไพ่</span></button><div class="btn" id="again">สับใหม่</div><div class="btn" id="home">หน้าแรก</div></div>
+<script src="../js/cards-data.js"></script>
+<script src="flow.js"></script>
+<script>
+let QTEXT='';try{QTEXT=(sessionStorage.getItem('tarot-q')||'').trim()}catch(e){}
+if(QTEXT){const qe=document.getElementById('q');qe.textContent='“'+QTEXT+'”';qe.hidden=false}
+const pos=SPREADS[ST.sp],n=pos.length,FACE={[ST.deck]:D.face},DECK=ST.deck,BACK={[ST.deck]:D.back};
+// ไพ่ที่ลูกดวงเลือกจากหน้าเลือกไพ่ (c=12.40r.63 · r = กลับหัว) · ถ้าเปิดหน้านี้ตรงๆ สุ่มให้แทน
+let picked=(Q.get('c')||'').split('.').filter(Boolean).map(t=>({c:CARDS.find(x=>x.id===parseInt(t)),r:t.endsWith('r')})).filter(x=>x.c);
+if(picked.length!==n)picked=[...CARDS].sort(()=>Math.random()-.5).slice(0,n).map(c=>({c,r:ST.rev==='1'&&Math.random()<.5}));
+const pool=picked.map(x=>({...x.c,isRev:x.r}));
+// เซลติกครอส 10 ใบ: ผังเว็บเดิม [แถว,คอลัมน์] ของไพ่ใบที่ 1–10
+//   .  .  .  10 / 6  3  .  9 / 2  1  4  8 / .  5  .  7
+const CC=n===10,CC_AREA=[[3,2],[3,1],[2,2],[3,3],[4,2],[2,1],[4,4],[3,4],[2,4],[1,4]];
+const per=n,rowsN=1,mob=innerWidth<700,gp=CC?8:mob?10:Math.min(40,innerWidth*.03);
+const ccAvail=CC&&mob?(()=>{document.body.classList.add('cc');const top=document.querySelector('h1').getBoundingClientRect().bottom+innerHeight*.02,dk=document.getElementById('dock').firstElementChild.getBoundingClientRect().top;return dk-14-top})():innerHeight-270; /* มือถือ: วัดพื้นที่จริงระหว่างหัวข้อกับแถบปุ่ม */
+let w=CC?Math.min(120,(innerWidth-32-3*gp)/4,((ccAvail-3*gp)/4-21)/1.658)
+          :Math.min(mob?(innerWidth-32-(per-1)*gp)/per:220,mob?140:(innerWidth*.8-(per-1)*gp)/per,innerHeight*.30);
+document.documentElement.style.setProperty('--w',w+'px');
+const row=document.getElementById('row'),read=document.getElementById('read');
+if(CC){document.body.classList.add('cc');row.style.cssText=`display:grid;grid-template-columns:repeat(4,${w}px);gap:${gp}px;justify-items:center;align-items:end`}
+else row.style.cssText=`gap:0 ${gp}px;width:${per*w+(per-1)*gp}px`;
+pool.forEach((c,i)=>{
+  const s=document.createElement('div');s.className='slot';
+  s.innerHTML=`<div class="pos"><b>${String(i+1).padStart(2,'0')}</b>${pos[i]}</div>
+  <div class="frame"><div class="inner"><div class="backs" style="background-image:url('${BACK[DECK]}')"></div><div class="face${c.isRev?' rev':''}" style="background-image:url('${FACE[DECK](c.id)}')"></div></div></div>
+  <div class="nm">${c.name}<small>${c.suit}${c.isRev?' · กลับหัว':''}</small></div>`;
+  s.onclick=()=>document.getElementById('mp'+i).scrollIntoView({behavior:'smooth',block:'center'});
+  if(CC)s.style.gridArea=CC_AREA[i].join('/');
+  row.appendChild(s);
+  const m=document.createElement('div');m.className='mp';m.id='mp'+i;
+  m.innerHTML=`<div class="top"><span class="no">${String(i+1).padStart(2,'0')}</span><span class="p">${pos[i]}</span></div>
+  <h2>${c.name}${c.isRev?'<span class="rv">กลับหัว</span>':''}</h2><div class="su">${c.suit}</div>
+  <div class="lb">UPRIGHT · ตั้งตรง</div><p class="${c.isRev?'muted':''}">${c.upright}</p>
+  ${c.isRev?`<div class="lb">REVERSED · กลับหัว</div><p>${c.rev}</p>`:''}`;
+  read.appendChild(m);
+});
+// 10 ใบ: ย้ายคำถามจากใต้หัวข้อ ไปช่องว่างซ้ายของแถวบน (ข้างไพ่ใบที่ 10) เหมือนในภาพที่บันทึก
+if(CC&&QTEXT){const qe=document.getElementById('q');qe.hidden=true;const cq=document.createElement('p');cq.className='q ccq';cq.textContent='“'+QTEXT+'”';row.appendChild(cq)}
+document.getElementById('again').onclick=()=>go('shuffle.html');document.getElementById('home').onclick=()=>go('spread.html');
+// ชื่อตำแหน่งยาวตัด 2 บรรทัด → ให้ทุกช่องสูงเท่ากัน ไพ่จะได้เรียงตรงแนว
+// มือถือ 10 ใบ: คำว่าเลื่อนลงอ่านคำทำนาย ไปอยู่ช่องว่างซ้ายล่าง ข้างไพ่ใบที่ 5
+if(CC&&mob){const sh=document.getElementById('sh');sh.innerHTML='เลื่อนลง<br>เพื่ออ่านคำทำนาย ↓';row.appendChild(sh)}
+// มือถือ 10 ใบ: วัดผังจริงแล้วย่อให้ไพ่แถวล่างจบเหนือแถบปุ่มพอดี
+function fitCC(){if(!(CC&&mob))return;const lim=document.getElementById('dock').firstElementChild.getBoundingClientRect().top-12;
+  for(let k=0;k<5;k++){const fr=[...row.querySelectorAll('.frame')],top=row.getBoundingClientRect().top,bot=Math.max(...fr.map(f=>f.getBoundingClientRect().bottom));
+    if(bot<=lim+.5)break;w=Math.floor(w*(lim-top)/(bot-top)*100)/100;document.documentElement.style.setProperty('--w',w+'px');row.style.gridTemplateColumns=`repeat(4,${w}px)`}}
+function eqPos(){const ps=[...row.querySelectorAll('.pos')];ps.forEach(e=>e.style.minHeight='');const ph=Math.max(...ps.map(e=>e.offsetHeight));ps.forEach(e=>e.style.minHeight=ph+'px')}
+eqPos();fitCC();document.fonts.ready.then(()=>{eqPos();fitCC()});
+
+// พลิกไพ่ทีละใบ (10 ใบพลิกเร็วขึ้น)
+function flips(t0){
+  const st=CC?300:550;
+  [...row.querySelectorAll('.slot')].forEach((s,i)=>setTimeout(()=>{s.querySelector('.frame').classList.add('flip');s.classList.add('done');
+    setTimeout(()=>document.getElementById('mp'+i).classList.add('vis'),700)},t0+i*st));
+  setTimeout(()=>{document.getElementById('sh').classList.add('show');document.getElementById('dock').classList.add('show')},t0+(n-1)*st+900); /* หลังคำทำนายใบสุดท้ายขึ้นครบ (พลิก + 0.7 วิ) */
+}
+// มาจากหน้าเลือกไพ่ (ณัทกรวางลำดับ): ① หลังไพ่ลอยเข้าช่องบนฉากหินอ่อน ② เปลี่ยนฉากเป็นท้องฟ้า หัวข้อโผล่ ③ พลิกไพ่
+let fly=null;try{fly=JSON.parse(sessionStorage.getItem('tarot-fly'));sessionStorage.removeItem('tarot-fly')}catch(e){}
+const fromPick=!!(fly&&fly.length===n);
+// ตอบตำแหน่งช่องไพ่ทันทีเมื่อกรอบถาม (ไม่ต้องรอรูป) ให้ฉากเลือกไพ่ส่งไพ่ลอยมาเข้าช่อง
+addEventListener('message',e=>{if(e.origin===location.origin&&e.data==='getRect'&&fromPick)
+  Promise.race([document.fonts.ready,new Promise(r=>setTimeout(r,300))]).then(()=>{eqPos();fitCC();
+    parent.postMessage({rects:[...row.querySelectorAll('.frame')].map(f=>{const r=f.getBoundingClientRect();return{x:r.left+r.width/2,y:r.top+r.height/2,w:r.width,h:r.height}})},location.origin)})});
+function handoffIn(){
+  document.body.classList.add('flyin');const bf=document.getElementById('bgfrom');bf.hidden=false;bf.style.backgroundImage=`url("${D.marble}")`;
+  frames.forEach(f=>f.classList.add('here')); // ไพ่ (หลังไพ่) อยู่ในช่องตั้งแต่ภาพแรก
+  const sky=new Image();sky.src=`../ภาพพื้นหลัง/dawn-${mob?'mobile':'desktop'}.jpg`;
+  const skyReady=(sky.decode?sky.decode():Promise.resolve()).catch(()=>{}),wait=(p,ms)=>Promise.race([p,new Promise(r=>setTimeout(r,ms))]);
+  wait(Promise.all([document.fonts.ready,window.__imgsReady]),600).then(()=>{eqPos();document.documentElement.classList.add('ready')});
+  // ขึ้นจอแล้ว → เปลี่ยนฉากเป็นท้องฟ้า หัวข้อโผล่ → พลิก
+  onShow(()=>wait(skyReady,500).then(()=>{bf.animate([{opacity:1},{opacity:0}],{duration:900,easing:'cubic-bezier(.45,0,.3,1)',fill:'forwards'});
+    document.body.classList.add('scene');setTimeout(()=>bf.remove(),950);flips(450)}),5000);
+}
+const frames=[...row.querySelectorAll('.frame')];
+if(fromPick&&window.__inShell)handoffIn();else if(fromPick)cloneFly();else{document.documentElement.classList.remove('fromPick');onShow(()=>flips(700),5000)}
+setTimeout(()=>document.documentElement.classList.add('ready'),1500); // สำรอง: ไม่ว่าอย่างไรหน้าต้องโชว์
+function cloneFly(){
+  document.body.classList.add('flyin');const bf=document.getElementById('bgfrom');bf.hidden=false;bf.style.backgroundImage=`url("${D.marble}")`;
+  // ตัวลอยวางทับตำแหน่งเดิมในหน้าเลือกไพ่พอดี (หน้าเปลี่ยนแล้วตาไม่เห็นรอยต่อ)
+  const cl=fly.map(f=>{const e=document.createElement('div');e.className='fly';
+    e.style.cssText+=`left:${f.x-f.w/2}px;top:${f.y-f.h/2}px;width:${f.w}px;height:${f.h}px;transform:rotate(${f.a}deg);background-image:url("${D.back}")`;
+    document.body.appendChild(e);return e});
+  const sky=new Image();sky.src=`../ภาพพื้นหลัง/dawn-${mob?'mobile':'desktop'}.jpg`;
+  const skyReady=(sky.decode?sky.decode():Promise.resolve()).catch(()=>{});
+  const wait=(p,ms)=>Promise.race([p,new Promise(r=>setTimeout(r,ms))]);
+  wait(Promise.all([document.fonts.ready,window.__imgsReady]),600).then(()=>{eqPos();document.documentElement.classList.add('ready');onShow(()=>setTimeout(()=>{ // ไม่ใช้ requestAnimationFrame: ระหว่างเปลี่ยนหน้าแบบจาง เบราว์เซอร์พักไว้
+    // ① ลอยเข้าช่อง (ขยับด้วย transform อย่างเดียว มือถือลื่น)
+    const fr=[...row.querySelectorAll('.frame')];let end=0;const gapF=CC?45:80;
+    cl.forEach((e,i)=>{const r=fr[i].getBoundingClientRect(),f=fly[i],d=40+i*gapF,
+      sx=f.w/r.width,sy=f.h/r.height,dx=f.x-(r.left+r.width/2),dy=f.y-(r.top+r.height/2);end=Math.max(end,d+750);
+      e.style.left=r.left+'px';e.style.top=r.top+'px';e.style.width=r.width+'px';e.style.height=r.height+'px';
+      e.style.transform=`translate(${dx}px,${dy}px) rotate(${f.a}deg) scale(${sx},${sy})`;
+      setTimeout(()=>{e.style.boxShadow='0 24px 60px rgba(0,0,0,.7)'},d);
+      e.animate([{transform:e.style.transform},{transform:'none'}],{duration:750,delay:d,easing:'cubic-bezier(.45,0,.2,1)',fill:'both'})});
+    setTimeout(()=>{fr.forEach(x=>x.classList.add('here'));cl.forEach(e=>e.remove());
+      // ② เปลี่ยนฉาก (รอภาพท้องฟ้าพร้อม ไม่เกิน 0.8 วิ)
+      wait(skyReady,500).then(()=>{bf.animate([{opacity:1},{opacity:0}],{duration:900,easing:'cubic-bezier(.45,0,.3,1)',fill:'forwards'});document.body.classList.add('scene');
+        // ③ ฉากเปลี่ยนเสร็จ → พลิกไพ่
+        setTimeout(()=>{bf.remove()},950);flips(500)})},end+30);
+  },30),5000)});
+}
+
+// ══ บันทึกภาพไพ่: วาดลงผืนภาพเองทั้งใบ (ฉากหลัง + ไพ่ + ชื่อตำแหน่ง + วันที่) ══
+const loadImg=src=>new Promise((ok,no)=>{const im=new Image();im.crossOrigin='anonymous';im.onload=()=>ok(im);im.onerror=no;im.src=src});
+function rrect(x,y,w,h,r,ctx){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath()}
+async function saveImage(){
+  const btn=document.getElementById('cam'),note=document.getElementById('camnote');
+  btn.classList.add('busy');clearTimeout(note.t);note.textContent='กำลังสร้างภาพ…';note.classList.add('on');
+  try{
+    await Promise.all(['300 40px Trirong','200 40px Trirong','400 26px Jost','italic 400 40px "Bodoni Moda"','400 20px "IBM Plex Sans Thai"'].map(f=>document.fonts.load(f)));
+    const [bgI,...faces]=await Promise.all([loadImg(`../ภาพพื้นหลัง/dawn-${mob?'mobile':'desktop'}.jpg`),...pool.map(c=>loadImg(FACE[DECK](c.id)))]);
+    const W=1080,H=CC?1920:1350,cv=document.createElement('canvas');cv.width=W;cv.height=H;const x=cv.getContext('2d');
+    // ขนาดไพ่ตามจำนวนใบ
+    // ตัดคำถามเป็นบรรทัดก่อน (ตามคำไทย สระไม่หลุด ไม่เกิน 2 บรรทัด) เพื่อเว้นที่ให้พอ
+    // คำถามตัวใหญ่ (52px) · ยาวเกิน 2 บรรทัดค่อยลดเป็น 44px ให้ครบทั้งคำถาม (สูงสุด 3 บรรทัด) · ตัดบรรทัดตามคำไทย
+    let QFONT='400 52px Trirong',QLH=70,qLines=[];
+    const wrapQ=(maxW=W-130)=>{qLines=[];x.font=QFONT;const qt='“'+QTEXT+'”',segs=window.Intl&&Intl.Segmenter?[...new Intl.Segmenter('th',{granularity:'word'}).segment(qt)].map(g=>g.segment):qt.split(/(?<=\s)/);let ln='';
+      for(const ch of segs){if(ln&&x.measureText(ln+ch).width>maxW){qLines.push(ln);ln=ch.trimStart()}else ln+=ch}qLines.push(ln)};
+    if(QTEXT&&!CC){wrapQ();if(qLines.length>2){QFONT='400 44px Trirong';QLH=60;wrapQ()}if(qLines.length>3){qLines.length=3;qLines[2]+='…'}}
+    const QL=qLines.length>1,QH=QTEXT&&!CC?128+(qLines.length-1)*QLH:0,gap=CC?24:per>3?30:44,cw=CC?(QTEXT?(qLines.length>2?84:QL?92:106):125):Math.min(n===1?(qLines.length>2?250:QL?270:300):(qLines.length>2?230:QL?250:270),(W-120-(per-1)*gap)/per),chh=cw*995/600,cy=H*.5+QH*.6,rowGap=150;
+    // 10 ใบ: ขนาดไพ่คำนวณจากพื้นที่ที่เหลือใต้คำถาม (4 แถว · ป้ายชื่อตำแหน่งเหนือไพ่ 40px · เว้นแถว 16px)
+    const CCT=278+QH+(QH?24:0)+20,CCW=CC?Math.min((W-160-3*gap)/4,((H-150-CCT-3*16-4*40)/4)*600/995):0,CCH=CCW*995/600;
+    // ฉากหลัง = ภาพเดียวกับที่เห็นบนจอ · มือถือ (9:20) ตัดจากบน 28% · จอคอม (16:9) ตัดตรงกลางเต็มความสูง
+    if(mob){const sh=Math.min(bgI.height,bgI.width*H/W),sw=sh*W/H;x.drawImage(bgI,(bgI.width-sw)/2,Math.min(bgI.height*.28,bgI.height-sh),sw,sh,0,0,W,H)}
+    else{const sw=bgI.height*W/H;x.drawImage(bgI,(bgI.width-sw)/2,0,sw,bgI.height,0,0,W,H)}
+    let g=x.createLinearGradient(0,0,0,H);
+    g.addColorStop(0,'rgba(2,2,4,.92)');g.addColorStop(.2,'rgba(2,2,4,.25)');g.addColorStop(.72,'rgba(2,2,4,.25)');g.addColorStop(1,'rgba(2,2,4,.95)');
+    x.fillStyle=g;x.fillRect(0,0,W,H);
+    x.textAlign='center';x.textBaseline='alphabetic';
+    // หัวภาพ
+    x.fillStyle='#F3EDE2';x.font='400 24px Jost';x.letterSpacing='10px';x.fillText('AMATATHEWA',W/2+5,92);
+    x.fillStyle='#C99B3C';x.font='400 22px Jost';x.fillText('YOUR READING',W/2+5,150);x.letterSpacing='0px';
+    const t1='ไพ่ของคุณ ',t2='เปิดแล้ว';x.font='200 56px Trirong';
+    const w1=x.measureText(t1).width,w2=x.measureText(t2).width,tx=W/2-(w1+w2)/2;x.textAlign='left';
+    x.fillStyle='#F3EDE2';x.fillText(t1,tx,222);x.fillStyle='#E8C987';x.fillText(t2,tx+w1,222);x.textAlign='center';
+    // คำถาม (ถ้ามี) ใต้หัวข้อ: ตัวขาว ใหญ่ อ่านชัดบนมือถือ
+    if(QTEXT&&!CC){x.fillStyle='#F3EDE2';x.font=QFONT;qLines.forEach((l,i)=>x.fillText(l,W/2,354+i*QLH))}
+    // 10 ใบ: คำถามอยู่ในช่องว่างซ้ายของแถวบน (ข้างไพ่ใบที่ 10) ชิดซ้าย กึ่งกลางแนวตั้ง · ยาวค่อยลดขนาดจนพอดีช่อง
+    if(QTEXT&&CC){const rx=W/2-(4*CCW+3*gap)/2,rw=3*CCW+2*gap-20,ry=CCT+40-36,rh=CCH+36;
+      // เลือกขนาดใหญ่สุดที่พอดีช่อง และไม่ทิ้งคำโดดๆ ไว้บรรทัดสุดท้าย (บรรทัดท้ายต้องยาว ≥ 40% ของช่อง)
+      let pick=null;for(const fs of [48,42,36]){QFONT=`400 ${fs}px Trirong`;QLH=Math.round(fs*1.38);wrapQ(rw);
+        if(qLines.length>3||qLines.length*QLH>rh)continue;pick=fs;break} /* ขนาดเดียวกันทุกคำถาม เผื่อที่ไว้ 3 บรรทัด */
+      if(pick){QFONT=`400 ${pick}px Trirong`;QLH=Math.round(pick*1.38);wrapQ(rw)}
+      if(qLines.length*QLH>rh){const m=Math.max(1,Math.floor(rh/QLH));qLines.length=m;qLines[m-1]+='…'}
+      x.fillStyle='#F3EDE2';x.font=QFONT;x.textAlign='left';const y0=ry+(rh-qLines.length*QLH)/2+QLH*.78;
+      qLines.forEach((l,i)=>x.fillText(l,rx,y0+i*QLH));x.textAlign='center'} /* เว้นจากหัวข้อชัดๆ ระยะบรรทัดโปร่ง */
+    // แถวไพ่
+    const total=per*cw+(per-1)*gap,top0=cy-(rowsN*chh+(rowsN-1)*rowGap)/2;
+    const cw0=cw,chh0=chh;
+    pool.forEach((c,i)=>{
+      const k=i%per,cw=CC?CCW:cw0,chh=CC?CCH:chh0,top=CC?CCT+40+(CC_AREA[i][0]-1)*(chh+56):top0,lx=CC?W/2-(4*cw+3*gap)/2+(CC_AREA[i][1]-1)*(cw+gap):W/2-total/2+k*(cw+gap),mx=lx+cw/2;
+      if(CC){x.fillStyle='rgba(243,237,226,.9)';x.font='400 22px "IBM Plex Sans Thai"';let t=String(i+1).padStart(2,'0')+' '+pos[i];while(x.measureText(t).width>cw+gap-4)t=t.slice(0,-2)+'…';x.fillText(t,mx,top-14)}
+      else{x.fillStyle='#C99B3C';x.font='italic 400 34px "Bodoni Moda"';x.fillText(String(i+1).padStart(2,'0'),mx,top-58);
+      x.fillStyle='rgba(243,237,226,.88)';x.font=`400 ${per>3?18:21}px "IBM Plex Sans Thai"`;x.fillText(pos[i],mx,top-24)}
+      x.save();x.shadowColor='rgba(0,0,0,.7)';x.shadowBlur=50;x.shadowOffsetY=20;
+      rrect(lx,top,cw,chh,cw*.055,x);x.fillStyle='#000';x.fill();x.restore();
+      x.save();rrect(lx,top,cw,chh,cw*.055,x);x.clip();
+      if(c.isRev){x.translate(lx+cw,top+chh);x.rotate(Math.PI);x.drawImage(faces[i],0,0,cw,chh)}else x.drawImage(faces[i],lx,top,cw,chh);
+      x.restore();
+      if(!CC){x.fillStyle='#F3EDE2';x.font=`300 ${n>3?20:25}px Trirong`;x.fillText(c.name,mx,top+chh+44);
+      x.fillStyle='#C99B3C';x.font=`400 ${n>3?15:17}px "IBM Plex Sans Thai"`;x.fillText(c.suit+(c.isRev?' · กลับหัว':''),mx,top+chh+74)}
+    });
+    // ท้ายภาพ: วันที่แบบไทย
+    const d=new Date(),dt=d.toLocaleDateString('th-TH',{day:'numeric',month:'long',year:'numeric'});
+    x.fillStyle='rgba(243,237,226,.55)';x.font='400 20px "IBM Plex Sans Thai"';x.fillText(dt,W/2,H-70);
+    const blob=await new Promise(r=>cv.toBlob(r,'image/jpeg',.95));
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+    a.download=`tarot-${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}.jpg`;
+    document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+    note.textContent='บันทึกภาพแล้ว';
+  }catch(e){note.textContent='บันทึกภาพไม่สำเร็จ ลองแคปหน้าจอแทนได้ครับ'}
+  btn.classList.remove('busy');note.t=setTimeout(()=>note.classList.remove('on'),2000);
+}
+document.getElementById('cam').onclick=saveImage;
+</script>
+</body></html>

@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="th"><head><meta charset="utf-8">
+<meta name="color-scheme" content="dark only">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ตัดไพ่ · AMATATHEWA</title>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;1,6..96,400&family=IBM+Plex+Sans+Thai:wght@300;400;500&family=Jost:wght@400;500&family=Trirong:wght@200;300;400&display=swap" rel="stylesheet">
+<style>
+/* ทุกหน้า: (ไม่ใช้ view transition — บางเบราว์เซอร์มือถือวางภาพเยื้อง) · ไม่มีแสงฟ้าตอนแตะ (มือถือ) · ไม่มีแท่งเลื่อนด้านขวา */
+*{-webkit-tap-highlight-color:transparent}
+html{scrollbar-width:none}html::-webkit-scrollbar,body::-webkit-scrollbar{display:none}
+</style>
+<style>
+:root{color-scheme:dark only;--gold:#C99B3C;--gold-light:#E8C987;--ivory:#F3EDE2;--dim:rgba(243,237,226,.62);--cw:min(140px,18vh)}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#05070E;color:var(--ivory);font-family:'IBM Plex Sans Thai',sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;user-select:none}
+.stage{position:relative;height:100vh;height:100svh;overflow:hidden;display:flex;flex-direction:column}
+.bg{position:absolute;inset:0;background:#05070E url("../ภาพพื้นหลัง/arch-desktop-blur.jpg") center/cover no-repeat;transform:scale(1.06)}
+header{position:relative;z-index:2;flex:none;display:flex;justify-content:space-between;align-items:center;padding:min(30px,3.4vh) 6vw}
+.brand{font-family:'Jost',sans-serif;letter-spacing:.42em;font-size:13px}
+.back{font-size:14px;color:var(--dim);cursor:pointer;letter-spacing:.04em;border-bottom:1px solid transparent;transition:color .3s,border-color .3s}
+.back:hover{color:var(--ivory);border-color:var(--gold)}
+main{position:relative;z-index:2;flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 24px 6vh}
+.kicker{font-family:'Jost',sans-serif;font-size:16px;letter-spacing:.42em;color:var(--gold);margin-bottom:min(18px,2vh)}
+h1{font-family:'Trirong',serif;font-weight:200;font-size:clamp(30px,5vh,48px);line-height:1.25;white-space:nowrap}
+h1 em{font-style:normal;color:var(--gold-light)}
+.lead{margin:min(10px,1.2vh) 0 min(46px,5.5vh);font-size:15px;color:var(--dim);font-weight:300}
+/* สามกอง */
+.piles{position:relative;display:flex;gap:min(56px,5vw);margin-bottom:min(40px,4.5vh)}
+.pile{position:relative;width:var(--cw);aspect-ratio:600/995;cursor:pointer;transition:transform .5s cubic-bezier(.4,0,.2,1)}
+.pile .c{position:absolute;inset:0;border-radius:calc(var(--cw)*.055);background:var(--back,url("https://raw.githubusercontent.com/amatathewa/tarot-collections/main/rider-waite-1909/back.webp")) center/cover;will-change:transform}
+.pile .c1{transform:translate(-2px,4px) rotate(-1.5deg);box-shadow:0 20px 44px rgba(0,0,0,.55)}
+.pile .c2{transform:translate(1px,2px) rotate(1deg)}
+.pile .c3{box-shadow:0 0 0 1px rgba(0,0,0,.3)}
+.pile:hover:not(.picked){transform:translateY(-8px)}
+.pile.picked{transform:translateY(-22px)}
+.pile .ring{position:absolute;inset:-7px;border:1px solid var(--gold);border-radius:calc(var(--cw)*.075);opacity:0;transition:opacity .35s}
+.pile.picked .ring{opacity:1}
+.pile .no{position:absolute;left:50%;bottom:-46px;transform:translateX(-50%);font-family:'Bodoni Moda',serif;font-style:italic;font-size:26px;color:var(--gold);opacity:0;transition:opacity .35s}
+.pile.picked .no{opacity:1}
+.pile .lb{position:absolute;left:50%;bottom:-40px;transform:translateX(-50%);font-size:13.5px;color:var(--dim);white-space:nowrap;transition:opacity .35s}
+.pile.picked .lb{opacity:0}
+.hint{font-size:14px;color:var(--dim);min-height:1.6em;margin-top:min(22px,2.4vh);transition:opacity .3s}
+.hint b{color:var(--gold-light);font-weight:400}
+.next{margin-top:min(22px,2.4vh);background:rgba(243,237,226,.08);backdrop-filter:blur(14px) saturate(1.2);-webkit-backdrop-filter:blur(14px) saturate(1.2);border:1px solid rgba(243,237,226,.28);color:var(--ivory);font-size:15px;letter-spacing:.04em;padding:15px 0;width:min(240px,70vw);cursor:pointer;opacity:0;pointer-events:none;transition:opacity .5s,background .3s}
+.next.show{opacity:1;pointer-events:all}
+.next:hover{background:rgba(243,237,226,.16)}
+.leave .kicker,.leave h1,.leave .lead,.leave .hint,.leave .btns,.leave .count,.leave .next,.leave .halo{opacity:0!important;transition:opacity .4s}
+@media(max-width:700px){
+  :root{--cw:min(92px,24vw)}
+  header{padding:18px 20px}
+  h1{font-size:min(7vw,32px)}
+  .lead{font-size:13.5px}
+  .piles{gap:5vw}
+  .pile .no{font-size:22px;bottom:-40px}
+  .pile .lb{font-size:12.5px;bottom:-34px}
+}
+</style></head><body>
+<div class="stage">
+  <div class="bg"></div>
+  <header><div class="brand">AMATATHEWA</div><div class="back" onclick="go('shuffle.html')">ย้อนกลับ</div></header>
+  <main>
+    <div class="kicker">CUT THE DECK</div>
+    <h1>ตัดไพ่ <em>ตามลำดับ</em></h1>
+    <p class="lead">แตะทีละกอง กองที่เลือกก่อนจะอยู่บนสุด</p>
+    <div class="piles" id="piles">
+      <div class="pile" data-i="0"><div class="ring"></div><div class="c c1"></div><div class="c c2"></div><div class="c c3"></div><div class="lb">กองซ้าย</div><div class="no"></div></div>
+      <div class="pile" data-i="1"><div class="ring"></div><div class="c c1"></div><div class="c c2"></div><div class="c c3"></div><div class="lb">กองกลาง</div><div class="no"></div></div>
+      <div class="pile" data-i="2"><div class="ring"></div><div class="c c1"></div><div class="c c2"></div><div class="c c3"></div><div class="lb">กองขวา</div><div class="no"></div></div>
+    </div>
+    <div class="hint" id="hint">เลือก<b>กองแรก</b></div>
+  </main>
+</div>
+<script src="flow.js"></script>
+<script>
+if(IN_SHELL)parent.postMessage({preload:'pick.html?'+new URLSearchParams(ST)},location.origin); // โหลดฉากกรีดไพ่เตรียมไว้ กดแล้วสำรับเลื่อนได้ทันที
+
+const P=[...document.querySelectorAll('.pile')],hint=document.getElementById('hint');let order=[];
+const H=['เลือก<b>กองแรก</b>','เลือก<b>กองที่สอง</b>','เลือก<b>กองสุดท้าย</b>'];
+P.forEach(p=>p.addEventListener('click',()=>{
+  if(p.classList.contains('picked')||order.length>=3)return;
+  order.push(+p.dataset.i);p.classList.add('picked');p.querySelector('.no').textContent=order.length;
+  if(order.length<3){hint.innerHTML=H[order.length];return}
+  hint.style.opacity=0;setTimeout(merge,250);
+}));
+function merge(){
+  // รวมกอง: กองที่เลือกก่อนวางทับบนสุด เลื่อนเข้าหากองกลาง
+  const r=P.map(p=>p.getBoundingClientRect()),cx=r[1].left;
+  P.forEach(p=>{p.querySelector('.no').style.opacity=0;p.querySelector('.ring').style.opacity=0});
+  [...order].reverse().forEach((idx,k)=>{const p=P[idx];p.style.zIndex=k+1;
+    setTimeout(()=>{p.style.transition='transform .5s cubic-bezier(.4,0,.2,1)';p.style.transform=`translate(${cx-r[idx].left}px,${-k*3}px)`},k*200)});
+  // รวมกองเสร็จ → ไปกรีดไพ่ต่อเองอัตโนมัติ (หน้าเลือกไพ่กรีดออกจากกองกลางจอ)
+  // รวมกองเสร็จ → ไปกรีดไพ่ทันที ไม่มีข้อความคั่น
+  setTimeout(()=>{document.body.classList.add('leave');go('pick.html',{},[document.getElementById('piles'),P[1]])},850);
+}
+
+</script>
+</body></html>

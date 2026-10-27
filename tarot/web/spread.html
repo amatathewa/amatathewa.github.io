@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="th"><head><meta charset="utf-8"><meta name="color-scheme" content="dark only">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>เปิดไพ่ทาโรต์ · AMATATHEWA</title>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;1,6..96,400&family=IBM+Plex+Sans+Thai:wght@300;400;500&family=Jost:wght@400;500&family=Trirong:wght@200;300;400&display=swap" rel="stylesheet">
+<style>
+/* ทุกหน้า: (ไม่ใช้ view transition — บางเบราว์เซอร์มือถือวางภาพเยื้อง) · ไม่มีแสงฟ้าตอนแตะ (มือถือ) · ไม่มีแท่งเลื่อนด้านขวา */
+*{-webkit-tap-highlight-color:transparent}
+html{scrollbar-width:none}html::-webkit-scrollbar,body::-webkit-scrollbar{display:none}
+</style>
+<style>
+:root{color-scheme:dark only}
+:root{--gold:#C99B3C;--gold-light:#E8C987;--ivory:#F3EDE2;--dim:rgba(243,237,226,.6);--line:rgba(243,237,226,.16)}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#0A0510;color:var(--ivory);font-family:'IBM Plex Sans Thai',sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden}
+.stage{position:relative;height:100vh;height:100svh;overflow:hidden;display:flex;flex-direction:column}
+/* จอคอม: ดวงจันทร์ขึ้นจากขอบล่าง กึ่งกลาง (ภาพ Gemini 16:9) */
+.bg{position:absolute;left:0;right:0;height:100%;bottom:calc(-1 * var(--down,24vh));transform-origin:50% 100%;background:#0A0510 url("../ภาพพื้นหลัง/moon-gemini-desktop.jpg") 50% 100%/max(100vw,170vh) auto no-repeat;animation:rise 50s ease-in-out infinite alternate}
+@keyframes rise{from{transform:scale(1)}to{transform:scale(1.03)}}
+header{position:relative;z-index:2;flex:none;display:flex;justify-content:space-between;align-items:center;padding:min(30px,3.4vh) 6vw}
+.brand{font-family:'Jost',sans-serif;letter-spacing:.42em;font-size:13px}
+.nav{display:flex;gap:34px;font-size:14px;color:var(--dim)}
+.nav b{color:var(--ivory);font-weight:400;border-bottom:1px solid var(--gold);padding-bottom:3px}
+main{position:relative;z-index:2;flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;text-align:center;padding:3vh 24px 0}
+.kicker{font-family:'Jost',sans-serif;font-size:11.5px;letter-spacing:.38em;color:var(--gold);margin-bottom:min(16px,1.8vh)}
+h1{font-family:'Trirong',serif;font-weight:200;font-size:clamp(32px,5.4vh,52px);line-height:1.25}
+h1 em{font-style:normal;color:var(--gold-light)}
+h1 br{display:none}
+.lead{margin:min(12px,1.4vh) 0 min(18px,2vh);font-size:15px;line-height:1.75;color:var(--dim);font-weight:300;max-width:460px}
+.grid{display:grid;grid-template-columns:repeat(6,1fr);width:min(760px,100%);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.tile{position:relative;padding:min(16px,1.8vh) 6px min(14px,1.6vh);cursor:pointer;transition:background .35s;display:flex;flex-direction:column;align-items:center;gap:min(8px,1vh)}
+.tile+.tile{border-left:1px solid rgba(243,237,226,.08)}
+.tile:hover{background:rgba(243,237,226,.04)}
+.top{display:contents}
+.no{font-family:'Bodoni Moda',serif;font-style:italic;font-size:21px;line-height:1;color:var(--gold)}
+.dg{opacity:.7}
+.nm{font-size:14.5px}
+.tile.sel{background:linear-gradient(0deg,rgba(201,155,60,.16),transparent 80%)}
+.tile.sel::after{content:'';position:absolute;left:18%;right:18%;bottom:-1px;height:1px;background:var(--gold)}
+.tile.sel .nm{color:var(--gold-light)}
+.tile.sel .dg rect{stroke:var(--gold)}
+.desc{margin-top:min(14px,1.6vh);font-size:14px;color:var(--dim);min-height:1.6em}
+.desc b{color:var(--ivory);font-weight:400}
+.opts{display:flex;gap:28px;justify-content:center;margin:min(12px,1.4vh) 0 min(20px,2.2vh);font-size:14px;color:var(--dim)}
+.opt{display:flex;gap:9px;align-items:center;cursor:pointer}
+.box{width:15px;height:15px;border:1px solid rgba(243,237,226,.45)}
+.box.on{background:var(--gold);border-color:var(--gold)}
+.cta{display:inline-flex;justify-content:center;align-items:center;gap:16px;background:var(--ivory);color:#140a1c;font-size:15px;font-weight:500;padding:15px 52px;cursor:pointer}
+.cta span{font-family:'Jost';font-size:18px}
+
+/* ===== เลือกสำรับ ===== */
+.deck{display:flex;align-items:center;gap:14px;margin:0 0 min(22px,2.4vh);padding:8px 16px 8px 8px;border:1px solid var(--line);cursor:pointer;transition:border-color .3s,background .3s}
+.deck:hover{border-color:rgba(201,155,60,.6);background:rgba(243,237,226,.03)}
+.deck img{width:30px;height:50px;object-fit:cover;border-radius:3px;box-shadow:0 4px 10px rgba(0,0,0,.5)}
+.deck .dl{text-align:left;line-height:1.35}
+.deck .dk{font-family:'Jost';font-size:10px;letter-spacing:.3em;color:var(--gold)}
+.deck .dn{font-size:15px}
+.deck .dc{font-size:13px;color:var(--dim);margin-left:10px;padding-left:14px;border-left:1px solid var(--line)}
+.picker{position:fixed;inset:0;z-index:20;background:rgba(5,4,10,.82);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4vh;opacity:0;pointer-events:none;transition:opacity .4s}
+.picker.open{opacity:1;pointer-events:all}
+.picker h2{font-family:'Trirong',serif;font-weight:200;font-size:clamp(26px,4.4vh,40px)}
+.decks{display:flex;gap:3vw;max-width:92vw;overflow-x:auto;padding:28px 24px 30px;margin:0 auto;scroll-snap-type:x mandatory}
+.dk-card{flex:none;width:clamp(130px,15vh,170px);text-align:center;cursor:pointer;scroll-snap-align:center}
+.dk-card img{width:100%;aspect-ratio:600/995;object-fit:cover;border-radius:8px;box-shadow:0 18px 40px rgba(0,0,0,.6);transition:transform .4s}
+.dk-card:hover img{transform:translateY(-6px)}
+.dk-card .n{margin-top:14px;font-size:15px}
+.dk-card .s{font-size:12.5px;color:var(--dim);margin-top:2px}
+.dk-card.on .n{color:var(--gold-light)}
+.dk-card.on img{outline:1px solid var(--gold);outline-offset:6px;border-radius:8px}
+.dk-card.soon{opacity:.45;cursor:default}
+.dk-card.soon .ph{width:100%;aspect-ratio:600/995;border:1px dashed rgba(243,237,226,.35);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--dim)}
+.picker .close{font-size:13px;letter-spacing:.2em;color:var(--dim);cursor:pointer;font-family:'Jost'}
+/* ===== ปุ่มใหม่ ไม่มีลูกศร (3 แบบ เลือกด้วย &b=1|2|3) ===== */
+.cta{position:relative;gap:0;letter-spacing:.04em;font-weight:400;padding:17px 58px;transition:background .4s,color .4s}
+.cta span{display:none}
+/* 1 กรอบคู่: พื้นครีม เส้นทองด้านในแบบกล่องเครื่องประดับ */
+.b1 .cta{background:var(--ivory);color:#1a1020}
+.b1 .cta::before{content:'';position:absolute;inset:4px;border:1px solid rgba(201,155,60,.75);pointer-events:none}
+.b1 .cta:hover{background:#fff}
+/* 2 เส้นบางโปร่ง + จุดทองสองข้าง */
+.b2 .cta{background:transparent;color:var(--ivory);border:1px solid rgba(243,237,226,.5)}
+.b2 .cta::before,.b2 .cta::after{content:'';position:absolute;top:50%;width:5px;height:5px;background:var(--gold);transform:translateY(-50%) rotate(45deg)}
+.b2 .cta::before{left:22px}.b2 .cta::after{right:22px}
+.b2 .cta:hover{background:rgba(243,237,226,.08);border-color:var(--gold)}
+/* 3 ทองด้าน แสงไล่ผ่านช้าๆ */
+.b3 .cta{background:linear-gradient(100deg,#a8802f,#d9b56a 45%,#b98d37);color:#1a1020;font-weight:500;overflow:hidden}
+.b3 .cta::after{content:'';position:absolute;top:0;bottom:0;width:40%;left:-60%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.35),transparent);animation:sheen 4.5s ease-in-out infinite}
+@keyframes sheen{0%,60%{left:-60%}100%{left:130%}}
+
+/* ===== ปุ่มรอบ 2 (b=4..7) ===== */
+/* 4 ตัวหนังสือ + เส้นยาว แบบนิตยสารแฟชั่น */
+.b4 .cta{background:none;padding:10px 0;color:var(--ivory);font-size:16px;gap:18px;letter-spacing:.06em}
+.b4 .cta::after{content:'';display:block;width:72px;height:1px;background:var(--gold);transition:width .5s}
+.b4 .cta:hover::after{width:120px}
+/* 5 วงกลม ตัวอักษรหมุนรอบ */
+.b5 .cta{background:none;padding:0;width:min(118px,13vh);height:min(118px,13vh);border-radius:50%;border:1px solid rgba(243,237,226,.35);color:var(--ivory);font-size:15px}
+.b5 .cta .ring{display:block;position:absolute;inset:-1px;animation:spin 24s linear infinite}
+.b5 .cta .ring text{font-family:'Jost';font-size:8.6px;letter-spacing:.32em;fill:var(--gold)}
+.b5 .cta:hover{background:rgba(243,237,226,.06)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.cta .ring{display:none}
+/* 6 กระจกฝ้า */
+.b6 .cta{background:rgba(243,237,226,.08);backdrop-filter:blur(14px) saturate(1.2);-webkit-backdrop-filter:blur(14px) saturate(1.2);border:1px solid rgba(243,237,226,.28);color:var(--ivory);border-radius:2px;padding:16px 64px}
+.b6 .cta:hover{background:rgba(243,237,226,.16)}
+/* 7 ทึบเรียบ สองบรรทัด */
+.b7 .cta{flex-direction:column;gap:3px;background:var(--ivory);color:#120a1a;padding:12px 60px 13px;font-size:15px;font-weight:500}
+.b7 .cta::before{content:'BEGIN';font-family:'Jost';font-size:9px;letter-spacing:.42em;color:#8a6a2a;font-weight:500}
+.b7 .cta:hover{background:#fff}
+.credit{display:none}
+/* หัวข้อ 2 บรรทัด: ขาวสั้นตัวใหญ่ · ทองยาวย่อให้อยู่บรรทัดเดียว */
+/* หัวข้อบรรทัดเดียว ขาว + ทอง */
+.kicker{font-size:16px!important;letter-spacing:.42em!important;margin-bottom:min(20px,2.2vh)!important}
+@media(max-width:700px){.kicker{font-size:13px!important;letter-spacing:.36em!important}}
+h1{white-space:nowrap}
+h1 em{font-size:1em}
+@media(max-width:700px){h1{font-size:min(6.3vw,30px)!important}}
+
+/* จอคอม: ฉากซุ้มประตูสวรรค์ (แทนดวงจันทร์) */
+@media(min-width:701px){.bg{bottom:0!important;height:100%!important;background:#05070E url("../ภาพพื้นหลัง/arch-desktop.jpg") center/cover no-repeat!important;animation:none!important}html,body{background:#05070E!important}}
+/* มือถือ: ซุ้มประตูแนวตั้ง (ภาพต่อท้องฟ้าเป็น 9:20 แล้ว) */
+@media(max-width:700px){.bg{top:0!important;bottom:0!important;left:0!important;right:0!important;height:100%!important;-webkit-mask-image:none!important;mask-image:none!important;background:#05070E url("../ภาพพื้นหลัง/arch-mobile.jpg") center bottom/cover no-repeat!important;transform:translateY(9vh)}
+  /* มือถือ: เนื้อหากระชับ ให้อ่าวกับแสงบนน้ำโผล่ใต้ปุ่ม */
+  main{padding-top:0!important}
+  .kicker{margin-bottom:.8vh!important}
+  .lead{margin:.8vh 0 1.6vh!important;font-size:13.5px!important;line-height:1.6!important}
+  .deck{margin-bottom:1.2vh!important;padding:6px 12px 6px 6px!important}
+  .deck img{width:24px!important;height:40px!important}
+  .tile{padding:1.1vh 12px 1vh!important;gap:.6vh!important}
+  .desc{margin-top:1vh!important}
+  .opts{margin:1vh 0 1.4vh!important}
+  .cta{padding:13px!important}}
+@media(max-width:700px) and (max-height:700px){.lead{display:none!important}h1{font-size:min(6.3vw,28px)!important}.tile .dg{display:none}}
+@media(max-width:700px){.veil{display:none!important}html,body{background:#05070E!important}}
+
+.veil{display:none;position:absolute;inset:0}
+
+/* มือถือ: แบบรอบ 5 (ชิดซ้าย ตาราง 2 คอลัมน์ ปุ่มเต็มแถว) + ภาพ Gemini แนวตั้ง */
+@media(max-width:700px){
+  /* มือถือใช้ภาพจริง Artemis II แบบรอบ 5 */
+  .bg{top:auto;bottom:0;left:0;right:0;height:34vh;animation:none;background:url("../ภาพพื้นหลัง/moon-mobile.jpg") 60% 30%/cover no-repeat;-webkit-mask-image:linear-gradient(to top,#000 45%,transparent 100%);mask-image:linear-gradient(to top,#000 45%,transparent 100%)}
+  .veil{display:block;background:linear-gradient(180deg,#050308 0%,#050308 50%,rgba(5,3,8,.7) 70%,rgba(5,3,8,.2) 100%)}
+  html,body{background:#050308!important}
+  header{padding:18px 20px}
+  .nav{display:none}
+  main{align-items:stretch;text-align:left;padding:2vh 20px 0}
+  h1{font-size:clamp(28px,4.6vh,36px)}
+  h1 br{display:inline}
+  .lead{font-size:14px;margin:1.2vh 0 2.4vh}
+  .grid{grid-template-columns:repeat(2,1fr);border:1px solid var(--line);border-bottom:0}
+  .tile{align-items:flex-start;padding:1.4vh 12px 1.3vh;border-bottom:1px solid var(--line);gap:1vh}
+  .tile+.tile{border-left:0}
+  .tile:nth-child(odd){border-right:1px solid var(--line)}
+  .top{display:flex;width:100%;justify-content:space-between;align-items:flex-start}
+  .no{font-size:19px}
+  .nm{font-size:15px}
+  .tile.sel::after{left:-1px;right:-1px;top:-1px;bottom:-1px;height:auto;background:none;border:1px solid var(--gold)}
+  .desc,.opts{text-align:center;justify-content:center}
+  .cta{width:100%;padding:15px}
+  .deck{align-self:stretch;margin-bottom:1.8vh}
+  .deck .dc{margin-left:auto}
+}
+/* ช่องพิมพ์คำถาม: เส้นบางโปร่ง เส้นใต้เป็นทองตอนพิมพ์ */
+.ask{width:min(460px,100%);margin:min(18px,2vh) 0 min(20px,2.2vh)}
+.ask input{width:100%;background:rgba(243,237,226,.05);border:0;border-bottom:1px solid rgba(243,237,226,.3);color:var(--ivory);font:400 16px 'IBM Plex Sans Thai',sans-serif;text-align:center;padding:12px 14px;outline:none;border-radius:0;transition:border-color .3s,background .3s}
+.ask input::placeholder{color:rgba(243,237,226,.45)}
+.ask input:focus{border-bottom-color:var(--gold);background:rgba(243,237,226,.08)}
+.ask-note{font-size:12.5px;color:rgba(243,237,226,.45);margin-top:7px}
+@media(max-width:700px){.ask{width:100%;margin:2.2vh 0 2.2vh}.ask input{text-align:left;padding:11px 12px}.ask-note{display:none}}
+/* มือถือ (ณัทกร 27 ต.ค.): หัวข้อ 2 แถว · เนื้อหาเลื่อนลงไม่ให้กระจุกข้างบน */
+@media(max-width:700px){
+  h1{font-size:min(8.4vw,34px)!important;line-height:1.32!important}
+  main{padding-top:3vh!important}
+  .kicker{margin-bottom:1.6vh!important}
+  .lead{margin:1.8vh 0 3.4vh!important}
+  .deck{margin-bottom:2vh!important}
+}
+@media(max-width:700px) and (max-height:760px){main{padding-top:.8vh!important}.ask{margin:1.6vh 0 1.6vh!important}.deck{margin-bottom:1.4vh!important}.lead{margin:2.2vh 0 2.4vh!important}}
+@media(max-width:700px) and (max-height:700px){h1{margin-bottom:2.8vh!important}}
+</style></head><body>
+<div class="stage">
+  <div class="bg"></div><div class="veil"></div>
+  <header><div class="brand">AMATATHEWA</div>
+    <nav class="nav"><span>ตรวจดาวจร</span><b>เปิดไพ่ทาโรต์</b><span>ดูดวงกับหมอเก่ง</span></nav></header>
+  <main>
+    <div class="kicker">TAROT READING</div>
+    <h1>ตั้งจิตให้นิ่ง <br><em>เชื่อความรู้สึกจากภายใน</em></h1>
+    <div class="ask"><input id="q" maxlength="80" placeholder="พิมพ์คำถามของคุณ เรื่องเดียวพอ" enterkeyhint="done" autocomplete="off"><div class="ask-note">ไม่พิมพ์ก็ได้ ตั้งไว้ในใจให้ชัดก็พอ</div></div>
+    <div class="deck" id="deck"><img id="deck-img" src="https://raw.githubusercontent.com/amatathewa/tarot-collections/main/rider-waite-1909/back.webp" alt=""><div class="dl"><div class="dk">DECK</div><div class="dn" id="deck-name">อมตเทวา ทาโรต์ 1909</div></div><div class="dc">เปลี่ยนสำรับ</div></div>
+    <div class="grid">
+      <div class="tile" data-d="คำตอบเดียว ตรงประเด็น" data-sp="1"><div class="top"><span class="no">01</span><svg class="dg" width="40" height="24"><rect x="14" y="1" width="12" height="22" fill="none" stroke="#F3EDE2"/></svg></div><div class="nm">หนึ่งใบ</div></div>
+      <div class="tile" data-d="เทียบสองทางเลือก" data-sp="2"><div class="top"><span class="no">02</span><svg class="dg" width="40" height="24"><rect x="5" y="1" width="12" height="22" fill="none" stroke="#F3EDE2"/><rect x="23" y="1" width="12" height="22" fill="none" stroke="#F3EDE2"/></svg></div><div class="nm">สองใบ</div></div>
+      <div class="tile" data-d="อดีต · ปัจจุบัน · อนาคต" data-sp="3"><div class="top"><span class="no">03</span><svg class="dg" width="40" height="24"><rect x="1" y="2" width="10" height="20" fill="none" stroke="#F3EDE2"/><rect x="15" y="2" width="10" height="20" fill="none" stroke="#F3EDE2"/><rect x="29" y="2" width="10" height="20" fill="none" stroke="#F3EDE2"/></svg></div><div class="nm">สามใบ</div></div>
+      <div class="tile" data-d="สถานการณ์ อุปสรรค และทางออก" data-sp="4"><div class="top"><span class="no">04</span><svg class="dg" width="40" height="24"><rect x="1" y="4" width="8" height="16" fill="none" stroke="#F3EDE2"/><rect x="11" y="4" width="8" height="16" fill="none" stroke="#F3EDE2"/><rect x="21" y="4" width="8" height="16" fill="none" stroke="#F3EDE2"/><rect x="31" y="4" width="8" height="16" fill="none" stroke="#F3EDE2"/></svg></div><div class="nm">สี่ใบ</div></div>
+      <div class="tile" data-d="คำแนะนำรอบด้าน" data-sp="5"><div class="top"><span class="no">05</span><svg class="dg" width="40" height="24"><rect x="16.5" y="0.5" width="7" height="7" fill="none" stroke="#F3EDE2"/><rect x="7" y="8.5" width="7" height="7" fill="none" stroke="#F3EDE2"/><rect x="16.5" y="8.5" width="7" height="7" fill="none" stroke="#F3EDE2"/><rect x="26" y="8.5" width="7" height="7" fill="none" stroke="#F3EDE2"/><rect x="16.5" y="16.5" width="7" height="7" fill="none" stroke="#F3EDE2"/></svg></div><div class="nm">ห้าใบ</div></div>
+      <div class="tile" data-d="สิบใบ อ่านทั้งเรื่องอย่างละเอียด" data-sp="10"><div class="top"><span class="no">10</span><svg class="dg" width="40" height="24"><rect x="6" y="5" width="8" height="14" fill="none" stroke="#F3EDE2"/><rect x="3" y="9" width="14" height="6" fill="none" stroke="#F3EDE2"/><rect x="30" y="0" width="7" height="5" fill="none" stroke="#F3EDE2"/><rect x="30" y="7" width="7" height="5" fill="none" stroke="#F3EDE2"/><rect x="30" y="14" width="7" height="5" fill="none" stroke="#F3EDE2"/><rect x="30" y="21" width="7" height="3" fill="none" stroke="#F3EDE2"/></svg></div><div class="nm">เซลติกครอส</div></div>
+    </div>
+    <div class="desc" id="desc"><b>สามใบ</b> · อดีต · ปัจจุบัน · อนาคต</div>
+    <div class="opts"><div class="opt" data-k="rev"><div class="box"></div>มีไพ่กลับหัว</div><div class="opt" data-k="major"><div class="box"></div>เฉพาะไพ่ชุดใหญ่</div></div>
+    <a class="cta" role="button"><svg class="ring" viewBox="0 0 120 120"><defs><path id="rp" d="M60,60 m-51,0 a51,51 0 1,1 102,0 a51,51 0 1,1 -102,0"/></defs><text><textPath href="#rp">BEGIN THE READING · AMATATHEWA · TAROT ·</textPath></text></svg>เริ่มสับไพ่</a>
+  </main>
+  <div class="picker" id="picker">
+    <h2>เลือกสำรับไพ่</h2>
+    <div class="decks">
+      <div class="dk-card" data-k="1909" data-img="https://raw.githubusercontent.com/amatathewa/tarot-collections/main/rider-waite-1909/back.webp" data-n="อมตเทวา ทาโรต์ 1909"><img src="https://raw.githubusercontent.com/amatathewa/tarot-collections/main/rider-waite-1909/back.webp" alt=""><div class="n">อมตเทวา ทาโรต์ 1909</div><div class="s">ภาพวาดคลาสสิกปี 1909</div></div>
+      <div class="dk-card" data-k="sns" data-img="https://raw.githubusercontent.com/amatathewa/tarot-collections/main/sns-deck/79.webp" data-n="Strength &amp; Sorcery"><img src="https://raw.githubusercontent.com/amatathewa/tarot-collections/main/sns-deck/79.webp" alt=""><div class="n">Strength &amp; Sorcery</div><div class="s">ต้นฉบับอมตเทวา รุ่นแรก</div></div>
+      <div class="dk-card soon"><div class="ph">เร็วๆ นี้</div><div class="n">Water Minimal</div><div class="s">กำลังวาด</div></div>
+    </div>
+    <div class="close" id="pk-close">CLOSE</div>
+  </div>
+</div>
+<script src="flow.js"></script>
+<script>
+document.body.classList.add('b6'); // ปุ่มกระจกฝ้า (ณัทกรเลือก)
+// สำรับที่เลือกไว้ครั้งก่อน (จำในเครื่องนี้)
+if(!Q.get('deck'))try{const k=localStorage.getItem('tarot-deck');if(DECKS[k])ST.deck=k}catch(e){}
+const pk=document.getElementById('picker');
+function setDeck(k){ST.deck=k;
+  document.getElementById('deck-img').src=DECKS[k].back;document.getElementById('deck-name').textContent=DECKS[k].name;
+  document.querySelectorAll('.dk-card').forEach(x=>x.classList.toggle('on',x.dataset.k===k));
+  try{localStorage.setItem('tarot-deck',k)}catch(e){}}
+document.getElementById('deck').onclick=()=>pk.classList.add('open');
+document.getElementById('pk-close').onclick=()=>pk.classList.remove('open');
+document.querySelectorAll('.dk-card:not(.soon)').forEach(c=>c.onclick=()=>{setDeck(c.dataset.k);setTimeout(()=>pk.classList.remove('open'),250)});
+setDeck(ST.deck);
+
+const tiles=[...document.querySelectorAll('.tile')];
+function setSp(t){tiles.forEach(x=>x.classList.remove('sel'));t.classList.add('sel');ST.sp=t.dataset.sp;
+  document.getElementById('desc').innerHTML='<b>'+t.querySelector('.nm').textContent+'</b> · '+t.dataset.d}
+tiles.forEach(t=>t.addEventListener('click',()=>setSp(t)));
+setSp(tiles.find(t=>t.dataset.sp===ST.sp)||tiles[2]);
+const opts=document.querySelectorAll('.opt');
+opts.forEach(o=>{o.querySelector('.box').classList.toggle('on',ST[o.dataset.k]==='1');
+  o.addEventListener('click',()=>{const on=o.querySelector('.box').classList.toggle('on');ST[o.dataset.k]=on?'1':'0'})});
+// คำถาม: เก็บไว้ในเครื่อง (ไม่ใส่ในที่อยู่เว็บ) ให้หน้าผลไพ่กับภาพที่บันทึกแสดง
+const qi=document.getElementById('q');try{qi.value=sessionStorage.getItem('tarot-q')||''}catch(e){}
+qi.addEventListener('input',()=>{try{sessionStorage.setItem('tarot-q',qi.value.trim())}catch(e){}});
+qi.addEventListener('keydown',e=>{if(e.key==='Enter')qi.blur()});
+document.querySelector('.cta').onclick=()=>go('shuffle.html');
+</script>
+</body></html>
