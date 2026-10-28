@@ -111,9 +111,7 @@ h1 em{font-style:normal;color:var(--gold-light)}
 @media(max-width:700px){.cc .row .scrollhint{grid-area:4/1/5/2;justify-self:end;align-self:center;text-align:right;width:118px;margin:0 6px 0 0;font-size:11.5px;line-height:1.55;white-space:normal}
   .cc .hero .kicker{display:none}.cc .row{margin-top:2vh!important;margin-bottom:auto!important;padding:0!important}}
 .cc .ccq{grid-area:1/1/2/4;align-self:center;justify-self:stretch;text-align:left;margin:0;padding-right:10px;max-width:none;font-style:normal;font-weight:300;color:var(--ivory);font-size:clamp(14px,calc(var(--w)*.21),22px);line-height:1.5;max-height:calc(var(--w)*1.66 + 24px);overflow:hidden}
-/* มือถือ: ยกแถบปุ่มขึ้นพ้นปุ่ม "เลื่อนขึ้นบนสุด" ของเบราว์เซอร์ (Samsung Internet โผล่กลางล่างตอนไถ) */
-@media(max-width:700px){.dock{padding-bottom:calc(66px + env(safe-area-inset-bottom))}.camnote{bottom:140px}.read{padding-bottom:calc(10vh + 140px)}}
-@media(max-width:700px){header{padding:18px 20px}h1{font-size:min(7vw,30px)}.scrollhint{margin-bottom:calc(3vh + 140px)}.mp{padding:20px}.mp p{font-size:15.5px}.dock{gap:8px}.dock .cam,.dock .btn{flex:1;width:auto;font-size:14px;padding:13px 4px}.dock .cam svg{display:none}}
+@media(max-width:700px){header{padding:18px 20px}h1{font-size:min(7vw,30px)}.scrollhint{margin-bottom:calc(3vh + 80px)}.mp{padding:20px}.mp p{font-size:15.5px}.dock{gap:8px}.dock .cam,.dock .btn{flex:1;width:auto;font-size:14px;padding:13px 4px}.dock .cam svg{display:none}}
 </style></head><body>
 <div class="bg" id="bg"></div><div class="shade"></div><div class="bgfrom" id="bgfrom" hidden></div>
 <header><div class="brand">AMATATHEWA</div><div class="back" onclick="go('spread.html')">หน้าแรก</div></header>
@@ -167,10 +165,8 @@ pool.forEach((c,i)=>{
 if(CC&&QTEXT){const qe=document.getElementById('q');qe.hidden=true;const cq=document.createElement('p');cq.className='q ccq';cq.textContent='“'+QTEXT+'”';row.appendChild(cq)}
 document.getElementById('again').onclick=()=>go('shuffle.html');document.getElementById('home').onclick=()=>go('spread.html');
 // ชื่อตำแหน่งยาวตัด 2 บรรทัด → ให้ทุกช่องสูงเท่ากัน ไพ่จะได้เรียงตรงแนว
-// มือถือ 10 ใบ: คำว่าเลื่อนลงอ่านคำทำนาย ไปอยู่ช่องว่างซ้ายล่าง ข้างไพ่ใบที่ 5
-if(CC&&mob){const sh=document.getElementById('sh');sh.innerHTML='เลื่อนลง<br>เพื่ออ่านคำทำนาย ↓';row.appendChild(sh)}
 // มือถือ 10 ใบ: วัดผังจริงแล้วย่อให้ไพ่แถวล่างจบเหนือแถบปุ่มพอดี
-function fitCC(){if(!(CC&&mob))return;const lim=document.getElementById('dock').firstElementChild.getBoundingClientRect().top-12;
+function fitCC(){if(!(CC&&mob))return;const lim=document.getElementById('dock').firstElementChild.getBoundingClientRect().top-12-36; // เว้นที่ให้คำว่าเลื่อนลงใต้แถวไพ่
   for(let k=0;k<5;k++){const fr=[...row.querySelectorAll('.frame')],top=row.getBoundingClientRect().top,bot=Math.max(...fr.map(f=>f.getBoundingClientRect().bottom));
     if(bot<=lim+.5)break;w=Math.floor(w*(lim-top)/(bot-top)*100)/100;document.documentElement.style.setProperty('--w',w+'px');row.style.gridTemplateColumns=`repeat(4,${w}px)`}}
 function eqPos(){const ps=[...row.querySelectorAll('.pos')];ps.forEach(e=>e.style.minHeight='');const ph=Math.max(...ps.map(e=>e.offsetHeight));ps.forEach(e=>e.style.minHeight=ph+'px')}

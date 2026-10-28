@@ -10,14 +10,16 @@ html,body{margin:0;height:100%;background:#05070E;overflow:hidden}
 iframe{position:fixed;inset:0;width:100%;height:100%;border:0;background:#05070E;opacity:0;z-index:1}
 iframe.cur{opacity:1;z-index:2}
 iframe.in{z-index:3;transition:opacity .25s ease}
+/* ฉากที่ไม่มีของเลื่อนต่อกัน (เริ่มสับไพ่ · ตัดไพ่): จางซ้อนช้าและนุ่มกว่า */
+iframe.in.soft{transition:opacity .75s cubic-bezier(.45,0,.25,1)}
 </style></head><body>
 <script>
 // cur = ฉากที่เห็นอยู่ · next = ฉากที่กำลังจะขึ้น · pre = ฉากที่โหลดเตรียมไว้ล่วงหน้า (ฉากกรีดไพ่ ตั้งแต่อยู่ฉากสับไพ่)
-let cur=null,next=null,pre=null,timer=0,ask=0,st={};
+let cur=null,next=null,pres={},timer=0,ask=0,st={};
 const O=location.origin;
 function mk(src){const f=document.createElement('iframe');f.src=src;f.dataset.src=src;document.body.appendChild(f);return f}
 function load(src,hand){
-  if(pre&&pre.dataset.src===src){next=pre;pre=null}else next=mk(src);
+  if(pres[src]){next=pres[src];delete pres[src]}else next=mk(src);
   const f=next;st={hand,moved:!hand,ready:!!f.readyData};
   clearTimeout(timer);timer=setTimeout(()=>swap(f),4000); // สำรอง: ช้าเกิน 4 วิ ก็สลับเลย
   if(hand){ // ส่งต่อสำรับ: ถามตำแหน่งจากฉากใหม่ซ้ำทุก 0.1 วิ จนได้คำตอบ (ไม่เกิน 1.5 วิ แล้วยอมสลับเลย)
@@ -27,27 +29,31 @@ function load(src,hand){
   }
   maybe(f);
 }
+// เตรียมฉากตามรายการ · purge=true เอาฉากที่เตรียมไว้แต่ไม่อยู่ในรายการออก (กันฉากค้างกินเครื่อง)
+function prep(want,purge){
+  if(purge)for(const k in pres)if(!want.includes(k)){pres[k].remove();delete pres[k]}
+  want.forEach(u=>{if(!pres[u]&&!(next&&next.dataset.src===u))pres[u]=mk(u)});
+}
 function maybe(f){if(f===next&&st.moved&&st.ready)swap(f)}
 function swap(f){
   if(f!==next)return;clearTimeout(timer);clearInterval(ask);next=null;
-  const old=cur;cur=f;
+  const old=cur;cur=f;prep(f.wants||[],true);
   if(!old){f.classList.add('cur');f.contentWindow.postMessage('show',O);return}
   // ฉากใหม่ค่อยๆ ขึ้นทับ (ภาพแรกของฉากใหม่ต่อจากฉากเดิมอยู่แล้ว) แล้วเอาฉากเดิมออก
-  f.classList.add('in');f.getBoundingClientRect();f.style.opacity=1;
+  const soft=!st.hand;f.classList.add('in');f.classList.toggle('soft',soft);f.getBoundingClientRect();f.style.opacity=1;
   f.contentWindow.postMessage('show',O);
-  setTimeout(()=>{f.classList.remove('in');f.classList.add('cur');f.style.opacity='';if(old)old.remove()},300);
+  setTimeout(()=>{f.classList.remove('in','soft');f.classList.add('cur');f.style.opacity='';if(old)old.remove()},soft?800:300);
 }
 addEventListener('message',e=>{
   if(e.origin!==O)return;const d=e.data||{};
-  if(d.preload){
-    if(pre&&pre.dataset.src!==d.preload){pre.remove();pre=null}
-    if(!pre&&!(next&&next.dataset.src===d.preload))pre=mk(d.preload);
-  }
+  // โหลดล่วงหน้า: ทุกฉากจดไว้ว่าอยากให้เตรียมฉากไหน · ลงมือโหลดเฉพาะคำขอของฉากที่เห็นอยู่หรือกำลังขึ้น
+  if(d.preload){const src=[cur,next,...Object.values(pres)].find(x=>x&&e.source===x.contentWindow);
+    if(src){src.wants=[].concat(d.preload);if(src===cur||src===next)prep(src.wants,false)}}
   if(d.go&&!next)load(d.go,!!d.hand);
   if((d.rect!==undefined||d.rects!==undefined)&&next&&e.source===next.contentWindow&&ask){clearInterval(ask);ask=0;const t=d.rect||d.rects;
     if(t&&cur){clearTimeout(timer);timer=setTimeout(()=>{st.moved=true;st.ready=true;swap(next)},3000);cur.contentWindow.postMessage({moveTo:t},O)}
     else{st.moved=true;maybe(next)}}
-  if(d.ready){const f=[next,pre].find(x=>x&&e.source===x.contentWindow);if(f){f.readyData=d;if(f===next){st.ready=true;maybe(f)}}}
+  if(d.ready){const f=[next,...Object.values(pres)].find(x=>x&&e.source===x.contentWindow);if(f){f.readyData=d;if(f===next){st.ready=true;maybe(f)}}}
   if(d.moved&&next&&cur&&e.source===cur.contentWindow){st.moved=true;maybe(next)}
 });
 load('spread.html'+location.search,false);

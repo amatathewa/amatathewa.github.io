@@ -67,7 +67,7 @@ h1 em{font-style:normal;color:var(--gold-light)}
 </div>
 <script src="flow.js"></script>
 <script>
-if(IN_SHELL)parent.postMessage({preload:'pick.html?'+new URLSearchParams(ST)},location.origin); // โหลดฉากกรีดไพ่เตรียมไว้ กดแล้วสำรับเลื่อนได้ทันที
+if(IN_SHELL)parent.postMessage({preload:['pick.html?'+new URLSearchParams(ST),'cut.html?'+new URLSearchParams(ST)]},location.origin); // โหลดฉากกรีดไพ่+ตัดไพ่เตรียมไว้ กดแล้วไปต่อได้ทันที
 
 document.body.className='arch';
 const d=document.getElementById('deck'),c=document.getElementById('cnt');let n=0,busy=false,hold=false,queued=0,t1;
@@ -89,7 +89,7 @@ function sh(){
 }
 const st=e=>{e.preventDefault();sh();t1=setTimeout(()=>{hold=true;if(!busy)sh()},220)},en=()=>{clearTimeout(t1);hold=false};
 d.addEventListener('mousedown',st);d.addEventListener('touchstart',st,{passive:false});['mouseup','mouseleave','touchend','touchcancel'].forEach(x=>d.addEventListener(x,en));
-document.getElementById('b1').onclick=()=>go('cut.html');
+document.getElementById('b1').onclick=()=>{document.body.classList.add('leave');go('cut.html')};
 // กรีดไพ่: ตัวหนังสือจางออก เหลือสำรับกลางจอ แล้วหน้าเลือกไพ่กรีดต่อจากกองนี้
 document.getElementById('b2').onclick=()=>{document.body.classList.add('leave');const dk=document.getElementById('deck');go('pick.html',{},[dk,dk])};
 </script>

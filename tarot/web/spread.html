@@ -41,6 +41,10 @@ h1 br{display:none}
 .tile.sel .dg rect{stroke:var(--gold)}
 .desc{margin-top:min(14px,1.6vh);font-size:14px;color:var(--dim);min-height:1.6em}
 .desc b{color:var(--ivory);font-weight:400}
+.desc.nudge{animation:nudge .9s ease}
+@keyframes nudge{0%,100%{opacity:1}30%{opacity:.35}60%{opacity:1}}
+/* กดเริ่มสับไพ่: เนื้อหาค่อยๆ จางออก พร้อมกับฉากสับไพ่ค่อยๆ ขึ้น */
+body.leave main{opacity:0;transition:opacity .5s ease}
 .opts{display:flex;gap:28px;justify-content:center;margin:min(12px,1.4vh) 0 min(20px,2.2vh);font-size:14px;color:var(--dim)}
 .opt{display:flex;gap:9px;align-items:center;cursor:pointer}
 .box{width:15px;height:15px;border:1px solid rgba(243,237,226,.45)}
@@ -194,7 +198,7 @@ h1 em{font-size:1em}
       <div class="tile" data-d="คำแนะนำรอบด้าน" data-sp="5"><div class="top"><span class="no">05</span><svg class="dg" width="40" height="24"><rect x="16.5" y="0.5" width="7" height="7" fill="none" stroke="#F3EDE2"/><rect x="7" y="8.5" width="7" height="7" fill="none" stroke="#F3EDE2"/><rect x="16.5" y="8.5" width="7" height="7" fill="none" stroke="#F3EDE2"/><rect x="26" y="8.5" width="7" height="7" fill="none" stroke="#F3EDE2"/><rect x="16.5" y="16.5" width="7" height="7" fill="none" stroke="#F3EDE2"/></svg></div><div class="nm">ห้าใบ</div></div>
       <div class="tile" data-d="สิบใบ อ่านทั้งเรื่องอย่างละเอียด" data-sp="10"><div class="top"><span class="no">10</span><svg class="dg" width="40" height="24"><rect x="6" y="5" width="8" height="14" fill="none" stroke="#F3EDE2"/><rect x="3" y="9" width="14" height="6" fill="none" stroke="#F3EDE2"/><rect x="30" y="0" width="7" height="5" fill="none" stroke="#F3EDE2"/><rect x="30" y="7" width="7" height="5" fill="none" stroke="#F3EDE2"/><rect x="30" y="14" width="7" height="5" fill="none" stroke="#F3EDE2"/><rect x="30" y="21" width="7" height="3" fill="none" stroke="#F3EDE2"/></svg></div><div class="nm">เซลติกครอส</div></div>
     </div>
-    <div class="desc" id="desc"><b>สามใบ</b> · อดีต · ปัจจุบัน · อนาคต</div>
+    <div class="desc" id="desc">เลือกจำนวนไพ่ที่ต้องการ</div>
     <div class="opts"><div class="opt" data-k="rev"><div class="box"></div>มีไพ่กลับหัว</div><div class="opt" data-k="major"><div class="box"></div>เฉพาะไพ่ชุดใหญ่</div></div>
     <a class="cta" role="button"><svg class="ring" viewBox="0 0 120 120"><defs><path id="rp" d="M60,60 m-51,0 a51,51 0 1,1 102,0 a51,51 0 1,1 -102,0"/></defs><text><textPath href="#rp">BEGIN THE READING · AMATATHEWA · TAROT ·</textPath></text></svg>เริ่มสับไพ่</a>
   </main>
@@ -227,7 +231,8 @@ const tiles=[...document.querySelectorAll('.tile')];
 function setSp(t){tiles.forEach(x=>x.classList.remove('sel'));t.classList.add('sel');ST.sp=t.dataset.sp;
   document.getElementById('desc').innerHTML='<b>'+t.querySelector('.nm').textContent+'</b> · '+t.dataset.d}
 tiles.forEach(t=>t.addEventListener('click',()=>setSp(t)));
-setSp(tiles.find(t=>t.dataset.sp===ST.sp)||tiles[2]);
+let picked=Q.has('sp');tiles.forEach(t=>t.addEventListener('click',()=>{picked=true}));
+if(picked)setSp(tiles.find(t=>t.dataset.sp===ST.sp)||tiles[2]);
 const opts=document.querySelectorAll('.opt');
 opts.forEach(o=>{o.querySelector('.box').classList.toggle('on',ST[o.dataset.k]==='1');
   o.addEventListener('click',()=>{const on=o.querySelector('.box').classList.toggle('on');ST[o.dataset.k]=on?'1':'0'})});
@@ -235,6 +240,8 @@ opts.forEach(o=>{o.querySelector('.box').classList.toggle('on',ST[o.dataset.k]==
 const qi=document.getElementById('q');try{qi.value=sessionStorage.getItem('tarot-q')||''}catch(e){}
 qi.addEventListener('input',()=>{try{sessionStorage.setItem('tarot-q',qi.value.trim())}catch(e){}});
 qi.addEventListener('keydown',e=>{if(e.key==='Enter')qi.blur()});
-document.querySelector('.cta').onclick=()=>go('shuffle.html');
+document.querySelector('.cta').onclick=()=>{
+  if(!picked){const d=document.getElementById('desc');d.innerHTML='<b>เลือกจำนวนไพ่ก่อน</b> แล้วค่อยเริ่มสับไพ่';d.classList.remove('nudge');d.offsetWidth;d.classList.add('nudge');return}
+  document.body.classList.add('leave');go('shuffle.html')};
 </script>
 </body></html>
