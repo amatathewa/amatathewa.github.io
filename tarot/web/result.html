@@ -81,6 +81,11 @@ h1 em{font-style:normal;color:var(--gold-light)}
 .cam.busy{opacity:.6;pointer-events:none}
 .camnote{position:fixed;z-index:6;left:0;right:0;bottom:84px;text-align:center;font-size:13px;color:var(--ivory);text-shadow:0 0 8px #000;pointer-events:none;opacity:0;transition:opacity .5s}
 .camnote.on{opacity:1}
+/* หน้าบันทึกภาพสำหรับเบราว์เซอร์ในแอป LINE: ภาพเต็มจอ กดค้างเพื่อบันทึก */
+.saveov{position:fixed;inset:0;z-index:20;background:rgba(5,7,14,.94);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:20px}
+.saveov p{margin:0;color:var(--ivory);font-size:16px;text-align:center}.saveov p b{color:var(--gold-light);font-weight:500}
+.saveov img{max-width:100%;max-height:72vh;border-radius:6px;box-shadow:0 20px 60px #000;-webkit-touch-callout:default;user-select:auto}
+.saveov button{font:inherit;font-size:15px;color:var(--ivory);background:none;border:1px solid rgba(243,237,226,.4);padding:12px 40px;border-radius:2px}
 /* แถบปุ่มติดล่างจอ: บันทึกภาพ · สับใหม่ · หน้าแรก — เลื่อนหน้าไปไหนก็กดได้เสมอ */
 .dock{position:fixed;z-index:5;left:0;right:0;bottom:0;display:flex;justify-content:center;gap:12px;padding:22px 16px calc(14px + env(safe-area-inset-bottom));background:linear-gradient(180deg,transparent,rgba(2,2,4,.88) 50%);opacity:0;pointer-events:none;transition:opacity .6s}
 .dock.show{opacity:1;pointer-events:all}
@@ -125,8 +130,8 @@ h1 em{font-style:normal;color:var(--gold-light)}
 <section class="read" id="read"></section>
 <div class="camnote" id="camnote"></div>
 <div class="dock" id="dock"><button class="cam" id="cam"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg><span>บันทึกภาพไพ่</span></button><div class="btn" id="again">สับใหม่</div><div class="btn" id="home">หน้าแรก</div></div>
-<script src="../js/cards-data.js?v=202610280902"></script>
-<script src="flow.js?v=202610280902"></script>
+<script src="../js/cards-data.js?v=202610280928"></script>
+<script src="flow.js?v=202610280928"></script>
 <script>
 let QTEXT='';try{QTEXT=(sessionStorage.getItem('tarot-q')||'').trim()}catch(e){}
 if(QTEXT){const qe=document.getElementById('q');qe.textContent='“'+QTEXT+'”';qe.hidden=false}
@@ -290,6 +295,13 @@ async function saveImage(){
     // ท้ายภาพ: วันที่แบบไทย
     const d=new Date(),dt=d.toLocaleDateString('th-TH',{day:'numeric',month:'long',year:'numeric'});
     x.fillStyle='rgba(243,237,226,.55)';x.font='400 20px "IBM Plex Sans Thai"';x.fillText(dt,W/2,H-70);
+    // เบราว์เซอร์ในแอป (LINE, Facebook, Instagram) ดาวน์โหลดไฟล์ไม่ได้ → โชว์ภาพเต็มจอ ให้กดค้างที่ภาพเพื่อบันทึก
+    if(/Line\/|FBAN|FBAV|Instagram/i.test(navigator.userAgent)){
+      const ov=document.createElement('div');ov.className='saveov';
+      ov.innerHTML=`<p>กดค้างที่ภาพ แล้วเลือก <b>บันทึกรูปภาพ</b></p><img alt="ภาพไพ่ของคุณ" src="${cv.toDataURL('image/jpeg',.92)}"><button>ปิด</button>`;
+      ov.querySelector('button').onclick=()=>ov.remove();document.body.appendChild(ov);
+      note.textContent='';btn.classList.remove('busy');return;
+    }
     const blob=await new Promise(r=>cv.toBlob(r,'image/jpeg',.95));
     const a=document.createElement('a');a.href=URL.createObjectURL(blob);
     a.download=`tarot-${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}.jpg`;
