@@ -92,7 +92,7 @@ function build(){
     for(let j=0;j<cnt;j++){
       const i=start+j,t=half>0?(j-half)/half:0,ang=Math.abs(maxAng*t)<.4?.4:maxAng*t,lift=Math.round(maxLift*t*t);
       const e=document.createElement('div');e.className='fc';
-      e.style.cssText=`width:${cw}px;height:${ch}px;left:${x0+j*step}px;top:${rowH-ch-maxLift+lift}px;background-image:url("${D.back}");transform:rotate(${ang}deg);z-index:${j+1}`;
+      e.style.cssText=`width:${cw}px;height:${ch}px;left:${x0+j*step}px;top:${rowH-ch-maxLift+lift}px;background-image:url("${D.back}");transform:rotate(${ang}deg);z-index:${cnt-j}`;
       e.dataset.a=ang;if(sel.includes(i))e.classList.add('sel');
       // แตะเลือกบนมือถือ: เลื่อนนิ้วเกิน 14px = เลื่อนดู ไม่นับเป็นเลือก
       let x,y,moved=false;
@@ -115,13 +115,14 @@ function startDeal(){if(ready)return;ready=true;if(fan.children.length&&!dealt)d
 // ฉากนี้ขึ้นจอแล้วค่อยกรีด (สำรอง 5 วิ ไพ่จะไม่ค้างซ่อน)
 onShow(startDeal,5000);
 // กรีดไพ่เหมือนมือจริง ทีละแถว: กองไพ่วางที่ซ้ายสุด → มือไถกองไปทางขวาด้วยความเร็วคงที่ ไพ่หลุดจากกองทีละใบ
-// ใบที่หลุดทีหลังวางทับใบก่อนหน้า · แถวนี้กรีดจบแล้วแถวถัดไปค่อยเริ่ม (ณัทกรขอ 28 ต.ค.)
+// ซ้อนแบบเดิม ใบซ้ายทับใบขวา (ณัทกรชินตาแบบนี้) · กองที่ไถเลื่อนอยู่ใต้ใบที่วางแล้ว ไพ่ไม่สลับชั้นกลางทาง จึงไม่กระพริบ
+// แถวถัดไป: กองค่อยๆ โผล่ระหว่างแถวก่อนกำลังจบ แล้วเริ่มไถทันทีที่แถวก่อนจบ ไม่มีจังหวะหยุด (ณัทกรขอ 28 ต.ค.)
 function deal(){
   dealt=true;fan.style.pointerEvents='none';fan.classList.remove('wait');fan.querySelectorAll('.pile0').forEach(p=>p.remove());
-  const M=260,S=26,PAUSE=140;let end=0,T=120;
+  const M=260,S=26;let end=0,T=120;
   [...fan.children].forEach((row,r)=>{
     const cs=[...row.querySelectorAll('.fc')],c0=cs[0],o0=r?0:1; // แถวแรกเริ่มจากกองที่เห็นอยู่แล้ว (ไม่จางเข้า)
-    if(r)T=end+PAUSE;
+    if(r)T=end-M; // กองโผล่ช่วงท้ายแถวก่อน แล้วเริ่มไถพอดีกับที่แถวก่อนจบ
     cs.forEach((e,j)=>{
       const dur=M+j*S;end=Math.max(end,T+dur);
       const at0=`translate(${c0.offsetLeft-e.offsetLeft}px,${c0.offsetTop-e.offsetTop}px) rotate(${c0.dataset.a}deg)`;
