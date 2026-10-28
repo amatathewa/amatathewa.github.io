@@ -64,7 +64,7 @@ h1 em{font-style:normal;color:var(--gold-light)}
     <div class="bar fadein"><div class="cnt">เลือกแล้ว<b id="n">0</b>/ <span id="need">3</span> ใบ</div><div class="btn off" id="go">เปิดไพ่</div></div>
   </main>
 </div>
-<script src="flow.js?v=202610280854"></script>
+<script src="flow.js?v=202610280902"></script>
 <script>
 const NEED=SPREADS[ST.sp].length;
 document.getElementById('bg').style.backgroundImage=`url("${D.marble}")`;
@@ -115,23 +115,27 @@ function startDeal(){if(ready)return;ready=true;if(fan.children.length&&!dealt)d
 // ฉากนี้ขึ้นจอแล้วค่อยกรีด (สำรอง 5 วิ ไพ่จะไม่ค้างซ่อน)
 onShow(startDeal,5000);
 // กรีดไพ่เหมือนมือจริง ทีละแถว: กองไพ่วางที่ซ้ายสุด → มือไถกองไปทางขวาด้วยความเร็วคงที่ ไพ่หลุดจากกองทีละใบ
-// ซ้อนแบบเดิม ใบซ้ายทับใบขวา (ณัทกรชินตาแบบนี้) · กองที่ไถเลื่อนอยู่ใต้ใบที่วางแล้ว ไพ่ไม่สลับชั้นกลางทาง จึงไม่กระพริบ
-// แถวถัดไปขึ้นล่วงหน้าตอนแถวก่อนใกล้จบ (ณัทกรกำหนด 28 ต.ค. · เคยลองให้ขึ้นเร็วกว่านี้แล้ว "ดูล้น")
+// กองวิ่งตามแนวโค้งของพัด และไพ่ทุกใบที่ยังอยู่ในกองมีท่าเดียวกันเสมอ (กองแน่น ไม่บาน) — ณัทกรเลือกแบบนี้จากหน้าทดลอง 28 ต.ค.
+// ซ้อนแบบเดิม ใบซ้ายทับใบขวา · แถวถัดไปขึ้นล่วงหน้าตอนแถวก่อนเหลือ 0.2 วิ (เคยลองให้ขึ้นเร็วกว่านี้แล้ว "ดูล้น")
 function deal(){
   dealt=true;fan.style.pointerEvents='none';fan.classList.remove('wait');fan.querySelectorAll('.pile0').forEach(p=>p.remove());
   const M=160,S=26,LEAD=200;let end=0,T=120;
   [...fan.children].forEach((row,r)=>{
-    const cs=[...row.querySelectorAll('.fc')],c0=cs[0],o0=r?0:1; // แถวแรกเริ่มจากกองที่เห็นอยู่แล้ว (ไม่จางเข้า)
-    if(r)T=end-LEAD; // แถวก่อนใกล้จบ (เหลือ 0.2 วิ) กองแถวถัดไปขึ้นเลย
+    const cs=[...row.querySelectorAll('.fc')],o0=r?0:1; // แถวแรกเริ่มจากกองที่เห็นอยู่แล้ว (ไม่จางเข้า)
+    if(r)T=end-LEAD;
     cs.forEach((e,j)=>{
       const dur=M+j*S;end=Math.max(end,T+dur);
-      const at0=`translate(${c0.offsetLeft-e.offsetLeft}px,${c0.offsetTop-e.offsetTop}px) rotate(${c0.dataset.a}deg)`;
-      e.animate(j?[{transform:at0,opacity:o0},{transform:at0,opacity:1,offset:M/dur,easing:'linear'},{transform:`rotate(${e.dataset.a}deg)`,opacity:1}]
-                 :[{opacity:o0},{opacity:1}],{duration:dur,delay:T,fill:'backwards'});
+      // ท่าของกองตอนอยู่ที่ตำแหน่งใบที่ k (เทียบจากที่ของใบ e)
+      const pose=k=>`translate(${cs[k].offsetLeft-e.offsetLeft}px,${cs[k].offsetTop-e.offsetTop}px) rotate(${cs[k].dataset.a}deg)`;
+      let kf=[{opacity:o0},{opacity:1}];
+      if(j){kf=[{transform:pose(0),opacity:o0},{transform:pose(0),opacity:1,offset:M/dur}];
+        for(let k=1;k<=j;k++)kf.push({transform:k===j?`rotate(${e.dataset.a}deg)`:pose(k),opacity:1,offset:(M+k*S)/dur})}
+      e.animate(kf,{duration:dur,delay:T,fill:'backwards'});
     });
   });
   setTimeout(()=>{fan.style.pointerEvents=''},end);
 }
+
 // ฉากซุ้มประตูเบลอจางเป็นหินอ่อน — รอภาพหินอ่อนพร้อมก่อน ไม่ให้กระพริบ · โหลดภาพท้องฟ้าหน้าผลไว้ล่วงหน้า
 const mb=new Image();mb.src=D.marble;
 // จางด้วย CSS animation (transition/animate() ของชั้นนี้ค้างที่จุดเริ่ม) + ครบเวลาแล้วลบชั้นทิ้งเสมอ ไม่ให้ฉากซุ้มประตูค้างทับ
