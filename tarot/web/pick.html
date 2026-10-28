@@ -64,7 +64,7 @@ h1 em{font-style:normal;color:var(--gold-light)}
     <div class="bar fadein"><div class="cnt">เลือกแล้ว<b id="n">0</b>/ <span id="need">3</span> ใบ</div><div class="btn off" id="go">เปิดไพ่</div></div>
   </main>
 </div>
-<script src="flow.js?v=202610280838"></script>
+<script src="flow.js?v=202610280841"></script>
 <script>
 const NEED=SPREADS[ST.sp].length;
 document.getElementById('bg').style.backgroundImage=`url("${D.marble}")`;
@@ -119,7 +119,7 @@ onShow(startDeal,5000);
 // แถวนี้กรีดจบแล้วแถวถัดไปค่อยเริ่ม (ณัทกรลองแบบซ้อนกันแล้ว "ดูล้น" ขอกลับแบบนี้ 28 ต.ค.)
 function deal(){
   dealt=true;fan.style.pointerEvents='none';fan.classList.remove('wait');fan.querySelectorAll('.pile0').forEach(p=>p.remove());
-  const M=260,S=26,PAUSE=300;let end=0,T=120;
+  const M=160,S=14,PAUSE=60;let end=0,T=120;
   [...fan.children].forEach((row,r)=>{
     const cs=[...row.querySelectorAll('.fc')],c0=cs[0],o0=r?0:1; // แถวแรกเริ่มจากกองที่เห็นอยู่แล้ว (ไม่จางเข้า)
     if(r)T=end+PAUSE;
