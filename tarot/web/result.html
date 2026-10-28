@@ -52,7 +52,7 @@ h1 em{font-style:normal;color:var(--gold-light)}
 .face,.backs{position:absolute;inset:0;backface-visibility:hidden;border-radius:calc(var(--w)*.055);background:center/cover;box-shadow:0 24px 60px rgba(0,0,0,.7)}
 .face{transform:rotateY(180deg)}
 .face.rev{transform:rotateY(180deg) rotate(180deg)}
-.nm{font-family:'Trirong',serif;font-size:16px;color:var(--ivory);text-shadow:0 0 14px #000,0 0 5px #000;opacity:0;transition:opacity .6s .5s}
+.nm{font-family:'Trirong',serif;font-size:16px;font-weight:400;color:#fff;text-shadow:0 0 14px #000,0 0 5px #000;opacity:0;transition:opacity .6s .5s}
 .nm small{display:block;font-family:'IBM Plex Sans Thai';font-size:12px;color:var(--gold);margin-top:2px}
 .flip~.nm,.slot.done .nm{opacity:1}
 .scrollhint{font-size:13px;color:var(--dim);letter-spacing:.02em;margin-bottom:3vh;opacity:0;transition:opacity .6s}
@@ -165,8 +165,10 @@ pool.forEach((c,i)=>{
 if(CC&&QTEXT){const qe=document.getElementById('q');qe.hidden=true;const cq=document.createElement('p');cq.className='q ccq';cq.textContent='“'+QTEXT+'”';row.appendChild(cq)}
 document.getElementById('again').onclick=()=>go('shuffle.html');document.getElementById('home').onclick=()=>go('spread.html');
 // ชื่อตำแหน่งยาวตัด 2 บรรทัด → ให้ทุกช่องสูงเท่ากัน ไพ่จะได้เรียงตรงแนว
+// มือถือ 10 ใบ: คำว่าเลื่อนลงอ่านคำทำนาย ไปอยู่ช่องว่างซ้ายล่าง ข้างไพ่ใบที่ 5 (ณัทกรว่าที่นี่สวยกว่า 28 ต.ค.)
+if(CC&&mob){const sh=document.getElementById('sh');sh.innerHTML='เลื่อนลง<br>เพื่ออ่านคำทำนาย ↓';row.appendChild(sh)}
 // มือถือ 10 ใบ: วัดผังจริงแล้วย่อให้ไพ่แถวล่างจบเหนือแถบปุ่มพอดี
-function fitCC(){if(!(CC&&mob))return;const lim=document.getElementById('dock').firstElementChild.getBoundingClientRect().top-12-36; // เว้นที่ให้คำว่าเลื่อนลงใต้แถวไพ่
+function fitCC(){if(!(CC&&mob))return;const lim=document.getElementById('dock').firstElementChild.getBoundingClientRect().top-12;
   for(let k=0;k<5;k++){const fr=[...row.querySelectorAll('.frame')],top=row.getBoundingClientRect().top,bot=Math.max(...fr.map(f=>f.getBoundingClientRect().bottom));
     if(bot<=lim+.5)break;w=Math.floor(w*(lim-top)/(bot-top)*100)/100;document.documentElement.style.setProperty('--w',w+'px');row.style.gridTemplateColumns=`repeat(4,${w}px)`}}
 function eqPos(){const ps=[...row.querySelectorAll('.pos')];ps.forEach(e=>e.style.minHeight='');const ph=Math.max(...ps.map(e=>e.offsetHeight));ps.forEach(e=>e.style.minHeight=ph+'px')}

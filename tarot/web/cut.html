@@ -20,6 +20,8 @@ header{position:relative;z-index:2;flex:none;display:flex;justify-content:space-
 .back{font-size:14px;color:var(--dim);cursor:pointer;letter-spacing:.04em;border-bottom:1px solid transparent;transition:color .3s,border-color .3s}
 .back:hover{color:var(--ivory);border-color:var(--gold)}
 main{position:relative;z-index:2;flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 24px 6vh}
+/* ยกกองไพ่ขึ้นให้อยู่ระดับเดียวกับสำรับในหน้าสับไพ่ เปลี่ยนหน้าแล้วตาไม่ต้องกระโดด (ณัทกรขอ 28 ต.ค.) */
+main{padding-bottom:calc(6vh + min(150px,19vh))}
 .kicker{font-family:'Jost',sans-serif;font-size:16px;letter-spacing:.42em;color:var(--gold);margin-bottom:min(18px,2vh)}
 h1{font-family:'Trirong',serif;font-weight:200;font-size:clamp(30px,5vh,48px);line-height:1.25;white-space:nowrap}
 h1 em{font-style:normal;color:var(--gold-light)}

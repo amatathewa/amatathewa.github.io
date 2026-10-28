@@ -92,7 +92,7 @@ function build(){
     for(let j=0;j<cnt;j++){
       const i=start+j,t=half>0?(j-half)/half:0,ang=Math.abs(maxAng*t)<.4?.4:maxAng*t,lift=Math.round(maxLift*t*t);
       const e=document.createElement('div');e.className='fc';
-      e.style.cssText=`width:${cw}px;height:${ch}px;left:${x0+j*step}px;top:${rowH-ch-maxLift+lift}px;background-image:url("${D.back}");transform:rotate(${ang}deg);z-index:${cnt-j}`;
+      e.style.cssText=`width:${cw}px;height:${ch}px;left:${x0+j*step}px;top:${rowH-ch-maxLift+lift}px;background-image:url("${D.back}");transform:rotate(${ang}deg);z-index:${j+1}`;
       e.dataset.a=ang;if(sel.includes(i))e.classList.add('sel');
       // แตะเลือกบนมือถือ: เลื่อนนิ้วเกิน 14px = เลื่อนดู ไม่นับเป็นเลือก
       let x,y,moved=false;
@@ -114,12 +114,14 @@ let dealt=false,ready=false;
 function startDeal(){if(ready)return;ready=true;if(fan.children.length&&!dealt)deal()}
 // ฉากนี้ขึ้นจอแล้วค่อยกรีด (สำรอง 5 วิ ไพ่จะไม่ค้างซ่อน)
 onShow(startDeal,5000);
-// กรีดไพ่: ไล่จากแถวบนลงล่าง · แต่ละแถวกองไพ่โผล่ที่ซ้ายสุด แล้วไถทั้งกองไปทางขวา วางไพ่ทิ้งทีละใบ
+// กรีดไพ่เหมือนมือจริง ทีละแถว: กองไพ่วางที่ซ้ายสุด → มือไถกองไปทางขวาด้วยความเร็วคงที่ ไพ่หลุดจากกองทีละใบ
+// ใบที่หลุดทีหลังวางทับใบก่อนหน้า · แถวนี้กรีดจบแล้วแถวถัดไปค่อยเริ่ม (ณัทกรขอ 28 ต.ค.)
 function deal(){
   dealt=true;fan.style.pointerEvents='none';fan.classList.remove('wait');fan.querySelectorAll('.pile0').forEach(p=>p.remove());
-  const M=200,S=19,ROW_GAP=215;let end=0;
+  const M=260,S=26,PAUSE=140;let end=0,T=120;
   [...fan.children].forEach((row,r)=>{
-    const cs=[...row.querySelectorAll('.fc')],c0=cs[0],T=120+r*ROW_GAP,o0=r?0:1; // แถวแรกเริ่มจากกองที่เห็นอยู่แล้ว (ไม่จางเข้า)
+    const cs=[...row.querySelectorAll('.fc')],c0=cs[0],o0=r?0:1; // แถวแรกเริ่มจากกองที่เห็นอยู่แล้ว (ไม่จางเข้า)
+    if(r)T=end+PAUSE;
     cs.forEach((e,j)=>{
       const dur=M+j*S;end=Math.max(end,T+dur);
       const at0=`translate(${c0.offsetLeft-e.offsetLeft}px,${c0.offsetTop-e.offsetTop}px) rotate(${c0.dataset.a}deg)`;
