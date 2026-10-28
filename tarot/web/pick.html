@@ -64,7 +64,7 @@ h1 em{font-style:normal;color:var(--gold-light)}
     <div class="bar fadein"><div class="cnt">เลือกแล้ว<b id="n">0</b>/ <span id="need">3</span> ใบ</div><div class="btn off" id="go">เปิดไพ่</div></div>
   </main>
 </div>
-<script src="flow.js?v=202610280848"></script>
+<script src="flow.js?v=202610280850"></script>
 <script>
 const NEED=SPREADS[ST.sp].length;
 document.getElementById('bg').style.backgroundImage=`url("${D.marble}")`;
@@ -119,10 +119,10 @@ onShow(startDeal,5000);
 // แถวถัดไปขึ้นล่วงหน้าตอนแถวก่อนใกล้จบ (ณัทกรกำหนด 28 ต.ค. · เคยลองให้ขึ้นเร็วกว่านี้แล้ว "ดูล้น")
 function deal(){
   dealt=true;fan.style.pointerEvents='none';fan.classList.remove('wait');fan.querySelectorAll('.pile0').forEach(p=>p.remove());
-  const M=160,S=26,LEAD=120;let end=0,T=120;
+  const M=160,S=26,LEAD=200;let end=0,T=120;
   [...fan.children].forEach((row,r)=>{
     const cs=[...row.querySelectorAll('.fc')],c0=cs[0],o0=r?0:1; // แถวแรกเริ่มจากกองที่เห็นอยู่แล้ว (ไม่จางเข้า)
-    if(r)T=end-LEAD; // แถวก่อนใกล้จบ (เหลือ 0.12 วิ) กองแถวถัดไปขึ้นเลย
+    if(r)T=end-LEAD; // แถวก่อนใกล้จบ (เหลือ 0.2 วิ) กองแถวถัดไปขึ้นเลย
     cs.forEach((e,j)=>{
       const dur=M+j*S;end=Math.max(end,T+dur);
       const at0=`translate(${c0.offsetLeft-e.offsetLeft}px,${c0.offsetTop-e.offsetTop}px) rotate(${c0.dataset.a}deg)`;
