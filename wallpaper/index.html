@@ -8,93 +8,117 @@
 <title>วอลเปเปอร์องค์เทพหมึกจีน | AMATATHEWA อมตเทวา</title>
 <meta name="description" content="วอลเปเปอร์องค์เทพแนวหมึกจีน พร้อมเลขมงคลเฉพาะคน ประยุกต์จากตำราโหราศาสตร์ไทย เลือกแต่งภาพได้เองทุกอย่าง">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Thai:wght@500;700&family=Sarabun:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;700&family=Trirong:wght@400;500&display=swap" rel="stylesheet">
 <style>
 @font-face{font-family:ShopSeal;src:url(assets/Sarabun-Bold.ttf);font-weight:700;font-display:swap}
-@font-face{font-family:ShopName;src:url(assets/Sarabun-Medium.ttf);font-weight:500;font-display:swap}
-:root{--paper:#efe6d6;--paper2:#e6dbc8;--ink:#26211c;--soft:#62584c;--line:#cdbfa8;--seal:#a8321f;--white:#fbf7ef;--on:#26211c}
+@font-face{font-family:ShopName;src:url(assets/Charm-Bold.ttf);font-weight:700;font-display:swap}
+:root{--plum:#1f1029;--deep:#0a0510;--lift:#341c42;--gold:#c99b3c;--goldsoft:#e3c88b;--ivory:#f4ecdd;--muted:#c9bdcf;--line:rgba(227,200,139,.26);--glass:rgba(244,236,221,.06);--paper:#efe6d6;--ink:#26211c;--inksoft:#5d5346}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
-html{scroll-behavior:smooth}
-body{margin:0;background:var(--paper);color:var(--ink);font:400 17px/1.65 Sarabun,sans-serif}
-.wrap{max-width:1040px;margin:auto;padding:0 16px}
-.notice{background:var(--ink);color:var(--paper);text-align:center;font-size:15px;padding:7px 16px}
-.brand{font:700 18px "Noto Serif Thai",serif;padding:16px 0}
-h1,h2{font-family:"Noto Serif Thai",serif;line-height:1.35;margin:0 0 10px}
-h1{font-size:clamp(30px,7vw,46px)}
-h2{font-size:clamp(23px,4.5vw,30px)}
-.lead{color:var(--soft);margin:0 0 18px}
-section{padding:30px 0;border-top:1px solid var(--line)}
-.hero{display:grid;gap:20px;padding-bottom:30px}
-.hero img{display:block;width:min(62vw,290px);height:auto;margin:auto;border-radius:12px;box-shadow:0 12px 30px rgba(50,35,20,.24)}
-.card{background:var(--white);padding:18px 16px;border-radius:8px}
+html{scroll-behavior:smooth;background:var(--deep)}
+body{margin:0;background:linear-gradient(160deg,var(--lift) 0,var(--plum) 700px,var(--deep) 1900px,var(--deep) 100%);color:var(--ivory);font:400 17px/1.7 "IBM Plex Sans Thai",sans-serif}
+.wrap{max-width:1080px;margin:auto;padding:0 18px}
+.notice{background:var(--deep);color:var(--goldsoft);text-align:center;font-size:15px;padding:7px 16px}
+.brand{display:flex;justify-content:center;padding:22px 0 14px}
+.brand img{width:132px;height:auto;display:block}
+h1,h2{font-family:Trirong,serif;font-weight:400;line-height:1.35;margin:0 0 12px;letter-spacing:.01em}
+h1{font-size:clamp(32px,7vw,50px)}
+h2{font-size:clamp(25px,4.6vw,33px);color:var(--goldsoft)}
+.lead{color:var(--muted);margin:0 0 20px}
+.price{color:var(--goldsoft);margin:0 0 20px;font-size:16px;letter-spacing:.02em}
+section{padding:38px 0;border-top:1px solid var(--line)}
+.hero{display:grid;gap:24px;padding:6px 0 38px}
+.hero figure{margin:0;padding:8px;border:1px solid var(--line);background:rgba(244,236,221,.04)}
+.hero img{display:block;width:100%;height:auto}
+.card{background:var(--glass);padding:20px 18px;border:1px solid var(--line);border-radius:4px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.card.paper{background:var(--paper);color:var(--ink);border-color:transparent;backdrop-filter:none;-webkit-backdrop-filter:none}
+.card.paper .help,.card.paper p{color:var(--inksoft)}
 label{display:block;font-weight:500;margin:14px 0 5px}
-select,input[type=text],input[type=file]{width:100%;font:inherit;min-height:46px;padding:9px 10px;border:1px solid var(--line);border-radius:6px;background:#fff;color:var(--ink)}
+select,input[type=text],input[type=file]{width:100%;font:inherit;min-height:48px;padding:9px 10px;border:1px solid transparent;border-radius:3px;background:var(--ivory);color:var(--ink)}
 .row3{display:grid;grid-template-columns:1fr 1.5fr 1.1fr;gap:8px}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .check{display:flex;gap:10px;align-items:center;font-weight:400;margin:12px 0 0;min-height:44px;cursor:pointer}
-.check input{width:24px;height:24px;flex:none;accent-color:var(--ink)}
-.btn{display:block;width:100%;min-height:52px;border:0;border-radius:6px;background:var(--seal);color:#fff;font:700 18px Sarabun,sans-serif;padding:12px 18px;text-align:center;text-decoration:none;cursor:pointer}
-.btn.alt{background:var(--ink)}
-.btn:disabled{background:#857b6f;cursor:not-allowed}
-.err{color:#9c4700;font-weight:700;margin-top:10px}
-.help{font-size:15px;color:var(--soft);margin:6px 0 0}
-.pair{display:grid;grid-template-columns:auto 1fr;gap:2px 14px;align-items:start;padding:14px 0;border-top:1px solid var(--line)}
-.pair:first-of-type{border-top:0;padding-top:4px}
-.pair .num{font:700 38px/1.15 "Noto Serif Thai",serif}
-.pair .num small{display:block;font-size:15px;font-weight:500;color:var(--soft)}
-.pair b{display:block}
-.pair p{margin:2px 0 0;font-size:15px;color:var(--soft)}
-.pair .check{grid-column:1/-1;margin-top:4px}
-.avoid{margin-top:14px;padding:12px;background:var(--paper2);border-radius:6px;font-size:15px}
+.check input{width:24px;height:24px;flex:none;accent-color:var(--gold)}
+.btn{display:block;width:100%;min-height:54px;border:1px solid rgba(244,236,221,.4);border-radius:3px;background:rgba(244,236,221,.14);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);color:var(--ivory);font:500 18px "IBM Plex Sans Thai",sans-serif;padding:12px 18px;text-align:center;text-decoration:none;cursor:pointer}
+.btn.solid{background:var(--ivory);color:var(--plum);border-color:var(--ivory);font-weight:700}
+.btn.alt{background:transparent}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.err{color:#ffb25e;font-weight:700;margin-top:10px}
+.help{font-size:15px;color:var(--muted);margin:6px 0 0}
+.pair{display:grid;grid-template-columns:auto 1fr;gap:2px 16px;align-items:start;padding:18px 0;border-top:1px solid rgba(38,33,28,.18)}
+.pair:first-of-type{border-top:0;padding-top:2px}
+.pair .num{font:400 44px/1.1 Trirong,serif;color:var(--ink)}
+.pair .num small{display:block;font:400 14px "IBM Plex Sans Thai",sans-serif;color:var(--inksoft);margin-top:4px}
+.pair b{display:block;font-size:18px}
+.pair p{margin:5px 0 0;font-size:16px}
+.card.paper .pair .why{font-size:14px}
+.card.paper .pair .motive{color:var(--ink);font-weight:500}
+.pair .check{grid-column:1/-1;margin-top:6px}
+.avoid{margin-top:14px;padding:12px;background:rgba(38,33,28,.08);border-radius:3px;font-size:15px}
+.gridwhy{display:grid;gap:20px;grid-template-columns:minmax(0,1fr)}
+.minigrid{display:grid;grid-template-columns:repeat(3,1fr);width:174px;margin:0 auto;border:1px solid var(--ink);font:400 34px/1 Trirong,serif}
+.minigrid span{display:flex;align-items:center;justify-content:center;height:58px;border:1px solid rgba(38,33,28,.28)}
+.reasons{margin:0;padding-left:20px}
+.reasons li{margin:6px 0}
+.digit-row{display:grid;grid-template-columns:44px 1fr;gap:10px;padding:10px 0;border-top:1px solid rgba(38,33,28,.14)}
+.digit-big{font:400 32px/1.2 Trirong,serif}
+.digit-row p{margin:2px 0 0;font-size:15px}
+.gridpairs{margin:8px 0 0;padding-left:20px;columns:2;column-gap:18px;font-size:15px}
 .studio{display:grid;gap:18px;grid-template-columns:minmax(0,1fr)}
 .studio>*{min-width:0}
-.stage{position:sticky;top:6px;z-index:5;background:var(--paper);padding:4px 0}
-canvas#view{display:block;width:min(100%,calc(56vh*852/1846));height:auto;aspect-ratio:852/1846;margin:auto;border-radius:12px;box-shadow:0 8px 26px rgba(50,35,20,.25);background:var(--paper2)}
-.busy{text-align:center;font-size:14px;color:var(--soft);height:21px}
-.ctl{padding:14px 0;border-top:1px solid var(--line)}
-.ctl:first-child{border-top:0}
-.ctl h3{font:700 17px Sarabun,sans-serif;margin:0 0 8px}
+.stage{position:sticky;top:0;z-index:5;background:rgba(15,8,21,.9);padding:8px 0 2px}
+canvas#view{display:block;width:min(100%,calc(54vh*852/1846));height:auto;aspect-ratio:852/1846;margin:auto;border-radius:10px;box-shadow:0 12px 34px rgba(0,0,0,.55);background:var(--paper)}
+canvas,img{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.busy{text-align:center;font-size:14px;color:var(--muted);height:21px}
+.ctl{padding:16px 0;border-top:1px solid var(--line)}
+.ctl:first-child{border-top:0;padding-top:0}
+.ctl h3{font:500 17px "IBM Plex Sans Thai",sans-serif;margin:0 0 9px;color:var(--goldsoft)}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
-.chip{min-height:44px;padding:8px 14px;border:1px solid var(--ink);border-radius:99px;background:transparent;color:var(--ink);font:500 16px Sarabun,sans-serif;cursor:pointer}
-.chip[aria-pressed=true]{background:var(--ink);color:var(--white)}
+.chip{min-height:44px;padding:8px 15px;border:1px solid rgba(244,236,221,.42);border-radius:99px;background:transparent;color:var(--ivory);font:400 16px "IBM Plex Sans Thai",sans-serif;cursor:pointer}
+.chip[aria-pressed=true]{background:var(--ivory);color:var(--plum);font-weight:500}
 .chip[aria-pressed=true]::before{content:"✓ "}
 .thumbs{display:flex;gap:8px;overflow-x:auto;padding:4px 2px 10px;scroll-snap-type:x proximity}
-.thumb{flex:none;width:82px;padding:0;border:3px solid transparent;border-radius:9px;background:none;cursor:pointer;scroll-snap-align:start;color:var(--ink);font:400 12px/1.25 Sarabun,sans-serif;text-align:center}
-.thumb img{display:block;width:100%;height:auto;border-radius:6px}
-.thumb[aria-pressed=true]{border-color:var(--ink);font-weight:700}
+.thumb{flex:none;position:relative;width:84px;padding:0;border:2px solid transparent;border-radius:6px;background:none;cursor:pointer;scroll-snap-align:start;color:var(--ivory);font:400 12px/1.3 "IBM Plex Sans Thai",sans-serif;text-align:center}
+.thumb img{display:block;width:100%;height:auto;border-radius:4px;margin-bottom:4px}
+.thumb[aria-pressed=true]{border-color:var(--gold);font-weight:500}
+.thumb.done::after{content:"✓";position:absolute;top:4px;right:4px;width:22px;height:22px;line-height:22px;border-radius:50%;background:var(--plum);color:var(--goldsoft);font-size:14px}
 .plans{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.plan{min-height:92px;padding:12px;border:1px solid var(--ink);border-radius:8px;background:transparent;color:var(--ink);font:400 15px Sarabun,sans-serif;cursor:pointer}
-.plan b{display:block;font:700 28px "Noto Serif Thai",serif}
-.plan[aria-pressed=true]{background:var(--ink);color:var(--white)}
+.plan{min-height:96px;padding:12px;border:1px solid rgba(244,236,221,.42);border-radius:3px;background:transparent;color:var(--ivory);font:400 15px "IBM Plex Sans Thai",sans-serif;cursor:pointer}
+.plan b{display:block;font:400 29px Trirong,serif}
+.plan[aria-pressed=true]{background:var(--ivory);color:var(--plum)}
 .btn+.btn,.pay .btn{margin-top:12px}
-details{border-bottom:1px solid var(--line);padding:12px 0}
+.paidimg{display:block;width:min(70%,240px);height:auto;margin:14px auto 8px;border-radius:8px;box-shadow:0 10px 26px rgba(0,0,0,.5)}
+.center{text-align:center}
+details{border-bottom:1px solid var(--line);padding:13px 0}
 summary{font-weight:500;cursor:pointer}
-details p{margin:8px 0 0;color:var(--soft)}
-footer{padding:26px 0 44px;color:var(--soft);font-size:14px;border-top:1px solid var(--line)}
+details p{margin:8px 0 0;color:var(--muted)}
+.card.paper details{border-color:rgba(38,33,28,.18)}
+footer{padding:28px 0 46px;color:var(--muted);font-size:14px;border-top:1px solid var(--line);text-align:center}
 footer a{color:inherit}
-.saveov{position:fixed;inset:0;z-index:50;background:rgba(20,16,12,.93);display:flex;flex-direction:column;align-items:center;gap:10px;padding:14px;color:#fff;text-align:center}
-.saveov img{flex:1;min-height:0;max-width:100%;object-fit:contain;border-radius:8px}
+.saveov{position:fixed;inset:0;z-index:50;background:rgba(10,5,16,.95);display:flex;flex-direction:column;align-items:center;gap:10px;padding:14px;color:#fff;text-align:center}
+.saveov img{flex:1;min-height:0;max-width:100%;object-fit:contain;border-radius:8px;-webkit-touch-callout:default}
 @media(min-width:800px){
- .hero{grid-template-columns:1.1fr .9fr;align-items:center}
+ .hero{grid-template-columns:1.05fr .95fr;align-items:center;gap:44px}
+ .gridwhy{grid-template-columns:220px minmax(0,1fr)}
  .studio{grid-template-columns:360px minmax(0,1fr);align-items:start}
- .stage{top:12px}
+ .stage{top:12px;background:none}
  canvas#view{width:min(100%,calc(84vh*852/1846))}
- .card.narrow{max-width:560px}
+ .card.narrow{max-width:620px}
 }
 </style>
 </head>
 <body>
 <div class="notice" id="notice">ช่วงทดลอง ยังไม่เปิดรับเงิน ลองคำนวณเลขและแต่งภาพได้ฟรี ภาพตัวอย่างมีลายน้ำ</div>
 <div class="wrap">
-  <div class="brand">AMATATHEWA อมตเทวา</div>
+  <div class="brand"><img src="assets/logo.png" alt="AMATATHEWA อมตเทวา" width="300" height="207" draggable="false"></div>
   <div class="hero">
+    <figure><img src="assets/hero.jpg?v=202611031" alt="ภาพหมึกจีนองค์พระศิวะอุ้มพระพิฆเนศน้อย" width="800" height="1005" draggable="false"></figure>
     <div>
-      <h1>องค์เทพหมึกจีน พร้อมเลขมงคลของคุณเอง</h1>
-      <p class="lead">กรอกวันเกิด ระบบจะคำนวณเลขมงคลให้ โดยประยุกต์จากตำราโหราศาสตร์ไทย จากนั้นคุณเลือกแต่งภาพเองได้ทั้งหมด จะใส่เลข ตารางเลข หรือคำมงคลก็ได้ หรือจะไม่ใส่เลยก็ได้</p>
+      <h1>องค์เทพหมึกจีน<br>เลขมงคลจากวันเกิดของคุณ</h1>
+      <p class="lead">กรอกวันเกิด เราคำนวณเลขมงคลให้ โดยประยุกต์จากตำราโหราศาสตร์ไทย จากนั้นคุณเลือกองค์เทพ เลข ตารางเลข และคำมงคลได้เองทุกจุด ดูตัวอย่างได้ฟรีก่อนตัดสินใจ</p>
+      <p class="price">1 ภาพ 99 บาท · ทั้งชุด 22 ภาพ 399 บาท</p>
       <a class="btn" href="#birth">เริ่มคำนวณเลขของฉัน</a>
     </div>
-    <img src="assets/base/lakshmi-flame.jpg" alt="ภาพหมึกจีนพระแม่ลักษมีประคองตะเกียง" width="640" height="1387">
   </div>
 
   <section id="birth">
@@ -111,16 +135,36 @@ footer a{color:inherit}
         <label for="amp">อำเภอที่เกิด</label><select id="amp"></select>
       </div>
       <label class="check" id="nightBox" hidden><input type="checkbox" id="night"> เกิดวันพุธตอนกลางคืน</label>
-      <button class="btn" style="margin-top:16px">คำนวณเลขมงคล</button>
+      <button class="btn solid" style="margin-top:16px">คำนวณเลขมงคล</button>
       <div class="err" id="err" hidden></div>
     </form>
   </section>
 
   <section id="numbers" hidden>
     <h2>2. เลขมงคลของคุณ</h2>
-    <p class="lead">ติ๊กคู่ที่อยากใส่ในตารางเลข ระบบจะจัดให้เลขที่อยู่ติดกันเป็นคู่มงคลทุกคู่ และไม่ใช้เลขกาลกิณีของคุณ</p>
-    <div class="card narrow" id="pairs"></div>
-    <a class="btn alt" href="#studio" style="margin-top:14px">ไปแต่งภาพ</a>
+    <p class="lead">เลขแต่ละคู่คำนวณจากวันเกิดของคุณ อ่านที่มาและความหมายตามตำรา แล้วเลือกคู่ที่ตรงกับเรื่องที่คุณตั้งใจ</p>
+    <div class="card paper narrow" id="pairs"></div>
+  </section>
+
+  <section id="gridWhy" hidden>
+    <h2>ทำไมต้องเลข 9 ช่องนี้</h2>
+    <p class="lead">ตารางนี้ไม่ได้สุ่มขึ้นมา ระบบจัดจากดวงของคุณตามหลักด้านล่าง</p>
+    <div class="card paper">
+      <div class="gridwhy">
+        <div>
+          <div class="minigrid" id="miniGrid"></div>
+          <button class="btn alt" id="otherGrid" type="button" style="color:var(--ink);border-color:var(--ink);margin-top:12px;backdrop-filter:none" hidden>ขอตารางแบบอื่น</button>
+          <p class="help center" id="otherNote"></p>
+        </div>
+        <div>
+          <ul class="reasons" id="gridReasons"></ul>
+          <div id="gridDigits" style="margin-top:12px"></div>
+          <details><summary>ดูคู่มงคลในตาราง</summary><ul class="gridpairs" id="gridPairs"></ul></details>
+        </div>
+      </div>
+      <p class="help" style="margin-top:12px">เลือกตารางแบบอื่นได้ แต่ไม่เปิดให้ย้ายเลขเอง เพราะจะทำให้เลขที่อยู่ติดกันไม่เป็นคู่มงคล ความหมายทั้งหมดเป็นความเชื่อตามตำราโหราศาสตร์ไทย ไม่ใช่การรับประกันผล</p>
+    </div>
+    <a class="btn" href="#studio" style="margin-top:14px">ไปแต่งภาพ</a>
   </section>
 
   <section id="studio" hidden>
@@ -130,14 +174,14 @@ footer a{color:inherit}
       <div class="stage"><canvas id="view" width="640" height="1387" role="img" aria-label="ภาพตัวอย่างวอลเปเปอร์"></canvas><div class="busy" id="busy"></div></div>
       <div class="card">
         <div class="ctl"><h3>ภาพองค์เทพ</h3><div class="thumbs" id="thumbs"></div></div>
-        <div class="ctl"><h3>ลายตารางเลขด้านหลัง</h3><div class="chips" id="frames"></div><p class="help" id="gridNote"></p></div>
+        <div class="ctl"><h3>ลายตารางเลขด้านหลัง</h3><div class="chips" id="frames"></div><p class="help" id="frameNote"></p><p class="help">ลายเป็นงานออกแบบของอมตเทวา เลือกตามที่ชอบได้เลย ไม่มีลายไหนผิด</p></div>
         <div class="ctl"><h3>เลขมงคลบนภาพ</h3><div class="chips" id="numberPick"></div>
           <h3 style="margin-top:12px">แบบตัวเลข</h3><div class="chips" id="numberStyle"></div>
           <h3 style="margin-top:12px">ตำแหน่ง</h3><div class="chips" id="sidePick"></div></div>
         <div class="ctl"><h3>คำมงคลในตราแดง</h3><div class="chips" id="words"></div>
           <input type="text" id="ownWord" maxlength="14" placeholder="หรือพิมพ์คำที่คุณชอบเอง" autocomplete="off" style="margin-top:10px" aria-label="พิมพ์คำมงคลเอง">
           <p class="help">ตราเป็นสีแดง คนไทยจำนวนมากถือเรื่องเขียนชื่อตัวเองด้วยสีแดง จึงไม่แนะนำให้ใส่ชื่อในตรา</p></div>
-        <div class="ctl"><h3>ชื่อหมึกดำใต้ภาพ</h3><input type="text" id="name" maxlength="30" placeholder="ไม่ใส่ก็ได้" autocomplete="off" aria-label="ชื่อใต้ภาพ"></div>
+        <div class="ctl"><h3>ชื่อหมึกดำบนภาพ</h3><input type="text" id="name" maxlength="30" placeholder="ไม่ใส่ก็ได้" autocomplete="off" aria-label="ชื่อใต้ภาพ"></div>
       </div>
     </div>
   </section>
@@ -146,6 +190,7 @@ footer a{color:inherit}
     <h2>4. รับภาพ</h2>
     <div class="card narrow">
       <div class="plans" id="plans"></div>
+      <p class="help" id="planNote">ซื้อทั้งชุดแล้ว แต่ละภาพแต่งเลข ลาย และคำมงคลต่างกันได้ การซื้อผูกกับวันเกิดนี้ 1 ดวง โหลดได้ภาพละ 3 ครั้ง ภายใน 30 วัน</p>
       <div class="pay" id="payClosed">
         <p class="help" style="margin-top:14px">ตอนนี้ยังไม่เปิดรับเงิน คุณบันทึกภาพตัวอย่างขนาดเล็กที่มีลายน้ำไปลองตั้งเป็นหน้าจอได้</p>
         <button class="btn alt" id="savePreview" type="button">บันทึกภาพตัวอย่าง</button>
@@ -158,12 +203,16 @@ footer a{color:inherit}
         <button class="btn alt" id="saveQr" type="button">บันทึก QR</button>
         <label for="slip">แนบสลิป</label>
         <input id="slip" type="file" accept="image/*">
-        <button class="btn" id="sendSlip" type="button">ส่งสลิปและรับภาพ</button>
+        <button class="btn solid" id="sendSlip" type="button">ส่งสลิปและรับภาพ</button>
         <div class="err" id="payErr" hidden></div>
       </div>
       <div class="pay" id="paid" hidden>
         <p style="margin:14px 0 0"><b>ชำระเงินแล้ว</b> <span id="paidNote"></span></p>
-        <button class="btn" id="saveFull" type="button">บันทึกภาพเต็ม</button>
+        <p class="center" style="margin:14px 0 0;color:var(--goldsoft)">ภาพที่กำลังจะบันทึก: <span id="paidName"></span></p>
+        <img class="paidimg" id="paidPreview" alt="ตัวอย่างภาพที่กำลังจะบันทึก" draggable="false">
+        <p class="help center">ลายน้ำมีเฉพาะภาพตัวอย่างนี้ ไฟล์เต็มไม่มีลายน้ำ</p>
+        <button class="btn solid" id="saveFull" type="button">บันทึกภาพเต็ม</button>
+        <p class="help center" id="fullLeft"></p>
         <div class="err" id="fullErr" hidden></div>
       </div>
     </div>
@@ -173,17 +222,18 @@ footer a{color:inherit}
     <h2>คำถามที่พบบ่อย</h2>
     <details><summary>เลขคำนวณจากอะไร</summary><p>ประยุกต์จากตำราโหราศาสตร์ไทย ถ้ารู้เวลาเกิด ระบบใช้ทั้งดวงเกิดและทักษา ถ้าไม่รู้เวลาเกิด ระบบใช้ทักษาวันเกิดกับคู่เลขมาตรฐาน</p></details>
     <details><summary>ตารางเลขคือยันต์จากตำราไหม</summary><p>ไม่ใช่ เป็นตารางเลขมงคลเฉพาะคนที่อมตเทวาออกแบบ เลขที่อยู่ติดกันซ้าย ขวา บน และล่างเป็นคู่มงคลทุกคู่ ภาพนี้ไม่ได้ผ่านพิธีปลุกเสก</p></details>
+    <details><summary>ซื้อแล้วใช้ให้คนอื่นได้ไหม</summary><p>การซื้อหนึ่งครั้งผูกกับวันเกิดหนึ่งดวง ถ้าจะแต่งให้คนอื่นต้องซื้อแยก และโหลดได้ภาพละ 3 ครั้งภายใน 30 วัน</p></details>
     <details><summary>ใช้กับมือถือรุ่นไหนได้บ้าง</summary><p>ไฟล์เต็มมีขนาด 1290×2796 ใช้เป็นภาพพื้นหลังได้ทั้ง iPhone และ Android บางรุ่นอาจตัดขอบภาพเล็กน้อย</p></details>
     <details><summary>ภาพนี้ช่วยเรื่องโชคลาภไหม</summary><p>ภาพชุดนี้เป็นงานศิลปะสำหรับคนที่ศรัทธาและรักความงาม เราไม่รับประกันผลด้านโชคลาภ สุขภาพ หรือความสำเร็จ</p></details>
     <details><summary>คืนเงินได้ไหม</summary><p>เป็นไฟล์ดิจิทัล จึงไม่รับคืนหลังได้รับไฟล์แล้ว ยกเว้นไฟล์มีปัญหาและเราแก้ให้ไม่ได้</p></details>
   </section>
-  <footer>© 2569 AMATATHEWA อมตเทวา · <a href="../tarot/web/">เปิดไพ่ทาโรต์</a></footer>
+  <footer>อมตเทวา ความดีงามอันเป็นนิรันดร์<br>© 2569 AMATATHEWA · ภาพทั้งหมดเป็นลิขสิทธิ์ของอมตเทวา ห้ามคัดลอกหรือนำไปขายต่อ · <a href="../tarot/web/">เปิดไพ่ทาโรต์</a></footer>
 </div>
 <div class="saveov" id="saveov" hidden><div>กดค้างที่ภาพเพื่อบันทึก</div><img id="saveImg" alt="ภาพสำหรับบันทึก"><button class="btn alt" id="saveClose" type="button" style="width:auto">ปิด</button></div>
-<script src="config.js?v=202611022"></script>
-<script src="calc.js?v=202611011"></script>
-<script src="compose.js?v=202611011"></script>
+<script src="config.js?v=202611031"></script>
+<script src="calc.js?v=202611031"></script>
+<script src="compose.js?v=202611031"></script>
 <script src="qr.js?v=202611021"></script>
-<script src="shop.js?v=202611021"></script>
+<script src="shop.js?v=202611031"></script>
 </body>
 </html>

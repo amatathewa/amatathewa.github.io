@@ -1,13 +1,33 @@
 // หน้าร้านวอลเปเปอร์: คำนวณเลข → แต่งภาพ → รับภาพ · ลูกค้าเลือกเองทุกอย่าง เรามีหน้าที่ให้ข้อเสนอ
 ;(async function () {
   const $ = id => document.getElementById(id), L = window.ThaiAstro, SHOP = window.SHOP
-  const meta = await (await fetch('assets/meta.json?v=202611011')).json()
+  const meta = await (await fetch('assets/meta.json?v=202611031')).json()
   const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text !== undefined) e.textContent = text; return e }
   const fill = (s, list) => list.forEach(([v, t]) => s.add(new Option(t, v)))
   const MONTH = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม']
   const WORDS = ['มั่งคั่ง', 'เมตตา', 'รุ่งเรือง', 'สำเร็จ', 'มั่นคง', 'ร่มเย็น', 'ราบรื่น', 'โชคดี', 'สงบสุข']
-  const SRC = { chart: 'คำนวณจากดวงเกิด', taksa: 'คำนวณจากทักษาวันเกิด', general: 'คู่มาตรฐาน' }
+  const SRC = { chart: 'คำนวณจากดวงเกิดของคุณ', taksa: 'คำนวณจากทักษาวันเกิดของคุณ', general: 'คู่มาตรฐานที่ไม่ขัดกับเลขกาลกิณีของคุณ' }
+  const MOTIVE = {
+    wealth: 'ใส่ไว้ให้เห็นทุกครั้งที่หยิบมือถือ เตือนใจเรื่องการเงินที่ตั้งใจไว้',
+    charm: 'ใส่ไว้เตือนใจเรื่องความรักและการวางตัวกับคนรอบข้าง',
+    flow: 'ใส่ไว้เตือนใจให้ใช้ชีวิตอย่างใจเย็นและมีผู้ใหญ่คอยหนุน',
+    fame: 'ใส่ไว้เตือนใจเรื่องงานและชื่อเสียงที่อยากไปให้ถึง',
+    extra: 'เป็นคู่สำรองจากดวงเดียวกัน เลือกใส่แทนคู่หลักได้',
+  }
+  const FRAME_NOTE = {
+    mountain: 'ภาพความมั่นคงของขุนเขา ออกแบบไว้สำหรับคนที่ตั้งใจเรื่องงาน',
+    plain: 'เส้นเรียบนิ่ง เข้าได้กับทุกภาพ ออกแบบไว้สำหรับคนที่ตั้งใจเรื่องงาน',
+    lotus: 'ภาพกลีบบัวที่ค่อยๆ งอกงาม ออกแบบไว้สำหรับคนที่ตั้งใจเรื่องเงิน',
+    heart: 'ภาพหัวใจกับดอกบัว ออกแบบไว้สำหรับคนที่ตั้งใจเรื่องความรัก',
+    none: 'ภาพองค์เทพล้วน ไม่มีตารางเลข',
+  }
+  const PLANET = {
+    1: ['อาทิตย์', 'เกียรติ ความเป็นผู้นำ'], 2: ['จันทร์', 'เสน่ห์ ความอ่อนโยน'], 3: ['อังคาร', 'ความกล้า การลงมือทำ'], 4: ['พุธ', 'การเจรจา ไหวพริบ การค้าขาย'],
+    5: ['พฤหัส', 'ปัญญา ผู้ใหญ่ ความรู้'], 6: ['ศุกร์', 'ทรัพย์ ความรัก ศิลปะ'], 7: ['เสาร์', 'ความอดทน ความมั่นคง'], 8: ['ราหู', 'โอกาสแปลกใหม่ งานกลางคืน'], 9: ['เกตุ', 'ลางสังหรณ์ สิ่งศักดิ์สิทธิ์'],
+  }
+  const ROLE = { 'ศรี': 'ดาวศรีของคุณ เรื่องโชคและทรัพย์', 'เดช': 'ดาวเดชของคุณ เรื่องอำนาจและความกล้า', 'มนตรี': 'ดาวมนตรีของคุณ เรื่องผู้ใหญ่อุปถัมภ์', 'มูละ': 'ดาวมูละของคุณ เรื่องฐานทรัพย์สิน', 'อุตสาหะ': 'ดาวอุตสาหะของคุณ เรื่องความเพียร', 'บริวาร': 'ดาวบริวารของคุณ เรื่องคนรอบตัว', 'อายุ': 'ดาวอายุของคุณ เรื่องความเป็นอยู่' }
   const DEFAULT_FRAME = { ganesha: 'mountain', lakshmi: 'lotus', parvati: 'heart', saraswati: 'lotus', shiva: 'plain', vishnu: 'plain', brahma: 'lotus', trimurti: 'plain', trishakti: 'heart' }
+  const THAI = '๐๑๒๓๔๕๖๗๘๙', thai = n => String(n).replace(/\d/g, d => THAI[d])
   const pad = n => String(n).padStart(2, '0'), range = (a, b) => Array.from({ length: b - a + 1 }, (_, i) => a + i)
   fill($('d'), range(1, 31).map(n => [n, n])); fill($('m'), MONTH.map((t, i) => [i + 1, t])); fill($('y'), range(2460, 2569).reverse().map(n => [n, n]))
   fill($('hh'), range(0, 23).map(n => [n, pad(n) + ' นาฬิกา'])); fill($('mm'), range(0, 59).map(n => [n, pad(n) + ' นาที']))
@@ -21,16 +41,35 @@
   ;['noTime', 'd', 'm', 'y'].forEach(id => $(id).addEventListener('change', sync)); sync()
   const lonOf = () => { const p = $('prov').value, a = $('amp').value, r = ((window.AMPHOE || {})[p] || []).find(x => x[0] === a); return r ? r[1] : (PROV.find(x => x.province === p) || {}).longitude }
 
-  const S = { image: 'lakshmi-flame', frame: 'lotus', frameChosen: false, grid: null, showNumber: true, number: null, thaiNumber: false, side: null, showSeal: true, word: 'มั่งคั่ง', showName: false, name: '', plan: 'one' }
-  let chart = null, allPairs = [], picked = []
+  // กันดึงภาพออกแบบง่ายๆ แคปหน้าจอยังทำได้ ภาพที่แสดงจึงมีลายน้ำเสมอ
+  document.addEventListener('contextmenu', e => { if (e.target.closest('img,canvas')) e.preventDefault() })
+  document.addEventListener('dragstart', e => { if (e.target.closest('img,canvas')) e.preventDefault() })
+
+  const S = { image: 'shiva-ganesha', frame: 'plain', frameChosen: false, grid: null, variant: 0, showNumber: true, number: null, thaiNumber: false, side: null, showSeal: true, word: 'มั่งคั่ง', showName: false, name: '', plan: 'one' }
+  const DESIGN_KEYS = ['frame', 'frameChosen', 'grid', 'variant', 'showNumber', 'number', 'thaiNumber', 'side', 'showSeal', 'word', 'showName', 'name']
+  let chart = null, allPairs = [], picked = [], owner = null, taksa = {}
+
+  // ---------- เก็บในเครื่องลูกค้า ----------
+  const keep = {
+    get: (k, d) => { try { return JSON.parse(localStorage.getItem(k)) || d } catch { return d } },
+    set: (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)) } catch {} },
+  }
+  const passes = keep.get('amt-passes', {})
+  const allDesigns = keep.get('amt-designs', {}), allSaved = keep.get('amt-saved', {})
+  const designs = () => allDesigns[owner] || (allDesigns[owner] = {})
+  const savedFiles = () => allSaved[owner] || (allSaved[owner] = {})
+  const saveDesign = () => { if (!owner) return; const d = {}; DESIGN_KEYS.forEach(k => { d[k] = S[k] }); designs()[S.image] = d; keep.set('amt-designs', allDesigns) }
+  const passNow = () => { const p = owner && passes[owner]; return p && p.exp > Date.now() ? p : null }
+  const covers = () => { const p = passNow(); return p && (p.scope === 'set' || p.image === S.image) }
 
   // ---------- วาดภาพ ----------
   const view = $('view')
   let drawing = false, again = false
+  const showPaidPreview = () => { if (covers()) { $('paidPreview').src = view.toDataURL('image/jpeg', .85); $('paidName').textContent = meta.deities.find(d => d.id === S.image).label } }
   const draw = async () => {
     if (drawing) { again = true; return }
     drawing = true; $('busy').textContent = 'กำลังวาดภาพ'
-    try { await window.Compose.render(view, S, meta, `assets/base/${S.image}.jpg?v=202611011`); $('busy').textContent = ''; view.dataset.ready = (+view.dataset.ready || 0) + 1 }
+    try { await window.Compose.render(view, S, meta, `assets/base/${S.image}.jpg?v=202611031`); $('busy').textContent = ''; view.dataset.ready = (+view.dataset.ready || 0) + 1; showPaidPreview() }
     catch (e) { $('busy').textContent = 'โหลดภาพไม่สำเร็จ ลองแตะอีกครั้ง'; console.error(e) }
     drawing = false
     if (again) { again = false; draw() }
@@ -41,40 +80,47 @@
     box.textContent = ''
     for (const [value, text] of items) {
       const b = el('button', 'chip', text); b.type = 'button'; b.setAttribute('aria-pressed', isOn(value))
-      b.onclick = () => { onTap(value); renderControls(); draw() }
+      b.onclick = () => { onTap(value); saveDesign(); renderControls(); draw() }
       box.append(b)
     }
   }
   const renderControls = () => {
     chips($('frames'), [...Object.entries(meta.frames).map(([k, f]) => [k, f.label]), ['none', 'ไม่ใส่']], v => S.frame === v, v => { S.frame = v; S.frameChosen = true })
-    const gridText = S.grid ? `ตารางของคุณ: ${S.grid.slice(0, 3).join(' ')} / ${S.grid.slice(3, 6).join(' ')} / ${S.grid.slice(6).join(' ')}` : ''
-    $('gridNote').textContent = gridText
+    $('frameNote').textContent = FRAME_NOTE[S.frame] || ''
     chips($('numberPick'), [...allPairs.map(p => [p.num, p.num]), ['none', 'ไม่ใส่']], v => v === 'none' ? !S.showNumber : S.showNumber && S.number === v, v => { if (v === 'none') S.showNumber = false; else { S.showNumber = true; S.number = v } })
     chips($('numberStyle'), [['ar', 'เลขสากล'], ['th', 'เลขไทย']], v => (v === 'th') === S.thaiNumber, v => { S.thaiNumber = v === 'th' })
     chips($('sidePick'), [['R', 'ขวา'], ['L', 'ซ้าย']], v => (S.side || meta.deities.find(d => d.id === S.image).side) === v, v => { S.side = v })
     chips($('words'), [...WORDS.map(w => [w, w]), ['none', 'ไม่ใส่']], v => v === 'none' ? !S.showSeal : S.showSeal && S.word === v && !$('ownWord').value.trim(), v => { $('ownWord').value = ''; if (v === 'none') S.showSeal = false; else { S.showSeal = true; S.word = v } })
-    for (const b of $('thumbs').children) b.setAttribute('aria-pressed', b.dataset.id === S.image)
+    const saved = owner ? savedFiles() : {}
+    for (const b of $('thumbs').children) { b.setAttribute('aria-pressed', b.dataset.id === S.image); b.classList.toggle('done', !!saved[b.dataset.id]) }
     for (const b of $('plans').children) b.setAttribute('aria-pressed', b.dataset.plan === S.plan)
     syncPay()
   }
+  const applyDesign = () => {
+    const d = designs()[S.image]
+    if (d) { DESIGN_KEYS.forEach(k => { S[k] = d[k] }); $('name').value = S.name; $('ownWord').value = WORDS.includes(S.word) ? '' : S.word }
+    else { S.side = null; if (!S.frameChosen) S.frame = DEFAULT_FRAME[S.image.split('-')[0]] }
+  }
   meta.deities.forEach(d => {
     const b = el('button', 'thumb'); b.type = 'button'; b.dataset.id = d.id
-    const i = el('img'); i.src = `assets/thumb/${d.id}.jpg?v=202611011`; i.alt = ''; i.loading = 'lazy'; i.width = 180; i.height = 390
+    const i = el('img'); i.src = `assets/thumb/${d.id}.jpg?v=202611011`; i.alt = ''; i.loading = 'lazy'; i.width = 180; i.height = 390; i.draggable = false
     b.append(i, el('span', '', d.label))
-    b.onclick = () => { S.image = d.id; if (!S.frameChosen) S.frame = DEFAULT_FRAME[d.id.split('-')[0]]; renderControls(); draw() }
+    b.onclick = () => { saveDesign(); S.image = d.id; applyDesign(); renderGridWhy(); renderControls(); draw() }
     $('thumbs').append(b)
   })
   ;[['one', SHOP.price.one, 'ภาพนี้ 1 ภาพ'], ['set', SHOP.price.set, `ทุกภาพ ${meta.deities.length} ภาพ`]].forEach(([k, p, t]) => {
     const b = el('button', 'plan'); b.type = 'button'; b.dataset.plan = k; b.append(el('b', '', `${p} บาท`), el('span', '', t))
     b.onclick = () => { S.plan = k; renderControls() }; $('plans').append(b)
   })
-  $('ownWord').oninput = () => { const v = $('ownWord').value.trim(); if (v) { S.showSeal = true; S.word = v } else S.word = WORDS[0]; renderControls(); draw() }
-  $('name').oninput = () => { S.name = $('name').value.trim(); S.showName = !!S.name; draw() }
+  $('ownWord').oninput = () => { const v = $('ownWord').value.trim(); if (v) { S.showSeal = true; S.word = v } else S.word = WORDS[0]; saveDesign(); renderControls(); draw() }
+  $('name').oninput = () => { S.name = $('name').value.trim(); S.showName = !!S.name; saveDesign(); draw() }
 
   // ---------- เลขมงคล ----------
+  const clean = t => String(t || '').split(' · ')[0].replace(/\s*มองจาก.*$/, '').replace(/\s*เสริมเงิน เสริมดวง เสริมบารมี/, '').trim()
+  const pairName = (a, b) => { const k = `${Math.min(a, b)}-${Math.max(a, b)}`, p = (window.PAIR_LONG || {})[k]; return p ? p.name.replace(/\s*\(.*\)\s*$/, '') : '' }
   const rebuildGrid = () => {
     const pool = allPairs.map(p => p.num)
-    const g = window.Lucky.grid(chart.kal, picked.length ? picked : pool, pool, chart)
+    const g = window.Lucky.grid(chart.kal, picked.length ? picked : pool, pool, { rank: chart.rank, salt: chart.salt + S.variant })
     S.grid = g.cells
     return g
   }
@@ -82,38 +128,84 @@
     const box = $('pairs'); box.textContent = ''
     allPairs.forEach(p => {
       const row = el('div', 'pair'), num = el('div', 'num', p.num), txt = el('div')
-      num.append(el('small', '', `กลับเป็น ${p.back}`))
-      txt.append(el('b', '', p.label), el('p', '', p.name), el('p', '', SRC[p.source]))
+      num.append(el('small', '', `หรือ ${p.back}`))
+      txt.append(el('b', '', p.name ? `${p.label} · ${p.name}` : p.label))
+      const meaning = clean(p.meaning)
+      if (meaning) txt.append(el('p', '', meaning))
+      txt.append(el('p', 'why', `ที่มาของเลขนี้: ${p.why}`), el('p', 'motive', MOTIVE[p.key]))
       const lab = el('label', 'check'), c = el('input'); c.type = 'checkbox'; c.checked = picked.includes(p.num)
-      c.onchange = () => { picked = allPairs.map(x => x.num).filter(n => n === p.num ? c.checked : picked.includes(n)); const g = rebuildGrid(); note(g); renderControls(); draw() }
+      c.onchange = () => { picked = allPairs.map(x => x.num).filter(n => n === p.num ? c.checked : picked.includes(n)); const g = rebuildGrid(); note(g); saveDesign(); renderGridWhy(); renderControls(); draw() }
       lab.append(c, 'ใส่ในตารางเลข')
       row.append(num, txt, lab); box.append(row)
     })
-    box.append(el('div', 'avoid', `เลขที่ควรเลี่ยงของคนเกิดวัน${chart.day} คือ ${chart.avoidDigit} ระบบจึงไม่ใส่เลขนี้ในภาพ${chart.hasTime ? '' : ' และเพราะไม่รู้เวลาเกิด เลขชุดนี้จึงคิดจากวันเกิดอย่างเดียว'}`))
+    box.append(el('div', 'avoid', `เลขกาลกิณีของคนเกิดวัน${chart.day} คือ ${chart.avoidDigit} ระบบจึงไม่ใส่เลขนี้ในภาพ${chart.hasTime ? '' : ' และเพราะไม่รู้เวลาเกิด เลขชุดนี้จึงคิดจากวันเกิดอย่างเดียว'}`))
     const n = el('p', 'help'); n.id = 'gridMiss'; box.append(n)
   }
   const note = g => { const n = $('gridMiss'); if (n) n.textContent = g.missing.length ? `ตารางมีช่องจำกัด คู่ ${g.missing.join(' ')} จึงยังไม่ได้อยู่ติดกัน ลองเอาติ๊กบางคู่ออกได้` : '' }
 
-  $('f').onsubmit = ev => {
+  // ทำไมต้องเลข 9 ตัวนี้ อธิบายจากดวงของเจ้าของจริง
+  const GRID_EDGES = [[0, 1], [1, 2], [3, 4], [4, 5], [6, 7], [7, 8], [0, 3], [3, 6], [1, 4], [4, 7], [2, 5], [5, 8]]
+  const renderGridWhy = () => {
+    if (!S.grid) return
+    const g = S.grid, mini = $('miniGrid'); mini.textContent = ''
+    g.forEach(n => mini.append(el('span', '', thai(n))))
+    const center = PLANET[g[4]]
+    const reasons = $('gridReasons'); reasons.textContent = ''
+    ;[`ไม่มีเลข ${chart.avoidDigit} เพราะเป็นเลขกาลกิณีของคนเกิดวัน${chart.day}`,
+      `ช่องกลางคือเลข ${g[4]} ดาว${center[0]} ${chart.strong.length && chart.strong[0].n === g[4] ? 'ซึ่งเป็นดาวที่แข็งที่สุดในดวงของคุณ' : 'เลือกจากดาวที่มีกำลังและเป็นคุณกับดวงของคุณ'}`,
+      `เลขที่อยู่ติดกันทั้งซ้าย ขวา บน ล่าง รวม ${GRID_EDGES.length} คู่ เป็นคู่มงคลทุกคู่`].forEach(t => reasons.append(el('li', '', t)))
+    const digits = $('gridDigits'); digits.textContent = ''
+    ;[...new Set(g)].sort((a, b) => a - b).forEach(n => {
+      const [name, mean] = PLANET[n], extra = []
+      if (taksa[n] && ROLE[taksa[n]]) extra.push(ROLE[taksa[n]])
+      if (chart.lord === n) extra.push('ดาวเจ้าลัคนาของคุณ')
+      const strong = chart.strong.find(s => s.n === n)
+      if (strong) extra.push(`ได้${strong.labels.filter(l => !['ประ', 'นิจ'].includes(l)).join(' ')}ในดวงเกิด`)
+      const row = el('div', 'digit-row'); row.append(el('span', 'digit-big', thai(n)))
+      const t = el('div'); t.append(el('b', '', `ดาว${name}`), el('p', '', `ตำราให้ความหมายเรื่อง${mean}${extra.length ? ` · ${extra.join(' · ')}` : ''}`))
+      row.append(t); digits.append(row)
+    })
+    const pairs = $('gridPairs'); pairs.textContent = ''
+    const seen = new Set()
+    GRID_EDGES.forEach(([a, b]) => {
+      const k = [g[a], g[b]].sort().join('')
+      if (seen.has(k)) return
+      seen.add(k)
+      const name = pairName(g[a], g[b])
+      pairs.append(el('li', '', `${g[a]}${g[b]}${name ? ` ${name}` : ''}`))
+    })
+    $('otherGrid').hidden = false
+  }
+  $('otherGrid').onclick = () => {
+    const before = S.grid.join('')
+    for (let i = 0; i < 8; i++) { S.variant++; const g = rebuildGrid(); note(g); if (S.grid.join('') !== before) break }
+    $('otherNote').textContent = S.grid.join('') === before ? 'เลขที่เลือกไว้จัดได้แบบนี้แบบเดียว ลองเอาติ๊กบางคู่ออกแล้วกดใหม่' : ''
+    saveDesign(); renderGridWhy(); renderControls(); draw()
+  }
+
+  const sha = async text => [...new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text)))].map(b => b.toString(16).padStart(2, '0')).join('')
+  $('f').onsubmit = async ev => {
     ev.preventDefault()
     const y = +$('y').value - 543, m = +$('m').value, d = +$('d').value, ok = new Date(Date.UTC(y, m - 1, d)).getUTCMonth() === m - 1
     $('err').hidden = ok
     if (!ok) { $('err').textContent = 'เดือนนี้ไม่มีวันที่นี้ ลองเลือกวันใหม่'; return }
-    const noTime = $('noTime').checked
-    chart = window.Lucky.build(window.Health, window.Reader, noTime ? { y, m, d, hh: null, mm: null, night: $('night').checked } : { y, m, d, hh: +$('hh').value, mm: +$('mm').value, lon: lonOf(), province: $('prov').value })
+    const noTime = $('noTime').checked, night = $('night').checked
+    const inp = noTime ? { y, m, d, hh: null, mm: null, night } : { y, m, d, hh: +$('hh').value, mm: +$('mm').value, lon: lonOf(), province: $('prov').value }
+    chart = window.Lucky.build(window.Health, window.Reader, inp)
+    const tk = window.Reader.taksaOf(noTime ? { ...inp, hh: night ? 19 : 12, mm: 0 } : inp); taksa = tk.of
+    // วันเกิดไม่ออกจากเครื่อง ส่งเฉพาะรหัสที่แฮชแล้วตอนซื้อ เพื่อผูกการซื้อกับเจ้าของวันเกิด
+    owner = await sha(`amatathewa:${y}-${m}-${d}-${noTime ? `n${night ? 1 : 0}` : `${inp.hh}-${inp.mm}`}`)
     allPairs = [...chart.pairs, ...chart.extras]; picked = allPairs.map(p => p.num)
-    S.number = allPairs[0].num; S.showNumber = true
+    S.number = allPairs[0].num; S.showNumber = true; S.variant = 0
     const g = rebuildGrid()
-    renderPairs(); note(g); renderControls()
-    ;['numbers', 'studio', 'buy'].forEach(id => { $(id).hidden = false })
+    applyDesign()
+    if (!allPairs.some(p => p.num === S.number)) S.number = allPairs[0].num
+    renderPairs(); note(g); renderGridWhy(); renderControls()
+    ;['numbers', 'gridWhy', 'studio', 'buy'].forEach(id => { $(id).hidden = false })
     draw(); $('numbers').scrollIntoView()
   }
 
   // ---------- รับภาพ ----------
-  const store = { get: () => { try { return JSON.parse(localStorage.getItem('amt-wallpaper') || 'null') } catch { return null } }, set: v => { try { localStorage.setItem('amt-wallpaper', JSON.stringify(v)) } catch {} } }
-  let pass = store.get()
-  if (pass && pass.exp && pass.exp < Date.now()) pass = null
-  const covers = () => pass && (pass.scope === 'set' || pass.image === S.image)
   // QR พร้อมเพย์ตามมาตรฐาน EMVCo ใส่ยอดไว้ให้ ลูกค้าไม่ต้องพิมพ์เอง
   const tlv = (id, v) => id + String(v.length).padStart(2, '0') + v
   const crc16 = s => { let c = 0xFFFF; for (let i = 0; i < s.length; i++) { c ^= s.charCodeAt(i) << 8; for (let b = 0; b < 8; b++) c = c & 0x8000 ? (c << 1) ^ 0x1021 : c << 1; c &= 0xFFFF } return c.toString(16).toUpperCase().padStart(4, '0') }
@@ -128,19 +220,26 @@
     for (let r = 0; r < n; r++) for (let k = 0; k < n; k++) if (qr.isDark(r, k)) x.fillRect(off + k * size, off + r * size, size, size)
   }
   const syncPay = () => {
-    const open = SHOP.paymentsOpen
+    const open = SHOP.paymentsOpen, paid = covers(), p = passNow()
     $('notice').hidden = open
     $('payClosed').hidden = open
-    $('paid').hidden = !covers(); $('payOpen').hidden = !open || covers()
-    $('plans').hidden = covers()
-    if (open) {
+    $('paid').hidden = !paid; $('payOpen').hidden = !open || paid
+    $('plans').hidden = !!paid
+    $('planNote').hidden = !!paid
+    if (open && !paid) {
       const amount = S.plan === 'set' ? SHOP.price.set : SHOP.price.one
       $('payAmount').textContent = amount
       $('payPhone').textContent = SHOP.bank.promptpay.replace(/^(\d{3})(\d{3})(\d{4})$/, '$1-$2-$3')
       $('payHolder').textContent = SHOP.bank.holder
       drawQr(amount)
     }
-    if (covers()) $('paidNote').textContent = pass.scope === 'set' ? 'เลือกภาพไหนก็บันทึกไฟล์เต็มได้' : 'บันทึกภาพนี้เป็นไฟล์เต็มได้'
+    if (paid) {
+      const count = Object.keys(savedFiles()).length
+      $('paidNote').textContent = p.scope === 'set'
+        ? `โหลดแล้ว ${count} จาก ${meta.deities.length} ภาพ · แต่ละภาพแต่งต่างกันได้ กดเลือกองค์เทพด้านบนแล้วแต่งต่อ ระบบจำการแต่งแยกรายภาพให้ภายในเครื่องนี้`
+        : 'บันทึกภาพนี้เป็นไฟล์เต็มได้'
+      showPaidPreview()
+    }
   }
   const saveBlob = async (blob, name) => {
     const inApp = /Line\/|FBAN|FBAV|Instagram/i.test(navigator.userAgent)
@@ -161,24 +260,29 @@
     if (!file) { err.textContent = 'แนบรูปสลิปก่อนนะครับ'; err.hidden = false; return }
     const b = $('sendSlip'); b.disabled = true; b.textContent = 'กำลังตรวจสลิป'
     try {
-      const fd = new FormData(); fd.append('plan', S.plan); fd.append('image', S.image); fd.append('slip', file)
+      const fd = new FormData(); fd.append('plan', S.plan); fd.append('image', S.image); fd.append('owner', owner); fd.append('slip', file)
       const r = await fetch(`${SHOP.api}/order`, { method: 'POST', body: fd }), j = await r.json()
       if (!r.ok) throw new Error(j.message || 'ตรวจสลิปไม่ผ่าน')
-      pass = { token: j.token, scope: j.scope, image: j.image, exp: j.exp }; store.set(pass); renderControls()
+      passes[owner] = { token: j.token, scope: j.scope, image: j.image, exp: j.exp }; keep.set('amt-passes', passes); renderControls()
+      $('buy').scrollIntoView()
     } catch (e) { err.textContent = e.message + ' ถ้าโอนแล้วแต่ไม่ผ่าน ทักมาที่ LINE ของอมตเทวาพร้อมสลิป'; err.hidden = false }
     b.disabled = false; b.textContent = 'ส่งสลิปและรับภาพ'
   }
   $('saveFull').onclick = async () => {
     const b = $('saveFull'), err = $('fullErr'); err.hidden = true; b.disabled = true; b.textContent = 'กำลังสร้างไฟล์เต็ม'
     try {
-      const r = await fetch(`${SHOP.api}/asset/${S.image}`, { headers: { Authorization: `Bearer ${pass.token}` } })
+      const r = await fetch(`${SHOP.api}/asset/${S.image}`, { headers: { Authorization: `Bearer ${passNow().token}`, 'X-Owner': owner } })
       if (!r.ok) throw new Error((await r.json()).message || 'โหลดไฟล์ไม่ได้')
+      const left = r.headers.get('X-Downloads-Left')
       const url = URL.createObjectURL(await r.blob()), c = document.createElement('canvas'); c.width = meta.full[0]; c.height = meta.full[1]
       await window.Compose.render(c, S, meta, url)
       await saveBlob(await blobOf(c), `amatathewa-${S.image}.jpg`); URL.revokeObjectURL(url)
-    } catch (e) { err.textContent = e.message + ' ลองกดอีกครั้ง'; err.hidden = false }
+      savedFiles()[S.image] = 1; keep.set('amt-saved', allSaved)
+      $('fullLeft').textContent = left !== null ? `ภาพนี้โหลดได้อีก ${left} ครั้ง` : ''
+      renderControls()
+    } catch (e) { err.textContent = e.message + (/ครบ/.test(e.message) ? ' ถ้าไฟล์มีปัญหา ทักมาที่ LINE ของอมตเทวา' : ' ลองกดอีกครั้ง'); err.hidden = false }
     b.disabled = false; b.textContent = 'บันทึกภาพเต็ม'
   }
   renderControls()
-  window.__shop = { S, meta, draw, set: o => { Object.assign(S, o); renderControls(); return draw() }, get chart() { return chart } }
+  window.__shop = { S, meta, draw, set: o => { Object.assign(S, o); renderControls(); return draw() }, get chart() { return chart }, get owner() { return owner } }
 })()
