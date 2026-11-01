@@ -1,0 +1,167 @@
+// หน้าร้านวอลเปเปอร์: คำนวณเลข → แต่งภาพ → รับภาพ · ลูกค้าเลือกเองทุกอย่าง เรามีหน้าที่ให้ข้อเสนอ
+;(async function () {
+  const $ = id => document.getElementById(id), L = window.ThaiAstro, SHOP = window.SHOP
+  const meta = await (await fetch('assets/meta.json?v=202611011')).json()
+  const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text !== undefined) e.textContent = text; return e }
+  const fill = (s, list) => list.forEach(([v, t]) => s.add(new Option(t, v)))
+  const MONTH = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม']
+  const WORDS = ['มั่งคั่ง', 'เมตตา', 'รุ่งเรือง', 'สำเร็จ', 'มั่นคง', 'ร่มเย็น', 'ราบรื่น', 'โชคดี', 'สงบสุข']
+  const SRC = { chart: 'คำนวณจากดวงเกิด', taksa: 'คำนวณจากทักษาวันเกิด', general: 'คู่มาตรฐาน' }
+  const DEFAULT_FRAME = { ganesha: 'mountain', lakshmi: 'lotus', parvati: 'heart', saraswati: 'lotus', shiva: 'plain', vishnu: 'plain', brahma: 'lotus', trimurti: 'plain', trishakti: 'heart' }
+  const pad = n => String(n).padStart(2, '0'), range = (a, b) => Array.from({ length: b - a + 1 }, (_, i) => a + i)
+  fill($('d'), range(1, 31).map(n => [n, n])); fill($('m'), MONTH.map((t, i) => [i + 1, t])); fill($('y'), range(2460, 2569).reverse().map(n => [n, n]))
+  fill($('hh'), range(0, 23).map(n => [n, pad(n) + ' นาฬิกา'])); fill($('mm'), range(0, 59).map(n => [n, pad(n) + ' นาที']))
+  $('y').value = 2535; $('hh').value = 8
+  const PROV = L.getThaiAstrologyProvinceLocations().slice().sort((a, b) => a.province.localeCompare(b.province, 'th'))
+  fill($('prov'), PROV.map(p => [p.province, p.province]))
+  const fillAmp = () => { $('amp').length = 0; fill($('amp'), [['', 'ตัวจังหวัด / ไม่ทราบ'], ...((window.AMPHOE || {})[$('prov').value] || []).map(([n]) => [n, n])]) }
+  $('prov').value = 'กรุงเทพมหานคร'; fillAmp(); $('prov').onchange = fillAmp
+  const isWed = () => new Date(Date.UTC(+$('y').value - 543, +$('m').value - 1, +$('d').value)).getUTCDay() === 3
+  const sync = () => { $('timeBox').hidden = $('noTime').checked; $('nightBox').hidden = !($('noTime').checked && isWed()) }
+  ;['noTime', 'd', 'm', 'y'].forEach(id => $(id).addEventListener('change', sync)); sync()
+  const lonOf = () => { const p = $('prov').value, a = $('amp').value, r = ((window.AMPHOE || {})[p] || []).find(x => x[0] === a); return r ? r[1] : (PROV.find(x => x.province === p) || {}).longitude }
+
+  const S = { image: 'lakshmi-flame', frame: 'lotus', frameChosen: false, grid: null, showNumber: true, number: null, thaiNumber: false, side: null, showSeal: true, word: 'มั่งคั่ง', showName: false, name: '', plan: 'one' }
+  let chart = null, allPairs = [], picked = []
+
+  // ---------- วาดภาพ ----------
+  const view = $('view')
+  let drawing = false, again = false
+  const draw = async () => {
+    if (drawing) { again = true; return }
+    drawing = true; $('busy').textContent = 'กำลังวาดภาพ'
+    try { await window.Compose.render(view, S, meta, `assets/base/${S.image}.jpg?v=202611011`); $('busy').textContent = ''; view.dataset.ready = (+view.dataset.ready || 0) + 1 }
+    catch (e) { $('busy').textContent = 'โหลดภาพไม่สำเร็จ ลองแตะอีกครั้ง'; console.error(e) }
+    drawing = false
+    if (again) { again = false; draw() }
+  }
+
+  // ---------- ตัวเลือก ----------
+  const chips = (box, items, isOn, onTap) => {
+    box.textContent = ''
+    for (const [value, text] of items) {
+      const b = el('button', 'chip', text); b.type = 'button'; b.setAttribute('aria-pressed', isOn(value))
+      b.onclick = () => { onTap(value); renderControls(); draw() }
+      box.append(b)
+    }
+  }
+  const renderControls = () => {
+    chips($('frames'), [...Object.entries(meta.frames).map(([k, f]) => [k, f.label]), ['none', 'ไม่ใส่']], v => S.frame === v, v => { S.frame = v; S.frameChosen = true })
+    const gridText = S.grid ? `ตารางของคุณ: ${S.grid.slice(0, 3).join(' ')} / ${S.grid.slice(3, 6).join(' ')} / ${S.grid.slice(6).join(' ')}` : ''
+    $('gridNote').textContent = gridText
+    chips($('numberPick'), [...allPairs.map(p => [p.num, p.num]), ['none', 'ไม่ใส่']], v => v === 'none' ? !S.showNumber : S.showNumber && S.number === v, v => { if (v === 'none') S.showNumber = false; else { S.showNumber = true; S.number = v } })
+    chips($('numberStyle'), [['ar', 'เลขสากล'], ['th', 'เลขไทย']], v => (v === 'th') === S.thaiNumber, v => { S.thaiNumber = v === 'th' })
+    chips($('sidePick'), [['R', 'ขวา'], ['L', 'ซ้าย']], v => (S.side || meta.deities.find(d => d.id === S.image).side) === v, v => { S.side = v })
+    chips($('words'), [...WORDS.map(w => [w, w]), ['none', 'ไม่ใส่']], v => v === 'none' ? !S.showSeal : S.showSeal && S.word === v && !$('ownWord').value.trim(), v => { $('ownWord').value = ''; if (v === 'none') S.showSeal = false; else { S.showSeal = true; S.word = v } })
+    for (const b of $('thumbs').children) b.setAttribute('aria-pressed', b.dataset.id === S.image)
+    for (const b of $('plans').children) b.setAttribute('aria-pressed', b.dataset.plan === S.plan)
+    syncPay()
+  }
+  meta.deities.forEach(d => {
+    const b = el('button', 'thumb'); b.type = 'button'; b.dataset.id = d.id
+    const i = el('img'); i.src = `assets/thumb/${d.id}.jpg?v=202611011`; i.alt = ''; i.loading = 'lazy'; i.width = 180; i.height = 390
+    b.append(i, el('span', '', d.label))
+    b.onclick = () => { S.image = d.id; if (!S.frameChosen) S.frame = DEFAULT_FRAME[d.id.split('-')[0]]; renderControls(); draw() }
+    $('thumbs').append(b)
+  })
+  ;[['one', SHOP.price.one, 'ภาพนี้ 1 ภาพ'], ['set', SHOP.price.set, `ทุกภาพ ${meta.deities.length} ภาพ`]].forEach(([k, p, t]) => {
+    const b = el('button', 'plan'); b.type = 'button'; b.dataset.plan = k; b.append(el('b', '', `${p} บาท`), el('span', '', t))
+    b.onclick = () => { S.plan = k; renderControls() }; $('plans').append(b)
+  })
+  $('ownWord').oninput = () => { const v = $('ownWord').value.trim(); if (v) { S.showSeal = true; S.word = v } else S.word = WORDS[0]; renderControls(); draw() }
+  $('name').oninput = () => { S.name = $('name').value.trim(); S.showName = !!S.name; draw() }
+
+  // ---------- เลขมงคล ----------
+  const rebuildGrid = () => {
+    const pool = allPairs.map(p => p.num)
+    const g = window.Lucky.grid(chart.kal, picked.length ? picked : pool, pool, chart)
+    S.grid = g.cells
+    return g
+  }
+  const renderPairs = () => {
+    const box = $('pairs'); box.textContent = ''
+    allPairs.forEach(p => {
+      const row = el('div', 'pair'), num = el('div', 'num', p.num), txt = el('div')
+      num.append(el('small', '', `กลับเป็น ${p.back}`))
+      txt.append(el('b', '', p.label), el('p', '', p.name), el('p', '', SRC[p.source]))
+      const lab = el('label', 'check'), c = el('input'); c.type = 'checkbox'; c.checked = picked.includes(p.num)
+      c.onchange = () => { picked = allPairs.map(x => x.num).filter(n => n === p.num ? c.checked : picked.includes(n)); const g = rebuildGrid(); note(g); renderControls(); draw() }
+      lab.append(c, 'ใส่ในตารางเลข')
+      row.append(num, txt, lab); box.append(row)
+    })
+    box.append(el('div', 'avoid', `เลขที่ควรเลี่ยงของคนเกิดวัน${chart.day} คือ ${chart.avoidDigit} ระบบจึงไม่ใส่เลขนี้ในภาพ${chart.hasTime ? '' : ' และเพราะไม่รู้เวลาเกิด เลขชุดนี้จึงคิดจากวันเกิดอย่างเดียว'}`))
+    const n = el('p', 'help'); n.id = 'gridMiss'; box.append(n)
+  }
+  const note = g => { const n = $('gridMiss'); if (n) n.textContent = g.missing.length ? `ตารางมีช่องจำกัด คู่ ${g.missing.join(' ')} จึงยังไม่ได้อยู่ติดกัน ลองเอาติ๊กบางคู่ออกได้` : '' }
+
+  $('f').onsubmit = ev => {
+    ev.preventDefault()
+    const y = +$('y').value - 543, m = +$('m').value, d = +$('d').value, ok = new Date(Date.UTC(y, m - 1, d)).getUTCMonth() === m - 1
+    $('err').hidden = ok
+    if (!ok) { $('err').textContent = 'เดือนนี้ไม่มีวันที่นี้ ลองเลือกวันใหม่'; return }
+    const noTime = $('noTime').checked
+    chart = window.Lucky.build(window.Health, window.Reader, noTime ? { y, m, d, hh: null, mm: null, night: $('night').checked } : { y, m, d, hh: +$('hh').value, mm: +$('mm').value, lon: lonOf(), province: $('prov').value })
+    allPairs = [...chart.pairs, ...chart.extras]; picked = allPairs.map(p => p.num)
+    S.number = allPairs[0].num; S.showNumber = true
+    const g = rebuildGrid()
+    renderPairs(); note(g); renderControls()
+    ;['numbers', 'studio', 'buy'].forEach(id => { $(id).hidden = false })
+    draw(); $('numbers').scrollIntoView()
+  }
+
+  // ---------- รับภาพ ----------
+  const store = { get: () => { try { return JSON.parse(localStorage.getItem('amt-wallpaper') || 'null') } catch { return null } }, set: v => { try { localStorage.setItem('amt-wallpaper', JSON.stringify(v)) } catch {} } }
+  let pass = store.get()
+  if (pass && pass.exp && pass.exp < Date.now()) pass = null
+  const covers = () => pass && (pass.scope === 'set' || pass.image === S.image)
+  const syncPay = () => {
+    const open = SHOP.paymentsOpen
+    $('notice').hidden = open
+    $('payClosed').hidden = open
+    $('paid').hidden = !covers(); $('payOpen').hidden = !open || covers()
+    $('plans').hidden = covers()
+    if (open) {
+      $('payAmount').textContent = S.plan === 'set' ? SHOP.price.set : SHOP.price.one
+      $('payBank').textContent = `${SHOP.bank.name} ${SHOP.bank.account} ${SHOP.bank.holder}`
+    }
+    if (covers()) $('paidNote').textContent = pass.scope === 'set' ? 'เลือกภาพไหนก็บันทึกไฟล์เต็มได้' : 'บันทึกภาพนี้เป็นไฟล์เต็มได้'
+  }
+  const saveBlob = async (blob, name) => {
+    const inApp = /Line\/|FBAN|FBAV|Instagram/i.test(navigator.userAgent)
+    const file = new File([blob], name, { type: 'image/jpeg' })
+    if (inApp) {
+      if (navigator.canShare && navigator.canShare({ files: [file] })) { try { await navigator.share({ files: [file] }); return } catch {} }
+      $('saveImg').src = URL.createObjectURL(blob); $('saveov').hidden = false; return
+    }
+    const a = el('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.append(a); a.click(); a.remove()
+    setTimeout(() => URL.revokeObjectURL(a.href), 60000)
+  }
+  const blobOf = c => new Promise(ok => c.toBlob(ok, 'image/jpeg', .93))
+  $('saveClose').onclick = () => { $('saveov').hidden = true }
+  $('savePreview').onclick = async () => { while (drawing) await new Promise(r => setTimeout(r, 60)); saveBlob(await blobOf(view), `amatathewa-ตัวอย่าง-${S.image}.jpg`) }
+  $('sendSlip').onclick = async () => {
+    const file = $('slip').files[0], err = $('payErr'); err.hidden = true
+    if (!file) { err.textContent = 'แนบรูปสลิปก่อนนะครับ'; err.hidden = false; return }
+    const b = $('sendSlip'); b.disabled = true; b.textContent = 'กำลังตรวจสลิป'
+    try {
+      const fd = new FormData(); fd.append('plan', S.plan); fd.append('image', S.image); fd.append('slip', file)
+      const r = await fetch(`${SHOP.api}/order`, { method: 'POST', body: fd }), j = await r.json()
+      if (!r.ok) throw new Error(j.message || 'ตรวจสลิปไม่ผ่าน')
+      pass = { token: j.token, scope: j.scope, image: j.image, exp: j.exp }; store.set(pass); renderControls()
+    } catch (e) { err.textContent = e.message + ' ถ้าโอนแล้วแต่ไม่ผ่าน ทักมาที่ LINE ของอมตเทวาพร้อมสลิป'; err.hidden = false }
+    b.disabled = false; b.textContent = 'ส่งสลิปและรับภาพ'
+  }
+  $('saveFull').onclick = async () => {
+    const b = $('saveFull'), err = $('fullErr'); err.hidden = true; b.disabled = true; b.textContent = 'กำลังสร้างไฟล์เต็ม'
+    try {
+      const r = await fetch(`${SHOP.api}/asset/${S.image}`, { headers: { Authorization: `Bearer ${pass.token}` } })
+      if (!r.ok) throw new Error((await r.json()).message || 'โหลดไฟล์ไม่ได้')
+      const url = URL.createObjectURL(await r.blob()), c = document.createElement('canvas'); c.width = meta.full[0]; c.height = meta.full[1]
+      await window.Compose.render(c, S, meta, url)
+      await saveBlob(await blobOf(c), `amatathewa-${S.image}.jpg`); URL.revokeObjectURL(url)
+    } catch (e) { err.textContent = e.message + ' ลองกดอีกครั้ง'; err.hidden = false }
+    b.disabled = false; b.textContent = 'บันทึกภาพเต็ม'
+  }
+  renderControls()
+  window.__shop = { S, meta, draw, set: o => { Object.assign(S, o); renderControls(); return draw() }, get chart() { return chart } }
+})()

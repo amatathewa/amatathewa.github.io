@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="data:,">
+<meta name="robots" content="noindex">
+<title>วอลเปเปอร์องค์เทพหมึกจีน | AMATATHEWA อมตเทวา</title>
+<meta name="description" content="วอลเปเปอร์องค์เทพแนวหมึกจีน พร้อมเลขมงคลเฉพาะคน ประยุกต์จากตำราโหราศาสตร์ไทย เลือกแต่งภาพได้เองทุกอย่าง">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Thai:wght@500;700&family=Sarabun:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+@font-face{font-family:ShopSeal;src:url(assets/Sarabun-Bold.ttf);font-weight:700;font-display:swap}
+@font-face{font-family:ShopName;src:url(assets/Sarabun-Medium.ttf);font-weight:500;font-display:swap}
+:root{--paper:#efe6d6;--paper2:#e6dbc8;--ink:#26211c;--soft:#62584c;--line:#cdbfa8;--seal:#a8321f;--white:#fbf7ef;--on:#26211c}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 17px/1.65 Sarabun,sans-serif}
+.wrap{max-width:1040px;margin:auto;padding:0 16px}
+.notice{background:var(--ink);color:var(--paper);text-align:center;font-size:15px;padding:7px 16px}
+.brand{font:700 18px "Noto Serif Thai",serif;padding:16px 0}
+h1,h2{font-family:"Noto Serif Thai",serif;line-height:1.35;margin:0 0 10px}
+h1{font-size:clamp(30px,7vw,46px)}
+h2{font-size:clamp(23px,4.5vw,30px)}
+.lead{color:var(--soft);margin:0 0 18px}
+section{padding:30px 0;border-top:1px solid var(--line)}
+.hero{display:grid;gap:20px;padding-bottom:30px}
+.hero img{display:block;width:min(62vw,290px);height:auto;margin:auto;border-radius:12px;box-shadow:0 12px 30px rgba(50,35,20,.24)}
+.card{background:var(--white);padding:18px 16px;border-radius:8px}
+label{display:block;font-weight:500;margin:14px 0 5px}
+select,input[type=text],input[type=file]{width:100%;font:inherit;min-height:46px;padding:9px 10px;border:1px solid var(--line);border-radius:6px;background:#fff;color:var(--ink)}
+.row3{display:grid;grid-template-columns:1fr 1.5fr 1.1fr;gap:8px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.check{display:flex;gap:10px;align-items:center;font-weight:400;margin:12px 0 0;min-height:44px;cursor:pointer}
+.check input{width:24px;height:24px;flex:none;accent-color:var(--ink)}
+.btn{display:block;width:100%;min-height:52px;border:0;border-radius:6px;background:var(--seal);color:#fff;font:700 18px Sarabun,sans-serif;padding:12px 18px;text-align:center;text-decoration:none;cursor:pointer}
+.btn.alt{background:var(--ink)}
+.btn:disabled{background:#857b6f;cursor:not-allowed}
+.err{color:#9c4700;font-weight:700;margin-top:10px}
+.help{font-size:15px;color:var(--soft);margin:6px 0 0}
+.pair{display:grid;grid-template-columns:auto 1fr;gap:2px 14px;align-items:start;padding:14px 0;border-top:1px solid var(--line)}
+.pair:first-of-type{border-top:0;padding-top:4px}
+.pair .num{font:700 38px/1.15 "Noto Serif Thai",serif}
+.pair .num small{display:block;font-size:15px;font-weight:500;color:var(--soft)}
+.pair b{display:block}
+.pair p{margin:2px 0 0;font-size:15px;color:var(--soft)}
+.pair .check{grid-column:1/-1;margin-top:4px}
+.avoid{margin-top:14px;padding:12px;background:var(--paper2);border-radius:6px;font-size:15px}
+.studio{display:grid;gap:18px;grid-template-columns:minmax(0,1fr)}
+.studio>*{min-width:0}
+.stage{position:sticky;top:6px;z-index:5;background:var(--paper);padding:4px 0}
+canvas#view{display:block;width:min(100%,calc(56vh*852/1846));height:auto;aspect-ratio:852/1846;margin:auto;border-radius:12px;box-shadow:0 8px 26px rgba(50,35,20,.25);background:var(--paper2)}
+.busy{text-align:center;font-size:14px;color:var(--soft);height:21px}
+.ctl{padding:14px 0;border-top:1px solid var(--line)}
+.ctl:first-child{border-top:0}
+.ctl h3{font:700 17px Sarabun,sans-serif;margin:0 0 8px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{min-height:44px;padding:8px 14px;border:1px solid var(--ink);border-radius:99px;background:transparent;color:var(--ink);font:500 16px Sarabun,sans-serif;cursor:pointer}
+.chip[aria-pressed=true]{background:var(--ink);color:var(--white)}
+.chip[aria-pressed=true]::before{content:"✓ "}
+.thumbs{display:flex;gap:8px;overflow-x:auto;padding:4px 2px 10px;scroll-snap-type:x proximity}
+.thumb{flex:none;width:82px;padding:0;border:3px solid transparent;border-radius:9px;background:none;cursor:pointer;scroll-snap-align:start;color:var(--ink);font:400 12px/1.25 Sarabun,sans-serif;text-align:center}
+.thumb img{display:block;width:100%;height:auto;border-radius:6px}
+.thumb[aria-pressed=true]{border-color:var(--ink);font-weight:700}
+.plans{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.plan{min-height:92px;padding:12px;border:1px solid var(--ink);border-radius:8px;background:transparent;color:var(--ink);font:400 15px Sarabun,sans-serif;cursor:pointer}
+.plan b{display:block;font:700 28px "Noto Serif Thai",serif}
+.plan[aria-pressed=true]{background:var(--ink);color:var(--white)}
+.btn+.btn,.pay .btn{margin-top:12px}
+details{border-bottom:1px solid var(--line);padding:12px 0}
+summary{font-weight:500;cursor:pointer}
+details p{margin:8px 0 0;color:var(--soft)}
+footer{padding:26px 0 44px;color:var(--soft);font-size:14px;border-top:1px solid var(--line)}
+footer a{color:inherit}
+.saveov{position:fixed;inset:0;z-index:50;background:rgba(20,16,12,.93);display:flex;flex-direction:column;align-items:center;gap:10px;padding:14px;color:#fff;text-align:center}
+.saveov img{flex:1;min-height:0;max-width:100%;object-fit:contain;border-radius:8px}
+@media(min-width:800px){
+ .hero{grid-template-columns:1.1fr .9fr;align-items:center}
+ .studio{grid-template-columns:360px minmax(0,1fr);align-items:start}
+ .stage{top:12px}
+ canvas#view{width:min(100%,calc(84vh*852/1846))}
+ .card.narrow{max-width:560px}
+}
+</style>
+</head>
+<body>
+<div class="notice" id="notice">ช่วงทดลอง ยังไม่เปิดรับเงิน ลองคำนวณเลขและแต่งภาพได้ฟรี ภาพตัวอย่างมีลายน้ำ</div>
+<div class="wrap">
+  <div class="brand">AMATATHEWA อมตเทวา</div>
+  <div class="hero">
+    <div>
+      <h1>องค์เทพหมึกจีน พร้อมเลขมงคลของคุณเอง</h1>
+      <p class="lead">กรอกวันเกิด ระบบจะคำนวณเลขมงคลให้ โดยประยุกต์จากตำราโหราศาสตร์ไทย จากนั้นคุณเลือกแต่งภาพเองได้ทั้งหมด จะใส่เลข ตารางเลข หรือคำมงคลก็ได้ หรือจะไม่ใส่เลยก็ได้</p>
+      <a class="btn" href="#birth">เริ่มคำนวณเลขของฉัน</a>
+    </div>
+    <img src="assets/base/lakshmi-flame.jpg" alt="ภาพหมึกจีนพระแม่ลักษมีประคองตะเกียง" width="640" height="1387">
+  </div>
+
+  <section id="birth">
+    <h2>1. กรอกวันเกิด</h2>
+    <p class="lead">เราคำนวณในเครื่องของคุณ ไม่ส่งวันเวลาเกิดไปเก็บที่ไหน</p>
+    <form class="card narrow" id="f">
+      <label>วันเกิด</label>
+      <div class="row3"><select id="d" aria-label="วัน"></select><select id="m" aria-label="เดือน"></select><select id="y" aria-label="ปี พ.ศ."></select></div>
+      <label class="check"><input type="checkbox" id="noTime"> ไม่รู้เวลาเกิด</label>
+      <div id="timeBox">
+        <label>เวลาเกิด</label>
+        <div class="row2"><select id="hh" aria-label="ชั่วโมง"></select><select id="mm" aria-label="นาที"></select></div>
+        <label for="prov">จังหวัดที่เกิด</label><select id="prov"></select>
+        <label for="amp">อำเภอที่เกิด</label><select id="amp"></select>
+      </div>
+      <label class="check" id="nightBox" hidden><input type="checkbox" id="night"> เกิดวันพุธตอนกลางคืน</label>
+      <button class="btn" style="margin-top:16px">คำนวณเลขมงคล</button>
+      <div class="err" id="err" hidden></div>
+    </form>
+  </section>
+
+  <section id="numbers" hidden>
+    <h2>2. เลขมงคลของคุณ</h2>
+    <p class="lead">ติ๊กคู่ที่อยากใส่ในตารางเลข ระบบจะจัดให้เลขที่อยู่ติดกันเป็นคู่มงคลทุกคู่ และไม่ใช้เลขกาลกิณีของคุณ</p>
+    <div class="card narrow" id="pairs"></div>
+    <a class="btn alt" href="#studio" style="margin-top:14px">ไปแต่งภาพ</a>
+  </section>
+
+  <section id="studio" hidden>
+    <h2>3. แต่งภาพของคุณ</h2>
+    <p class="lead">ทุกอย่างเลือกใส่หรือไม่ใส่ก็ได้ แตะแล้วภาพจะเปลี่ยนทันที</p>
+    <div class="studio">
+      <div class="stage"><canvas id="view" width="640" height="1387" role="img" aria-label="ภาพตัวอย่างวอลเปเปอร์"></canvas><div class="busy" id="busy"></div></div>
+      <div class="card">
+        <div class="ctl"><h3>ภาพองค์เทพ</h3><div class="thumbs" id="thumbs"></div></div>
+        <div class="ctl"><h3>ลายตารางเลขด้านหลัง</h3><div class="chips" id="frames"></div><p class="help" id="gridNote"></p></div>
+        <div class="ctl"><h3>เลขมงคลบนภาพ</h3><div class="chips" id="numberPick"></div>
+          <h3 style="margin-top:12px">แบบตัวเลข</h3><div class="chips" id="numberStyle"></div>
+          <h3 style="margin-top:12px">ตำแหน่ง</h3><div class="chips" id="sidePick"></div></div>
+        <div class="ctl"><h3>คำมงคลในตราแดง</h3><div class="chips" id="words"></div>
+          <input type="text" id="ownWord" maxlength="14" placeholder="หรือพิมพ์คำที่คุณชอบเอง" autocomplete="off" style="margin-top:10px" aria-label="พิมพ์คำมงคลเอง">
+          <p class="help">ตราเป็นสีแดง คนไทยจำนวนมากถือเรื่องเขียนชื่อตัวเองด้วยสีแดง จึงไม่แนะนำให้ใส่ชื่อในตรา</p></div>
+        <div class="ctl"><h3>ชื่อหมึกดำใต้ภาพ</h3><input type="text" id="name" maxlength="30" placeholder="ไม่ใส่ก็ได้" autocomplete="off" aria-label="ชื่อใต้ภาพ"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="buy" hidden>
+    <h2>4. รับภาพ</h2>
+    <div class="card narrow">
+      <div class="plans" id="plans"></div>
+      <div class="pay" id="payClosed">
+        <p class="help" style="margin-top:14px">ตอนนี้ยังไม่เปิดรับเงิน คุณบันทึกภาพตัวอย่างขนาดเล็กที่มีลายน้ำไปลองตั้งเป็นหน้าจอได้</p>
+        <button class="btn alt" id="savePreview" type="button">บันทึกภาพตัวอย่าง</button>
+      </div>
+      <div class="pay" id="payOpen" hidden>
+        <p style="margin:14px 0 0">โอนเงิน <b id="payAmount"></b> บาท เข้าบัญชี<br><span id="payBank"></span></p>
+        <label for="slip">แนบสลิป</label>
+        <input id="slip" type="file" accept="image/*">
+        <button class="btn" id="sendSlip" type="button">ส่งสลิปและรับภาพ</button>
+        <div class="err" id="payErr" hidden></div>
+      </div>
+      <div class="pay" id="paid" hidden>
+        <p style="margin:14px 0 0"><b>ชำระเงินแล้ว</b> <span id="paidNote"></span></p>
+        <button class="btn" id="saveFull" type="button">บันทึกภาพเต็ม</button>
+        <div class="err" id="fullErr" hidden></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>คำถามที่พบบ่อย</h2>
+    <details><summary>เลขคำนวณจากอะไร</summary><p>ประยุกต์จากตำราโหราศาสตร์ไทย ถ้ารู้เวลาเกิด ระบบใช้ทั้งดวงเกิดและทักษา ถ้าไม่รู้เวลาเกิด ระบบใช้ทักษาวันเกิดกับคู่เลขมาตรฐาน</p></details>
+    <details><summary>ตารางเลขคือยันต์จากตำราไหม</summary><p>ไม่ใช่ เป็นตารางเลขมงคลเฉพาะคนที่อมตเทวาออกแบบ เลขที่อยู่ติดกันซ้าย ขวา บน และล่างเป็นคู่มงคลทุกคู่ ภาพนี้ไม่ได้ผ่านพิธีปลุกเสก</p></details>
+    <details><summary>ใช้กับมือถือรุ่นไหนได้บ้าง</summary><p>ไฟล์เต็มมีขนาด 1290×2796 ใช้เป็นภาพพื้นหลังได้ทั้ง iPhone และ Android บางรุ่นอาจตัดขอบภาพเล็กน้อย</p></details>
+    <details><summary>ภาพนี้ช่วยเรื่องโชคลาภไหม</summary><p>ภาพชุดนี้เป็นงานศิลปะสำหรับคนที่ศรัทธาและรักความงาม เราไม่รับประกันผลด้านโชคลาภ สุขภาพ หรือความสำเร็จ</p></details>
+    <details><summary>คืนเงินได้ไหม</summary><p>เป็นไฟล์ดิจิทัล จึงไม่รับคืนหลังได้รับไฟล์แล้ว ยกเว้นไฟล์มีปัญหาและเราแก้ให้ไม่ได้</p></details>
+  </section>
+  <footer>© 2569 AMATATHEWA อมตเทวา · <a href="../tarot/web/">เปิดไพ่ทาโรต์</a></footer>
+</div>
+<div class="saveov" id="saveov" hidden><div>กดค้างที่ภาพเพื่อบันทึก</div><img id="saveImg" alt="ภาพสำหรับบันทึก"><button class="btn alt" id="saveClose" type="button" style="width:auto">ปิด</button></div>
+<script src="config.js?v=202611011"></script>
+<script src="calc.js?v=202611011"></script>
+<script src="compose.js?v=202611011"></script>
+<script src="shop.js?v=202611011"></script>
+</body>
+</html>
