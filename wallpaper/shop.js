@@ -114,6 +114,19 @@
   let pass = store.get()
   if (pass && pass.exp && pass.exp < Date.now()) pass = null
   const covers = () => pass && (pass.scope === 'set' || pass.image === S.image)
+  // QR พร้อมเพย์ตามมาตรฐาน EMVCo ใส่ยอดไว้ให้ ลูกค้าไม่ต้องพิมพ์เอง
+  const tlv = (id, v) => id + String(v.length).padStart(2, '0') + v
+  const crc16 = s => { let c = 0xFFFF; for (let i = 0; i < s.length; i++) { c ^= s.charCodeAt(i) << 8; for (let b = 0; b < 8; b++) c = c & 0x8000 ? (c << 1) ^ 0x1021 : c << 1; c &= 0xFFFF } return c.toString(16).toUpperCase().padStart(4, '0') }
+  const promptpayPayload = (phone, amount) => {
+    const body = tlv('00', '01') + tlv('01', '12') + tlv('29', tlv('00', 'A000000677010111') + tlv('01', '0066' + phone.slice(1))) + tlv('58', 'TH') + tlv('53', '764') + tlv('54', amount.toFixed(2)) + '6304'
+    return body + crc16(body)
+  }
+  const drawQr = amount => {
+    const qr = window.qrcode(0, 'M'); qr.addData(promptpayPayload(SHOP.bank.promptpay, amount)); qr.make()
+    const c = $('payQr'), n = qr.getModuleCount(), size = Math.floor(c.width / (n + 8)), off = Math.floor((c.width - size * n) / 2), x = c.getContext('2d')
+    x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height); x.fillStyle = '#000'
+    for (let r = 0; r < n; r++) for (let k = 0; k < n; k++) if (qr.isDark(r, k)) x.fillRect(off + k * size, off + r * size, size, size)
+  }
   const syncPay = () => {
     const open = SHOP.paymentsOpen
     $('notice').hidden = open
@@ -121,8 +134,11 @@
     $('paid').hidden = !covers(); $('payOpen').hidden = !open || covers()
     $('plans').hidden = covers()
     if (open) {
-      $('payAmount').textContent = S.plan === 'set' ? SHOP.price.set : SHOP.price.one
-      $('payBank').textContent = `${SHOP.bank.name} ${SHOP.bank.account} ${SHOP.bank.holder}`
+      const amount = S.plan === 'set' ? SHOP.price.set : SHOP.price.one
+      $('payAmount').textContent = amount
+      $('payPhone').textContent = SHOP.bank.promptpay.replace(/^(\d{3})(\d{3})(\d{4})$/, '$1-$2-$3')
+      $('payHolder').textContent = SHOP.bank.holder
+      drawQr(amount)
     }
     if (covers()) $('paidNote').textContent = pass.scope === 'set' ? 'เลือกภาพไหนก็บันทึกไฟล์เต็มได้' : 'บันทึกภาพนี้เป็นไฟล์เต็มได้'
   }
@@ -139,6 +155,7 @@
   const blobOf = c => new Promise(ok => c.toBlob(ok, 'image/jpeg', .93))
   $('saveClose').onclick = () => { $('saveov').hidden = true }
   $('savePreview').onclick = async () => { while (drawing) await new Promise(r => setTimeout(r, 60)); saveBlob(await blobOf(view), `amatathewa-ตัวอย่าง-${S.image}.jpg`) }
+  $('saveQr').onclick = async () => saveBlob(await blobOf($('payQr')), `amatathewa-qr-${S.plan === 'set' ? SHOP.price.set : SHOP.price.one}.jpg`)
   $('sendSlip').onclick = async () => {
     const file = $('slip').files[0], err = $('payErr'); err.hidden = true
     if (!file) { err.textContent = 'แนบรูปสลิปก่อนนะครับ'; err.hidden = false; return }

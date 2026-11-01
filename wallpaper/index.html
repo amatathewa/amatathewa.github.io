@@ -151,7 +151,11 @@ footer a{color:inherit}
         <button class="btn alt" id="savePreview" type="button">บันทึกภาพตัวอย่าง</button>
       </div>
       <div class="pay" id="payOpen" hidden>
-        <p style="margin:14px 0 0">โอนเงิน <b id="payAmount"></b> บาท เข้าบัญชี<br><span id="payBank"></span></p>
+        <p style="margin:14px 0 0">สแกนจ่าย <b id="payAmount"></b> บาท ด้วยแอปธนาคาร</p>
+        <canvas id="payQr" width="300" height="300" style="display:block;width:220px;height:220px;margin:12px auto 0;background:#fff" role="img" aria-label="QR พร้อมเพย์"></canvas>
+        <p class="help" style="margin-top:10px">เปิดเว็บบนมือถือ กดบันทึก QR แล้วเปิดรูปในแอปธนาคารของคุณ หรือโอนเข้าพร้อมเพย์ <b id="payPhone"></b></p>
+        <p class="help" style="margin-top:6px">ชื่อที่ขึ้นตอนโอนคือ <b id="payHolder"></b> เจ้าของร้านอมตเทวา</p>
+        <button class="btn alt" id="saveQr" type="button">บันทึก QR</button>
         <label for="slip">แนบสลิป</label>
         <input id="slip" type="file" accept="image/*">
         <button class="btn" id="sendSlip" type="button">ส่งสลิปและรับภาพ</button>
@@ -179,6 +183,7 @@ footer a{color:inherit}
 <script src="config.js?v=202611011"></script>
 <script src="calc.js?v=202611011"></script>
 <script src="compose.js?v=202611011"></script>
-<script src="shop.js?v=202611011"></script>
+<script src="qr.js?v=202611021"></script>
+<script src="shop.js?v=202611021"></script>
 </body>
 </html>
