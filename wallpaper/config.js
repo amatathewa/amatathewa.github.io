@@ -2,6 +2,6 @@
 window.SHOP = {
   paymentsOpen: true,
   api: 'https://amatathewa-wallpaper.amatathewa.workers.dev',
-  bank: { promptpay: '0992151825', holder: 'นาย ณัทกร ภรณพัทธนากุล' },
+  bank: { name: 'ธนาคารกสิกรไทย', account: '237-8-08515-5', holder: 'นาย ณัทกร ภรณพัทธนากุล', wallet: '004999249899377' },
   price: { one: 99, set: 399 },
 }

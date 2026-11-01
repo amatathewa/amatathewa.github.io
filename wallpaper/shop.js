@@ -71,11 +71,19 @@
   const draw = async () => {
     if (drawing) { again = true; return }
     drawing = true; $('busy').textContent = 'กำลังวาดภาพ'
-    try { await window.Compose.render(view, S, meta, `assets/base/${S.image}.jpg?v=202611031`); $('busy').textContent = ''; view.dataset.ready = (+view.dataset.ready || 0) + 1; showPaidPreview() }
+    try { await window.Compose.render(view, S, meta, `assets/base/${S.image}.jpg?v=202611031`); $('busy').textContent = ''; view.dataset.ready = (+view.dataset.ready || 0) + 1; showPaidPreview(); $('miniView').getContext('2d').drawImage(view, 0, 0, 168, 364) }
     catch (e) { $('busy').textContent = 'โหลดภาพไม่สำเร็จ ลองแตะอีกครั้ง'; console.error(e) }
     drawing = false
     if (again) { again = false; draw() }
   }
+
+  // มือถือ: ภาพใหญ่เลื่อนตามหน้าปกติ พอเลื่อนลงไปแต่ง มีภาพเล็กมุมจอให้เห็นผล กดแล้วกลับไปดูภาพใหญ่
+  const mini = $('miniView'), mobile = window.matchMedia('(max-width:799px)')
+  let stageVisible = true, studioVisible = false
+  const syncMini = () => { mini.hidden = !(mobile.matches && studioVisible && !stageVisible) }
+  new IntersectionObserver(([e]) => { stageVisible = e.isIntersecting; syncMini() }, { threshold: .25 }).observe($('stage'))
+  new IntersectionObserver(([e]) => { studioVisible = e.isIntersecting; syncMini() }).observe($('studio'))
+  mini.onclick = () => $('stage').scrollIntoView({ block: 'center' })
 
   // ---------- ตัวเลือก ----------
   const chips = (box, items, isOn, onTap) => {
@@ -132,6 +140,10 @@
     return g
   }
   const goGrid = i => { S.variant = (i + gridOptions.length) % gridOptions.length; S.grid = gridOptions[S.variant].split('').map(Number); S.tried = [...new Set([...(S.tried || []), S.variant])].sort((a, b) => a - b); saveDesign(); renderGridWhy(); renderControls(); draw() }
+  const dropTried = i => {
+    S.tried = i === null ? [0] : S.tried.filter(x => x !== i)
+    if (!S.tried.includes(S.variant)) goGrid(0); else { saveDesign(); renderGridWhy(); renderControls() }
+  }
   const renderGridPicker = () => document.querySelectorAll('.gridpick').forEach(box => {
     box.textContent = ''
     const nav = el('div', 'gridnav'), prev = el('button', 'chip', '◀ แบบก่อนหน้า'), next = el('button', 'chip', 'แบบถัดไป ▶')
@@ -139,11 +151,14 @@
     nav.append(prev, el('b', '', `แบบที่ ${S.variant + 1} จาก ${gridOptions.length}`), next); box.append(nav)
     const seen = el('div', 'triedgrids')
     ;(S.tried || []).forEach(i => {
-      const b = el('button', 'tried'); b.type = 'button'; b.setAttribute('aria-pressed', i === S.variant); b.setAttribute('aria-label', `กลับไปตารางแบบที่ ${i + 1}`)
+      const wrap = el('div', 'triedwrap'), b = el('button', 'tried'); b.type = 'button'; b.setAttribute('aria-pressed', i === S.variant); b.setAttribute('aria-label', `กลับไปตารางแบบที่ ${i + 1}`)
       const t = el('span', 'triedmini'); [...gridOptions[i]].forEach(n => t.append(el('i', '', thai(n))))
-      b.append(t, el('small', '', i === 0 ? 'แบบแนะนำ' : `แบบที่ ${i + 1}`)); b.onclick = () => goGrid(i); seen.append(b)
+      b.append(t, el('small', '', i === 0 ? 'แบบแนะนำ' : `แบบที่ ${i + 1}`)); b.onclick = () => goGrid(i); wrap.append(b)
+      if (i !== 0) { const del = el('button', 'trieddel', '×'); del.type = 'button'; del.setAttribute('aria-label', `ลบตารางแบบที่ ${i + 1} ออกจากแถบนี้`); del.onclick = () => dropTried(i); wrap.append(del) }
+      seen.append(wrap)
     })
-    box.append(el('p', 'help', 'เรียงลำดับตายตัว ไม่ได้สุ่ม กดกลับไปแบบที่ดูแล้วได้ทุกเมื่อ'), seen)
+    box.append(el('p', 'help', 'เรียงลำดับตายตัว ไม่ได้สุ่ม กดกลับไปแบบที่ดูแล้วได้ทุกเมื่อ กด × เพื่อลบแบบที่ไม่เอาออกจากแถบ'), seen)
+    if ((S.tried || []).length > 2) { const clear = el('button', 'chip', 'ล้างแบบที่ดูแล้ว'); clear.type = 'button'; clear.onclick = () => dropTried(null); box.append(clear) }
   })
   const renderPairs = () => {
     const box = $('pairs'); box.textContent = ''
@@ -222,12 +237,13 @@
   // QR พร้อมเพย์ตามมาตรฐาน EMVCo ใส่ยอดไว้ให้ ลูกค้าไม่ต้องพิมพ์เอง
   const tlv = (id, v) => id + String(v.length).padStart(2, '0') + v
   const crc16 = s => { let c = 0xFFFF; for (let i = 0; i < s.length; i++) { c ^= s.charCodeAt(i) << 8; for (let b = 0; b < 8; b++) c = c & 0x8000 ? (c << 1) ^ 0x1021 : c << 1; c &= 0xFFFF } return c.toString(16).toUpperCase().padStart(4, '0') }
-  const promptpayPayload = (phone, amount) => {
-    const body = tlv('00', '01') + tlv('01', '12') + tlv('29', tlv('00', 'A000000677010111') + tlv('01', '0066' + phone.slice(1))) + tlv('58', 'TH') + tlv('53', '764') + tlv('54', amount.toFixed(2)) + '6304'
+  // ใช้รหัส e-Wallet จาก QR ของ K PLUS แทนเบอร์โทร ลูกค้าถอดรหัสแล้วไม่เห็นเบอร์
+  const promptpayPayload = (wallet, amount) => {
+    const body = tlv('00', '01') + tlv('01', '12') + tlv('29', tlv('00', 'A000000677010111') + tlv('03', wallet)) + tlv('58', 'TH') + tlv('53', '764') + tlv('54', amount.toFixed(2)) + '6304'
     return body + crc16(body)
   }
   const drawQr = amount => {
-    const qr = window.qrcode(0, 'M'); qr.addData(promptpayPayload(SHOP.bank.promptpay, amount)); qr.make()
+    const qr = window.qrcode(0, 'M'); qr.addData(promptpayPayload(SHOP.bank.wallet, amount)); qr.make()
     const c = $('payQr'), n = qr.getModuleCount(), size = Math.floor(c.width / (n + 8)), off = Math.floor((c.width - size * n) / 2), x = c.getContext('2d')
     x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height); x.fillStyle = '#000'
     for (let r = 0; r < n; r++) for (let k = 0; k < n; k++) if (qr.isDark(r, k)) x.fillRect(off + k * size, off + r * size, size, size)
@@ -242,7 +258,8 @@
     if (open && !paid) {
       const amount = S.plan === 'set' ? SHOP.price.set : SHOP.price.one
       $('payAmount').textContent = amount
-      $('payPhone').textContent = SHOP.bank.promptpay.replace(/^(\d{3})(\d{3})(\d{4})$/, '$1-$2-$3')
+      $('payBankName').textContent = SHOP.bank.name
+      $('payAccount').textContent = SHOP.bank.account
       $('payHolder').textContent = SHOP.bank.holder
       drawQr(amount)
     }
@@ -268,6 +285,11 @@
   $('saveClose').onclick = () => { $('saveov').hidden = true }
   $('savePreview').onclick = async () => { while (drawing) await new Promise(r => setTimeout(r, 60)); saveBlob(await blobOf(view), `amatathewa-ตัวอย่าง-${S.image}.jpg`) }
   $('saveQr').onclick = async () => saveBlob(await blobOf($('payQr')), `amatathewa-qr-${S.plan === 'set' ? SHOP.price.set : SHOP.price.one}.jpg`)
+  $('copyAccount').onclick = async () => {
+    const b = $('copyAccount'), number = SHOP.bank.account.replace(/-/g, '')
+    try { await navigator.clipboard.writeText(number); b.textContent = 'คัดลอกแล้ว' } catch { b.textContent = number }
+    setTimeout(() => { b.textContent = 'คัดลอกเลขบัญชี' }, 2500)
+  }
   $('sendSlip').onclick = async () => {
     const file = $('slip').files[0], err = $('payErr'); err.hidden = true
     if (!file) { err.textContent = 'แนบรูปสลิปก่อนนะครับ'; err.hidden = false; return }

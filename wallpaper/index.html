@@ -19,19 +19,20 @@
 <style>
 @font-face{font-family:ShopSeal;src:url(assets/Sarabun-Bold.ttf);font-weight:700;font-display:swap}
 @font-face{font-family:ShopName;src:url(assets/Charm-Bold.ttf);font-weight:700;font-display:swap}
-:root{--plum:#14110e;--deep:#0b0908;--lift:#2a2521;--burgundy:#68221e;--gold:#c99b3c;--goldsoft:#e3c88b;--ivory:#f4ecdd;--muted:#c9c0b4;--line:rgba(227,200,139,.26);--glass:rgba(244,236,221,.06);--paper:#efe6d6;--ink:#26211c;--inksoft:#5d5346}
+:root{--plum:#14110e;--deep:#0b0908;--lift:#2a2521;--burgundy:#68221e;--gold:#c99b3c;--goldsoft:#e3c88b;--ivory:#f4ecdd;--muted:#c9c0b4;--line:rgba(227,200,139,.26);--glass:rgba(20,17,14,.68);--paper:#efe6d6;--ink:#26211c;--inksoft:#5d5346}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 html{scroll-behavior:smooth;background:var(--deep)}
-body{margin:0;background:linear-gradient(160deg,var(--lift) 0,var(--plum) 700px,var(--deep) 1900px,var(--deep) 100%);color:var(--ivory);font:400 17px/1.7 "IBM Plex Sans Thai",sans-serif}
+body{margin:0;background:none;color:var(--ivory);font:400 17px/1.7 "IBM Plex Sans Thai",sans-serif}
+body::before{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradient(rgba(11,9,8,.36),rgba(11,9,8,.36)),var(--bgm,url(assets/bg1-m.jpg)) center/cover no-repeat}
 .wrap{max-width:1080px;margin:auto;padding:0 18px}
 .notice{background:var(--deep);color:var(--goldsoft);text-align:center;font-size:15px;padding:7px 16px}
 .brand{display:flex;justify-content:center;padding:22px 0 14px}
 .brand img{width:132px;height:auto;display:block}
 h1,h2{font-family:Trirong,serif;font-weight:400;line-height:1.35;margin:0 0 12px;letter-spacing:.01em}
-h1{font-size:clamp(32px,7vw,50px)}
-h2{font-size:clamp(25px,4.6vw,33px);color:var(--goldsoft)}
-.lead{color:var(--muted);margin:0 0 20px}
+h1{font-size:clamp(30px,7vw,42px);text-shadow:0 1px 14px rgba(0,0,0,.7)}
+h2{font-size:clamp(25px,4.6vw,33px);color:var(--goldsoft);text-shadow:0 1px 12px rgba(0,0,0,.85)}
+.lead{color:var(--ivory);margin:0 0 20px;text-shadow:0 1px 10px rgba(0,0,0,.9)}
 .price{color:var(--goldsoft);margin:0 0 20px;font-size:16px;letter-spacing:.02em}
 section{padding:38px 0;border-top:1px solid var(--line)}
 .hero{display:grid;gap:24px;padding:6px 0 38px}
@@ -75,7 +76,13 @@ select,input[type=text],input[type=file]{width:100%;font:inherit;min-height:48px
 .gridnav{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px 10px;margin-top:10px;text-align:center}
 .gridnav b{order:-1;width:100%;font-weight:500}
 .gridnav .chip::before{content:none}
-.triedgrids{display:flex;gap:8px;overflow-x:auto;padding:6px 2px}
+.triedgrids{display:flex;gap:10px;overflow-x:auto;padding:10px 8px 6px 2px}
+.triedwrap{position:relative;flex:none}
+.trieddel{position:absolute;top:-8px;right:-8px;width:30px;height:30px;padding:0;border-radius:50%;border:1px solid var(--goldsoft);background:var(--plum);color:var(--ivory);font:400 18px/1 sans-serif;cursor:pointer}
+.bankbox{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:12px 0 0;padding:14px;border:1px solid var(--line);border-radius:3px}
+.bankbox span{color:var(--muted);font-size:15px}
+.bankbox b{font-weight:500}
+#payAccount{font-size:21px;letter-spacing:.03em;color:var(--goldsoft)}
 .tried{flex:none;width:76px;padding:4px;background:none;border:1px solid rgba(244,236,221,.34);border-radius:4px;color:inherit;cursor:pointer}
 .onpaper .tried{border-color:rgba(38,33,28,.34)}
 .tried[aria-pressed=true]{border:2px solid var(--gold)}
@@ -85,8 +92,9 @@ select,input[type=text],input[type=file]{width:100%;font:inherit;min-height:48px
 .gridpairs{margin:8px 0 0;padding-left:20px;columns:2;column-gap:18px;font-size:15px}
 .studio{display:grid;gap:18px;grid-template-columns:minmax(0,1fr)}
 .studio>*{min-width:0}
-.stage{position:sticky;top:0;z-index:5;background:rgba(11,9,8,.92);padding:8px 0 2px}
-canvas#view{display:block;width:min(100%,calc(54vh*852/1846));height:auto;aspect-ratio:852/1846;margin:auto;border-radius:10px;box-shadow:0 12px 34px rgba(0,0,0,.55);background:var(--paper)}
+.stage{padding:8px 0 2px}
+.miniview{position:fixed;right:12px;bottom:14px;z-index:20;width:84px;height:182px;border-radius:8px;border:1px solid rgba(227,200,139,.6);box-shadow:0 8px 24px rgba(0,0,0,.7);cursor:pointer}
+canvas#view{display:block;width:min(78%,calc(78vh*852/1846));height:auto;aspect-ratio:852/1846;margin:auto;border-radius:10px;box-shadow:0 12px 34px rgba(0,0,0,.55);background:var(--paper)}
 canvas,img{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 .busy{text-align:center;font-size:14px;color:var(--muted);height:21px}
 .ctl{padding:16px 0;border-top:1px solid var(--line)}
@@ -120,18 +128,20 @@ footer a{color:inherit}
  .hero{grid-template-columns:1.05fr .95fr;align-items:center;gap:44px}
  .gridwhy{grid-template-columns:220px minmax(0,1fr)}
  .studio{grid-template-columns:360px minmax(0,1fr);align-items:start}
- .stage{top:12px;background:none}
+ .stage{position:sticky;top:12px}
+ body::before{background-image:linear-gradient(rgba(11,9,8,.36),rgba(11,9,8,.36)),url(assets/bg-d.jpg)}
  canvas#view{width:min(100%,calc(84vh*852/1846))}
  .card.narrow{max-width:620px}
 }
 </style>
+<script>try{const b=new URLSearchParams(location.search).get('bg');if(b==='1'||b==='2')document.documentElement.style.setProperty('--bgm','url(assets/bg'+b+'-m.jpg)')}catch{}</script>
 </head>
 <body>
 <div class="notice" id="notice">ช่วงทดลอง ยังไม่เปิดรับเงิน ลองคำนวณเลขและแต่งภาพได้ฟรี ภาพตัวอย่างมีลายน้ำ</div>
 <div class="wrap">
   <div class="brand"><img src="assets/logo.png" alt="AMATATHEWA อมตเทวา" width="300" height="207" draggable="false"></div>
   <div class="hero">
-    <figure><img src="assets/hero.jpg?v=202611033" alt="ภาพหมึกจีนองค์พระศิวะอุ้มพระพิฆเนศน้อย" width="800" height="1005" draggable="false"></figure>
+    <figure><img src="assets/hero.jpg?v=202611035" alt="ภาพหมึกจีนองค์พระศิวะอุ้มพระพิฆเนศน้อย" width="800" height="1005" draggable="false"></figure>
     <div>
       <h1>องค์เทพหมึกจีน<br>เลขมงคลจากวันเกิดของคุณ</h1>
       <p class="lead">กรอกวันเกิด เราคำนวณเลขมงคลให้ โดยประยุกต์จากตำราโหราศาสตร์ไทย จากนั้นคุณเลือกองค์เทพ เลข ตารางเลข และคำมงคลได้เองทุกจุด ดูตัวอย่างได้ฟรีก่อนตัดสินใจ</p>
@@ -189,7 +199,7 @@ footer a{color:inherit}
     <h2>3. แต่งภาพของคุณ</h2>
     <p class="lead">ทุกอย่างเลือกใส่หรือไม่ใส่ก็ได้ แตะแล้วภาพจะเปลี่ยนทันที</p>
     <div class="studio">
-      <div class="stage"><canvas id="view" width="640" height="1387" role="img" aria-label="ภาพตัวอย่างวอลเปเปอร์"></canvas><div class="busy" id="busy"></div></div>
+      <div class="stage" id="stage"><canvas id="view" width="640" height="1387" role="img" aria-label="ภาพตัวอย่างวอลเปเปอร์"></canvas><div class="busy" id="busy"></div></div>
       <div class="card">
         <div class="ctl"><h3>ภาพองค์เทพ</h3><div class="thumbs" id="thumbs"></div></div>
         <div class="ctl"><h3>ลายตารางเลขด้านหลัง</h3><div class="chips" id="frames"></div><p class="help" id="frameNote"></p><p class="help">เลือกตามที่ชอบได้เลย ไม่มีลายไหนผิด</p><div class="gridpick" style="margin-top:12px"></div></div>
@@ -215,10 +225,12 @@ footer a{color:inherit}
         <button class="btn alt" id="savePreview" type="button">บันทึกภาพตัวอย่าง</button>
       </div>
       <div class="pay" id="payOpen" hidden>
-        <p style="margin:14px 0 0">สแกนจ่าย <b id="payAmount"></b> บาท ด้วยแอปธนาคาร</p>
+        <p style="margin:14px 0 0">ยอดที่ต้องโอน <b id="payAmount"></b> บาท</p>
+        <div class="bankbox"><span>ธนาคาร</span><b id="payBankName"></b><span>เลขบัญชี</span><b id="payAccount"></b><span>ชื่อบัญชี</span><b id="payHolder"></b></div>
+        <button class="btn alt" id="copyAccount" type="button">คัดลอกเลขบัญชี</button>
+        <p class="help center" style="margin-top:14px">หรือสแกน QR ยอดนี้ด้วยแอปธนาคาร</p>
         <canvas id="payQr" width="300" height="300" style="display:block;width:220px;height:220px;margin:12px auto 0;background:#fff" role="img" aria-label="QR พร้อมเพย์"></canvas>
-        <p class="help" style="margin-top:10px">เปิดเว็บบนมือถือ กดบันทึก QR แล้วเปิดรูปในแอปธนาคารของคุณ หรือโอนเข้าพร้อมเพย์ <b id="payPhone"></b></p>
-        <p class="help" style="margin-top:6px">ชื่อที่ขึ้นตอนโอนคือ <b id="payHolder"></b> เจ้าของร้านอมตเทวา</p>
+        <p class="help center" style="margin-top:10px">เปิดเว็บบนมือถือ กดบันทึก QR แล้วเปิดรูปในแอปธนาคาร</p>
         <button class="btn alt" id="saveQr" type="button">บันทึก QR</button>
         <label for="slip">แนบสลิป</label>
         <p class="help" style="margin:0 0 6px">เคยซื้อแล้วแต่ภาพหายจากเครื่อง แนบสลิปเดิมและใช้วันเกิดเดิม เพื่อโหลดต่อได้ภายใน 30 วัน</p>
@@ -249,11 +261,12 @@ footer a{color:inherit}
   </section>
   <footer>อมตเทวา ความดีงามอันเป็นนิรันดร์<br>© 2569 AMATATHEWA · ภาพทั้งหมดเป็นลิขสิทธิ์ของอมตเทวา ห้ามคัดลอกหรือนำไปขายต่อ · <a href="../tarot/web/">เปิดไพ่ทาโรต์</a></footer>
 </div>
+<canvas class="miniview" id="miniView" width="168" height="364" role="button" aria-label="กลับไปดูภาพใหญ่" hidden></canvas>
 <div class="saveov" id="saveov" hidden><div>กดค้างที่ภาพเพื่อบันทึก</div><img id="saveImg" alt="ภาพสำหรับบันทึก"><button class="btn alt" id="saveClose" type="button" style="width:auto">ปิด</button></div>
-<script src="config.js?v=202611033"></script>
-<script src="calc.js?v=202611033"></script>
-<script src="compose.js?v=202611033"></script>
+<script src="config.js?v=202611034"></script>
+<script src="calc.js?v=202611034"></script>
+<script src="compose.js?v=202611034"></script>
 <script src="qr.js?v=202611021"></script>
-<script src="shop.js?v=202611033"></script>
+<script src="shop.js?v=202611034"></script>
 </body>
 </html>
