@@ -4,6 +4,7 @@
   const meta = await (await fetch('assets/meta.json?v=202611031')).json()
   const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text !== undefined) e.textContent = text; return e }
   const fill = (s, list) => list.forEach(([v, t]) => s.add(new Option(t, v)))
+  const SET_IMAGES = 10
   const MONTH = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม']
   const WORDS = ['มั่งคั่ง', 'เมตตา', 'รุ่งเรือง', 'สำเร็จ', 'มั่นคง', 'ร่มเย็น', 'ราบรื่น', 'โชคดี', 'สงบสุข']
   const SRC = { chart: 'คำนวณจากดวงเกิดของคุณ', taksa: 'คำนวณจากทักษาวันเกิดของคุณ', general: 'คู่มาตรฐานที่ไม่ขัดกับเลขกาลกิณีของคุณ' }
@@ -110,7 +111,7 @@
     b.onclick = () => { saveDesign(); S.image = d.id; applyDesign(); renderGridWhy(); renderControls(); draw() }
     $('thumbs').append(b)
   })
-  ;[['one', SHOP.price.one, 'ภาพนี้ 1 ภาพ'], ['set', SHOP.price.set, `ทุกภาพ ${meta.deities.length} ภาพ`]].forEach(([k, p, t]) => {
+  ;[['one', SHOP.price.one, 'ภาพนี้ 1 ภาพ'], ['set', SHOP.price.set, `เลือกได้ ${SET_IMAGES} ภาพ`]].forEach(([k, p, t]) => {
     const b = el('button', 'plan'); b.type = 'button'; b.dataset.plan = k; b.append(el('b', '', `${p} บาท`), el('span', '', t))
     b.onclick = () => { S.plan = k; renderControls() }; $('plans').append(b)
   })
@@ -182,9 +183,7 @@
       body.append(el('b', '', `${r[0]} · ${r[1]}`), el('p', '', r[2]))
       const use = match || inRow.find(x => allPairs.some(p => norm(p.num) === norm(x))) || inRow[0], name = pairName(+use[0], +use[1])
       body.append(el('p', 'rowuse', match ? `เลขที่ควรใช้ ${use}${name ? ` ${name}` : ''} ซึ่งเป็นคู่เรื่อง${wanted.label}ของคุณ` : `แถวนี้มีคู่ ${use}${name ? ` ${name}` : ''}${wanted ? ` ส่วนคู่เรื่อง${wanted.label} ${wanted.num} ลองกดแบบถัดไป` : ''}`))
-      const b = el('button', 'chip', `ใช้ ${use} บนภาพ`); b.type = 'button'; b.setAttribute('aria-pressed', S.showNumber && S.number === use)
-      b.onclick = () => { S.showNumber = true; S.number = use; saveDesign(); renderGridWhy(); renderControls(); draw() }
-      body.append(b); row.append(head, body); rowsBox.append(row)
+      row.append(head, body); rowsBox.append(row)
     })
     const pairs = $('gridPairs'); pairs.textContent = ''
     const seen = new Set()
@@ -248,9 +247,9 @@
       drawQr(amount)
     }
     if (paid) {
-      const count = Object.keys(savedFiles()).length
+      const count = Math.max(Object.keys(savedFiles()).length, p.used || 0), thisOne = savedFiles()[S.image]
       $('paidNote').textContent = p.scope === 'set'
-        ? `โหลดแล้ว ${count} จาก ${meta.deities.length} ภาพ · แต่ละภาพแต่งต่างกันได้ กดเลือกองค์เทพด้านบนแล้วแต่งต่อ ระบบจำการแต่งแยกรายภาพให้ภายในเครื่องนี้`
+        ? `ใช้สิทธิ์แล้ว ${count} จาก ${SET_IMAGES} ภาพ · ${thisOne ? 'ภาพนี้ใช้สิทธิ์แล้ว แก้แล้วโหลดซ้ำไม่เสียสิทธิ์เพิ่ม' : 'ภาพนี้ยังไม่ใช้สิทธิ์ กดบันทึกจะนับ 1 สิทธิ์'} · กดเลือกองค์เทพด้านบนเพื่อแต่งภาพถัดไป ระบบจำการแต่งแยกรายภาพให้ในเครื่องนี้`
         : 'บันทึกภาพนี้เป็นไฟล์เต็มได้'
       showPaidPreview()
     }
@@ -292,6 +291,7 @@
       await window.Compose.render(c, S, meta, url)
       await saveBlob(await blobOf(c), `amatathewa-${S.image}.jpg`); URL.revokeObjectURL(url)
       savedFiles()[S.image] = 1; keep.set('amt-saved', allSaved)
+      const usedNow = +r.headers.get('X-Images-Used'); if (usedNow) { passNow().used = usedNow; keep.set('amt-passes', passes) }
       $('fullLeft').textContent = left !== null ? `ภาพนี้โหลดได้อีก ${left} ครั้ง` : ''
       renderControls()
     } catch (e) { err.textContent = e.message + (/ครบ/.test(e.message) ? ' ถ้าไฟล์มีปัญหา ทักมาที่ LINE ของอมตเทวา' : ' ลองกดอีกครั้ง'); err.hidden = false }
