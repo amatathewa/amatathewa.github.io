@@ -16,133 +16,155 @@
 "id": "ganesha-mouse",
 "label": "พระพิฆเนศกับหนู",
 "side": "R",
-"y": 445
+"y": 445,
+"end": 1700
 },
 {
 "id": "ganesha-face",
 "label": "พระพิฆเนศ ใบหน้าใกล้",
 "side": "R",
-"y": 445
+"y": 445,
+"end": 1694
 },
 {
 "id": "shiva-ganesha",
 "label": "พระศิวะอุ้มพระพิฆเนศ",
 "side": "R",
-"y": 445
+"y": 445,
+"end": 1671
 },
 {
 "id": "shiva-moon",
 "label": "พระศิวะบนยอดเขา",
 "side": "R",
-"y": 445
+"y": 445,
+"end": 1637
 },
 {
 "id": "shiva-face",
 "label": "พระศิวะ ใบหน้าใกล้",
 "side": "R",
-"y": 445
+"y": 445,
+"end": 1492
 },
 {
 "id": "lakshmi-flame",
 "label": "พระแม่ลักษมีประคองตะเกียง",
 "side": "R",
-"y": 445
+"y": 445,
+"end": 1660
 },
 {
 "id": "lakshmi-face",
 "label": "พระแม่ลักษมี ใบหน้าใกล้",
 "side": "R",
-"y": 445
+"y": 445,
+"end": 1638
 },
 {
 "id": "parvati-ganesha",
 "label": "พระแม่ปารวตีอุ้มพระพิฆเนศ",
 "side": "R",
-"y": 445
+"y": 445,
+"end": 1607
 },
 {
 "id": "parvati-himalaya",
 "label": "พระแม่ปารวตีบนหิมาลัย",
 "side": "R",
-"y": 445
+"y": 445,
+"end": 1701
 },
 {
 "id": "parvati-face",
 "label": "พระแม่ปารวตี ใบหน้าใกล้",
 "side": "R",
-"y": 445
+"y": 445,
+"end": 1543
 },
 {
 "id": "saraswati-swan",
 "label": "พระแม่สรัสวตีกับหงส์",
 "side": "R",
-"y": 445
+"y": 445,
+"end": 1645
 },
 {
 "id": "saraswati-face",
 "label": "พระแม่สรัสวตี ใบหน้าใกล้",
 "side": "R",
-"y": 400
+"y": 400,
+"end": 1605
 },
 {
 "id": "vishnu-serene",
 "label": "พระวิษณุ สงบนิ่ง",
 "side": "R",
-"y": 445
+"y": 445,
+"end": 1720
 },
 {
 "id": "vishnu-garuda",
 "label": "พระวิษณุทรงครุฑ",
 "side": "R",
-"y": 445
+"y": 445,
+"end": 1709
 },
 {
 "id": "vishnu-conch",
 "label": "พระวิษณุถือสังข์",
 "side": "R",
-"y": 400
+"y": 400,
+"end": 1777
 },
 {
 "id": "vishnu-serpent",
 "label": "พระวิษณุบนพญานาค",
 "side": "R",
-"y": 445
+"y": 445,
+"end": 1639
 },
 {
 "id": "vishnu-blessing",
 "label": "พระวิษณุประทานพร",
 "side": "R",
-"y": 445
+"y": 445,
+"end": 1681
 },
 {
 "id": "brahma-lotus",
 "label": "พระพรหมประคองดอกบัว",
 "side": "R",
-"y": 445
+"y": 445,
+"end": 1643
 },
 {
 "id": "brahma-face",
 "label": "พระพรหม ใบหน้าใกล้",
 "side": "R",
-"y": 445
+"y": 445,
+"end": 1527
 },
 {
 "id": "trimurti-face",
 "label": "พระตรีมูรติ ใบหน้าใกล้",
 "side": "R",
-"y": 445
+"y": 445,
+"end": 1672
 },
 {
 "id": "trishakti-peak",
 "label": "พระตรีศักติบนยอดเขา",
 "side": "R",
-"y": 320
+"y": 320,
+"end": 1608
 },
 {
 "id": "trishakti-lean",
 "label": "พระตรีศักติ สามพระแม่พิงกัน",
 "side": "R",
-"y": 445
+"y": 445,
+"end": 1494
 }
 ],
 "frames": {

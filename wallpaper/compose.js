@@ -23,13 +23,14 @@
     if (INK.has(sp)) return INK.get(sp)
     const c = layer(sp.width, sp.height), g = c.getContext('2d', { willReadFrequently: true }); g.drawImage(sp, 0, 0)
     const d = g.getImageData(0, 0, c.width, c.height).data
-    let x0 = c.width, y0 = c.height, x1 = 0, y1 = 0
-    for (let y = 0; y < c.height; y++) for (let x = 0; x < c.width; x++) if (d[(y * c.width + x) * 4 + 3] > 40) { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y }
+    let x0 = c.width, y0 = c.height, x1 = 0, y1 = 0, inked = 0
+    for (let y = 0; y < c.height; y++) for (let x = 0; x < c.width; x++) if (d[(y * c.width + x) * 4 + 3] > 40) { inked++; if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y }
     const box = { x: x0, y: y0, w: x1 - x0 + 1, h: y1 - y0 + 1 }
+    box.weight = Math.max(.76, Math.min(1.06, Math.sqrt(.38 / (inked / (box.w * box.h)))))   // ตัวที่เนื้อหมึกแน่นอย่าง ๑ ๓ ดูใหญ่กว่าขนาดจริง จึงย่อลง
     INK.set(sp, box); return box
   }
   const placeEven = (ctx, sp, cx, cy, size, maxW, maxH, deg, k) => {
-    const b = inkBox(sp), r = Math.min(size / Math.sqrt(b.w * b.h), maxW / b.w, maxH / b.h)
+    const b = inkBox(sp), r = Math.min(size * b.weight / Math.sqrt(b.w * b.h), maxW / b.w, maxH / b.h)
     ctx.save(); ctx.translate(cx * k, cy * k); ctx.rotate(-deg * Math.PI / 180)
     ctx.drawImage(sp, -(b.x + b.w / 2) * r * k, -(b.y + b.h / 2) * r * k, sp.width * r * k, sp.height * r * k); ctx.restore()
   }
@@ -99,8 +100,9 @@
 
     // ชื่อใช้หมึกดำเท่านั้น คนไทยจำนวนมากถือเรื่องเขียนชื่อตัวเองด้วยสีแดง
     if (s.showName && s.name) {
-      // วางเหนือแถบปุ่มหน้าจอล็อกและช่องค้นหาหน้าโฮม พื้นหลังสว่างขึ้นเล็กน้อยให้อ่านออกเมื่อทับลายองค์เทพ
-      const NAME_Y = 1458, L = layer(W, H), g = L.getContext('2d'), G = layer(W, H), gg = G.getContext('2d')
+      // วางใต้องค์เทพตามทรงของแต่ละภาพ พื้นหลังสว่างขึ้นเล็กน้อยให้อ่านออก · มือถือบางรุ่นซูมภาพตัดขอบล่าง จึงมีตัวเลือกขยับขึ้น
+      const under = Math.max(1520, Math.min(1760, (deity.end || 1660) + 48))
+      const NAME_Y = s.nameHigh ? Math.min(under, 1600) : under, L = layer(W, H), g = L.getContext('2d'), G = layer(W, H), gg = G.getContext('2d')
       let size = 50
       const setFont = c => { c.font = `700 ${size * k}px ShopName, serif`; c.textAlign = 'center'; c.textBaseline = 'middle' }
       setFont(g)

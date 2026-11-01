@@ -15,17 +15,18 @@
     extra: 'เป็นคู่สำรองจากดวงเดียวกัน เลือกใส่แทนคู่หลักได้',
   }
   const FRAME_NOTE = {
-    mountain: 'ภาพความมั่นคงของขุนเขา ออกแบบไว้สำหรับคนที่ตั้งใจเรื่องงาน',
-    plain: 'เส้นเรียบนิ่ง เข้าได้กับทุกภาพ ออกแบบไว้สำหรับคนที่ตั้งใจเรื่องงาน',
-    lotus: 'ภาพกลีบบัวที่ค่อยๆ งอกงาม ออกแบบไว้สำหรับคนที่ตั้งใจเรื่องเงิน',
-    heart: 'ภาพหัวใจกับดอกบัว ออกแบบไว้สำหรับคนที่ตั้งใจเรื่องความรัก',
+    mountain: 'ดั่งขุนเขาที่ตั้งมั่น เปรียบถึงความมั่นคงและความรุ่งเรืองในหน้าที่การงาน',
+    plain: 'เรียบนิ่งอย่างคนที่ไปถึงจุดหมาย เปรียบถึงความสำเร็จในชีวิตการงาน',
+    lotus: 'ดั่งกลีบบัวที่ค่อยๆ เบ่งบาน เปรียบถึงความงอกงามของการเงิน',
+    heart: 'ดั่งดอกบัวกลางหัวใจ เปรียบถึงความงดงามและเสน่ห์ในความรัก',
     none: 'ภาพองค์เทพล้วน ไม่มีตารางเลข',
   }
-  const PLANET = {
-    1: ['อาทิตย์', 'เกียรติ ความเป็นผู้นำ'], 2: ['จันทร์', 'เสน่ห์ ความอ่อนโยน'], 3: ['อังคาร', 'ความกล้า การลงมือทำ'], 4: ['พุธ', 'การเจรจา ไหวพริบ การค้าขาย'],
-    5: ['พฤหัส', 'ปัญญา ผู้ใหญ่ ความรู้'], 6: ['ศุกร์', 'ทรัพย์ ความรัก ศิลปะ'], 7: ['เสาร์', 'ความอดทน ความมั่นคง'], 8: ['ราหู', 'โอกาสแปลกใหม่ งานกลางคืน'], 9: ['เกตุ', 'ลางสังหรณ์ สิ่งศักดิ์สิทธิ์'],
-  }
-  const ROLE = { 'ศรี': 'ดาวศรีของคุณ เรื่องโชคและทรัพย์', 'เดช': 'ดาวเดชของคุณ เรื่องอำนาจและความกล้า', 'มนตรี': 'ดาวมนตรีของคุณ เรื่องผู้ใหญ่อุปถัมภ์', 'มูละ': 'ดาวมูละของคุณ เรื่องฐานทรัพย์สิน', 'อุตสาหะ': 'ดาวอุตสาหะของคุณ เรื่องความเพียร', 'บริวาร': 'ดาวบริวารของคุณ เรื่องคนรอบตัว', 'อายุ': 'ดาวอายุของคุณ เรื่องความเป็นอยู่' }
+  // ความหมายของแถวเป็นแนวทางที่อมตเทวาออกแบบเอง ไม่ใช่หลักจากตำราโดยตรง
+  const ROWS = [
+    ['แถวบน', 'งานและชื่อเสียง', 'ส่วนบนเหมือนสิ่งที่คนมองเห็นเรา จึงวางเลขเรื่องงานไว้ตรงนี้', 'fame'],
+    ['แถวกลาง', 'ตัวเราและความรัก', 'ใจกลางของตารางเหมือนใจของเรา จึงวางเลขเรื่องเสน่ห์และความสัมพันธ์ไว้ตรงนี้', 'charm'],
+    ['แถวล่าง', 'เงินและฐานชีวิต', 'ส่วนล่างเหมือนรากฐาน จึงวางเลขเรื่องทรัพย์ไว้ตรงนี้', 'wealth'],
+  ]
   const DEFAULT_FRAME = { ganesha: 'mountain', lakshmi: 'lotus', parvati: 'heart', saraswati: 'lotus', shiva: 'plain', vishnu: 'plain', brahma: 'lotus', trimurti: 'plain', trishakti: 'heart' }
   const THAI = '๐๑๒๓๔๕๖๗๘๙', thai = n => String(n).replace(/\d/g, d => THAI[d])
   const pad = n => String(n).padStart(2, '0'), range = (a, b) => Array.from({ length: b - a + 1 }, (_, i) => a + i)
@@ -45,9 +46,9 @@
   document.addEventListener('contextmenu', e => { if (e.target.closest('img,canvas')) e.preventDefault() })
   document.addEventListener('dragstart', e => { if (e.target.closest('img,canvas')) e.preventDefault() })
 
-  const S = { image: 'shiva-ganesha', frame: 'plain', frameChosen: false, grid: null, variant: 0, showNumber: true, number: null, thaiNumber: false, side: null, showSeal: true, word: 'มั่งคั่ง', showName: false, name: '', plan: 'one' }
-  const DESIGN_KEYS = ['frame', 'frameChosen', 'grid', 'variant', 'showNumber', 'number', 'thaiNumber', 'side', 'showSeal', 'word', 'showName', 'name']
-  let chart = null, allPairs = [], picked = [], owner = null, taksa = {}
+  const S = { image: 'shiva-ganesha', frame: 'plain', frameChosen: false, grid: null, variant: 0, tried: [0], nameHigh: false, showNumber: true, number: null, thaiNumber: false, side: null, showSeal: true, word: 'มั่งคั่ง', showName: false, name: '', plan: 'one' }
+  const DESIGN_KEYS = ['frame', 'frameChosen', 'grid', 'variant', 'tried', 'showNumber', 'number', 'thaiNumber', 'side', 'showSeal', 'word', 'showName', 'name', 'nameHigh']
+  let chart = null, allPairs = [], picked = [], owner = null, gridOptions = []
 
   // ---------- เก็บในเครื่องลูกค้า ----------
   const keep = {
@@ -89,6 +90,7 @@
     $('frameNote').textContent = FRAME_NOTE[S.frame] || ''
     chips($('numberPick'), [...allPairs.map(p => [p.num, p.num]), ['none', 'ไม่ใส่']], v => v === 'none' ? !S.showNumber : S.showNumber && S.number === v, v => { if (v === 'none') S.showNumber = false; else { S.showNumber = true; S.number = v } })
     chips($('numberStyle'), [['ar', 'เลขสากล'], ['th', 'เลขไทย']], v => (v === 'th') === S.thaiNumber, v => { S.thaiNumber = v === 'th' })
+    chips($('namePlace'), [['low', 'ใต้องค์เทพ'], ['high', 'ขยับขึ้น']], v => (v === 'high') === !!S.nameHigh, v => { S.nameHigh = v === 'high' })
     chips($('sidePick'), [['R', 'ขวา'], ['L', 'ซ้าย']], v => (S.side || meta.deities.find(d => d.id === S.image).side) === v, v => { S.side = v })
     chips($('words'), [...WORDS.map(w => [w, w]), ['none', 'ไม่ใส่']], v => v === 'none' ? !S.showSeal : S.showSeal && S.word === v && !$('ownWord').value.trim(), v => { $('ownWord').value = ''; if (v === 'none') S.showSeal = false; else { S.showSeal = true; S.word = v } })
     const saved = owner ? savedFiles() : {}
@@ -98,8 +100,8 @@
   }
   const applyDesign = () => {
     const d = designs()[S.image]
-    if (d) { DESIGN_KEYS.forEach(k => { S[k] = d[k] }); $('name').value = S.name; $('ownWord').value = WORDS.includes(S.word) ? '' : S.word }
-    else { S.side = null; if (!S.frameChosen) S.frame = DEFAULT_FRAME[S.image.split('-')[0]] }
+    if (d) { DESIGN_KEYS.forEach(k => { S[k] = d[k] }); if (gridOptions[S.variant] && gridOptions[S.variant] !== (S.grid || []).join('')) { S.variant = Math.max(0, gridOptions.indexOf((S.grid || []).join(''))); S.grid = gridOptions[S.variant].split('').map(Number) } if (!S.tried) S.tried = [S.variant]; $('name').value = S.name; $('ownWord').value = WORDS.includes(S.word) ? '' : S.word }
+    else { S.side = null; S.variant = 0; S.tried = [0]; if (gridOptions[0]) S.grid = gridOptions[0].split('').map(Number); if (!S.frameChosen) S.frame = DEFAULT_FRAME[S.image.split('-')[0]] }
   }
   meta.deities.forEach(d => {
     const b = el('button', 'thumb'); b.type = 'button'; b.dataset.id = d.id
@@ -118,12 +120,30 @@
   // ---------- เลขมงคล ----------
   const clean = t => String(t || '').split(' · ')[0].replace(/\s*มองจาก.*$/, '').replace(/\s*เสริมเงิน เสริมดวง เสริมบารมี/, '').trim()
   const pairName = (a, b) => { const k = `${Math.min(a, b)}-${Math.max(a, b)}`, p = (window.PAIR_LONG || {})[k]; return p ? p.name.replace(/\s*\(.*\)\s*$/, '') : '' }
-  const rebuildGrid = () => {
-    const pool = allPairs.map(p => p.num)
-    const g = window.Lucky.grid(chart.kal, picked.length ? picked : pool, pool, { rank: chart.rank, salt: chart.salt + S.variant })
-    S.grid = g.cells
+  const rowPair = key => { const p = allPairs.find(x => x.key === key) || (key === 'fame' ? allPairs.find(x => x.key === 'flow') : null); return p || null }
+  const rebuildGrid = (keepGrid = false) => {
+    const pool = allPairs.map(p => p.num), rows = ROWS.map(r => { const p = rowPair(r[3]); return p ? p.num : null })
+    const g = window.Lucky.grid(chart.kal, picked.length ? picked : pool, pool, { rank: chart.rank, salt: chart.salt, rows })
+    gridOptions = g.options
+    if (!keepGrid) { S.variant = 0; S.tried = [0] }
+    S.variant = Math.min(S.variant, gridOptions.length - 1)
+    S.grid = gridOptions[S.variant].split('').map(Number)
     return g
   }
+  const goGrid = i => { S.variant = (i + gridOptions.length) % gridOptions.length; S.grid = gridOptions[S.variant].split('').map(Number); S.tried = [...new Set([...(S.tried || []), S.variant])].sort((a, b) => a - b); saveDesign(); renderGridWhy(); renderControls(); draw() }
+  const renderGridPicker = () => document.querySelectorAll('.gridpick').forEach(box => {
+    box.textContent = ''
+    const nav = el('div', 'gridnav'), prev = el('button', 'chip', '◀ แบบก่อนหน้า'), next = el('button', 'chip', 'แบบถัดไป ▶')
+    prev.type = next.type = 'button'; prev.onclick = () => goGrid(S.variant - 1); next.onclick = () => goGrid(S.variant + 1)
+    nav.append(prev, el('b', '', `แบบที่ ${S.variant + 1} จาก ${gridOptions.length}`), next); box.append(nav)
+    const seen = el('div', 'triedgrids')
+    ;(S.tried || []).forEach(i => {
+      const b = el('button', 'tried'); b.type = 'button'; b.setAttribute('aria-pressed', i === S.variant); b.setAttribute('aria-label', `กลับไปตารางแบบที่ ${i + 1}`)
+      const t = el('span', 'triedmini'); [...gridOptions[i]].forEach(n => t.append(el('i', '', thai(n))))
+      b.append(t, el('small', '', i === 0 ? 'แบบแนะนำ' : `แบบที่ ${i + 1}`)); b.onclick = () => goGrid(i); seen.append(b)
+    })
+    box.append(el('p', 'help', 'เรียงลำดับตายตัว ไม่ได้สุ่ม กดกลับไปแบบที่ดูแล้วได้ทุกเมื่อ'), seen)
+  })
   const renderPairs = () => {
     const box = $('pairs'); box.textContent = ''
     allPairs.forEach(p => {
@@ -149,21 +169,22 @@
     if (!S.grid) return
     const g = S.grid, mini = $('miniGrid'); mini.textContent = ''
     g.forEach(n => mini.append(el('span', '', thai(n))))
-    const center = PLANET[g[4]]
+    const center = [window.Lucky.NAME[g[4]] || 'เกตุ']
     const reasons = $('gridReasons'); reasons.textContent = ''
     ;[`ไม่มีเลข ${chart.avoidDigit} เพราะเป็นเลขกาลกิณีของคนเกิดวัน${chart.day}`,
       `ช่องกลางคือเลข ${g[4]} ดาว${center[0]} ${chart.strong.length && chart.strong[0].n === g[4] ? 'ซึ่งเป็นดาวที่แข็งที่สุดในดวงของคุณ' : 'เลือกจากดาวที่มีกำลังและเป็นคุณกับดวงของคุณ'}`,
       `เลขที่อยู่ติดกันทั้งซ้าย ขวา บน ล่าง รวม ${GRID_EDGES.length} คู่ เป็นคู่มงคลทุกคู่`].forEach(t => reasons.append(el('li', '', t)))
-    const digits = $('gridDigits'); digits.textContent = ''
-    ;[...new Set(g)].sort((a, b) => a - b).forEach(n => {
-      const [name, mean] = PLANET[n], extra = []
-      if (taksa[n] && ROLE[taksa[n]]) extra.push(ROLE[taksa[n]])
-      if (chart.lord === n) extra.push('ดาวเจ้าลัคนาของคุณ')
-      const strong = chart.strong.find(s => s.n === n)
-      if (strong) extra.push(`ได้${strong.labels.filter(l => !['ประ', 'นิจ'].includes(l)).join(' ')}ในดวงเกิด`)
-      const row = el('div', 'digit-row'); row.append(el('span', 'digit-big', thai(n)))
-      const t = el('div'); t.append(el('b', '', `ดาว${name}`), el('p', '', `ตำราให้ความหมายเรื่อง${mean}${extra.length ? ` · ${extra.join(' · ')}` : ''}`))
-      row.append(t); digits.append(row)
+    const rowsBox = $('gridRows'); rowsBox.textContent = ''
+    ROWS.forEach((r, i) => {
+      const cells = g.slice(i * 3, i * 3 + 3), wanted = rowPair(r[3]), inRow = [`${cells[0]}${cells[1]}`, `${cells[1]}${cells[2]}`]
+      const norm = x => [...x].sort().join(''), match = wanted && inRow.find(x => norm(x) === norm(wanted.num))
+      const row = el('div', 'grid-row'), head = el('div', 'grid-row-num', cells.map(thai).join(' ')), body = el('div')
+      body.append(el('b', '', `${r[0]} · ${r[1]}`), el('p', '', r[2]))
+      const use = match || inRow.find(x => allPairs.some(p => norm(p.num) === norm(x))) || inRow[0], name = pairName(+use[0], +use[1])
+      body.append(el('p', 'rowuse', match ? `เลขที่ควรใช้ ${use}${name ? ` ${name}` : ''} ซึ่งเป็นคู่เรื่อง${wanted.label}ของคุณ` : `แถวนี้มีคู่ ${use}${name ? ` ${name}` : ''}${wanted ? ` ส่วนคู่เรื่อง${wanted.label} ${wanted.num} ลองกดแบบถัดไป` : ''}`))
+      const b = el('button', 'chip', `ใช้ ${use} บนภาพ`); b.type = 'button'; b.setAttribute('aria-pressed', S.showNumber && S.number === use)
+      b.onclick = () => { S.showNumber = true; S.number = use; saveDesign(); renderGridWhy(); renderControls(); draw() }
+      body.append(b); row.append(head, body); rowsBox.append(row)
     })
     const pairs = $('gridPairs'); pairs.textContent = ''
     const seen = new Set()
@@ -174,13 +195,7 @@
       const name = pairName(g[a], g[b])
       pairs.append(el('li', '', `${g[a]}${g[b]}${name ? ` ${name}` : ''}`))
     })
-    $('otherGrid').hidden = false
-  }
-  $('otherGrid').onclick = () => {
-    const before = S.grid.join('')
-    for (let i = 0; i < 8; i++) { S.variant++; const g = rebuildGrid(); note(g); if (S.grid.join('') !== before) break }
-    $('otherNote').textContent = S.grid.join('') === before ? 'เลขที่เลือกไว้จัดได้แบบนี้แบบเดียว ลองเอาติ๊กบางคู่ออกแล้วกดใหม่' : ''
-    saveDesign(); renderGridWhy(); renderControls(); draw()
+    renderGridPicker()
   }
 
   const sha = async text => [...new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text)))].map(b => b.toString(16).padStart(2, '0')).join('')
@@ -192,11 +207,10 @@
     const noTime = $('noTime').checked, night = $('night').checked
     const inp = noTime ? { y, m, d, hh: null, mm: null, night } : { y, m, d, hh: +$('hh').value, mm: +$('mm').value, lon: lonOf(), province: $('prov').value }
     chart = window.Lucky.build(window.Health, window.Reader, inp)
-    const tk = window.Reader.taksaOf(noTime ? { ...inp, hh: night ? 19 : 12, mm: 0 } : inp); taksa = tk.of
     // วันเกิดไม่ออกจากเครื่อง ส่งเฉพาะรหัสที่แฮชแล้วตอนซื้อ เพื่อผูกการซื้อกับเจ้าของวันเกิด
     owner = await sha(`amatathewa:${y}-${m}-${d}-${noTime ? `n${night ? 1 : 0}` : `${inp.hh}-${inp.mm}`}`)
     allPairs = [...chart.pairs, ...chart.extras]; picked = allPairs.map(p => p.num)
-    S.number = allPairs[0].num; S.showNumber = true; S.variant = 0
+    S.number = allPairs[0].num; S.showNumber = true
     const g = rebuildGrid()
     applyDesign()
     if (!allPairs.some(p => p.num === S.number)) S.number = allPairs[0].num
@@ -284,5 +298,5 @@
     b.disabled = false; b.textContent = 'บันทึกภาพเต็ม'
   }
   renderControls()
-  window.__shop = { S, meta, draw, set: o => { Object.assign(S, o); renderControls(); return draw() }, get chart() { return chart }, get owner() { return owner } }
+  window.__shop = { S, meta, draw, get options() { return gridOptions }, set: o => { Object.assign(S, o); renderControls(); return draw() }, get chart() { return chart }, get owner() { return owner } }
 })()

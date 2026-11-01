@@ -60,9 +60,22 @@ select,input[type=text],input[type=file]{width:100%;font:inherit;min-height:48px
 .minigrid span{display:flex;align-items:center;justify-content:center;height:58px;border:1px solid rgba(38,33,28,.28)}
 .reasons{margin:0;padding-left:20px}
 .reasons li{margin:6px 0}
-.digit-row{display:grid;grid-template-columns:44px 1fr;gap:10px;padding:10px 0;border-top:1px solid rgba(38,33,28,.14)}
-.digit-big{font:400 32px/1.2 Trirong,serif}
-.digit-row p{margin:2px 0 0;font-size:15px}
+.grid-row{display:grid;grid-template-columns:86px 1fr;gap:12px;padding:14px 0;border-top:1px solid rgba(38,33,28,.14)}
+.grid-row-num{font:400 25px/1.3 Trirong,serif;white-space:nowrap}
+.grid-row p{margin:3px 0 0;font-size:15px}
+.grid-row .rowuse{color:var(--ink);font-weight:500}
+.grid-row .chip,.onpaper .chip{color:var(--ink);border-color:rgba(38,33,28,.55);margin-top:8px}
+.grid-row .chip[aria-pressed=true]{background:var(--ink);color:var(--ivory)}
+.gridnav{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px 10px;margin-top:10px;text-align:center}
+.gridnav b{order:-1;width:100%;font-weight:500}
+.gridnav .chip::before{content:none}
+.triedgrids{display:flex;gap:8px;overflow-x:auto;padding:6px 2px}
+.tried{flex:none;width:76px;padding:4px;background:none;border:1px solid rgba(244,236,221,.34);border-radius:4px;color:inherit;cursor:pointer}
+.onpaper .tried{border-color:rgba(38,33,28,.34)}
+.tried[aria-pressed=true]{border:2px solid var(--gold)}
+.tried small{display:block;font-size:12px;margin-top:3px}
+.triedmini{display:grid;grid-template-columns:repeat(3,1fr);font:400 15px/1.35 Trirong,serif}
+.triedmini i{font-style:normal;text-align:center}
 .gridpairs{margin:8px 0 0;padding-left:20px;columns:2;column-gap:18px;font-size:15px}
 .studio{display:grid;gap:18px;grid-template-columns:minmax(0,1fr)}
 .studio>*{min-width:0}
@@ -112,7 +125,7 @@ footer a{color:inherit}
 <div class="wrap">
   <div class="brand"><img src="assets/logo.png" alt="AMATATHEWA อมตเทวา" width="300" height="207" draggable="false"></div>
   <div class="hero">
-    <figure><img src="assets/hero.jpg?v=202611031" alt="ภาพหมึกจีนองค์พระศิวะอุ้มพระพิฆเนศน้อย" width="800" height="1005" draggable="false"></figure>
+    <figure><img src="assets/hero.jpg?v=202611032" alt="ภาพหมึกจีนองค์พระศิวะอุ้มพระพิฆเนศน้อย" width="800" height="1005" draggable="false"></figure>
     <div>
       <h1>องค์เทพหมึกจีน<br>เลขมงคลจากวันเกิดของคุณ</h1>
       <p class="lead">กรอกวันเกิด เราคำนวณเลขมงคลให้ โดยประยุกต์จากตำราโหราศาสตร์ไทย จากนั้นคุณเลือกองค์เทพ เลข ตารางเลข และคำมงคลได้เองทุกจุด ดูตัวอย่างได้ฟรีก่อนตัดสินใจ</p>
@@ -153,16 +166,15 @@ footer a{color:inherit}
       <div class="gridwhy">
         <div>
           <div class="minigrid" id="miniGrid"></div>
-          <button class="btn alt" id="otherGrid" type="button" style="color:var(--ink);border-color:var(--ink);margin-top:12px;backdrop-filter:none" hidden>ขอตารางแบบอื่น</button>
-          <p class="help center" id="otherNote"></p>
+          <div class="gridpick onpaper"></div>
         </div>
         <div>
           <ul class="reasons" id="gridReasons"></ul>
-          <div id="gridDigits" style="margin-top:12px"></div>
+          <div id="gridRows" style="margin-top:12px"></div>
           <details><summary>ดูคู่มงคลในตาราง</summary><ul class="gridpairs" id="gridPairs"></ul></details>
         </div>
       </div>
-      <p class="help" style="margin-top:12px">เลือกตารางแบบอื่นได้ แต่ไม่เปิดให้ย้ายเลขเอง เพราะจะทำให้เลขที่อยู่ติดกันไม่เป็นคู่มงคล ความหมายทั้งหมดเป็นความเชื่อตามตำราโหราศาสตร์ไทย ไม่ใช่การรับประกันผล</p>
+      <p class="help" style="margin-top:12px">เลือกตารางแบบอื่นได้ แต่ไม่เปิดให้ย้ายเลขเอง เพราะจะทำให้เลขที่อยู่ติดกันไม่เป็นคู่มงคล การแบ่งความหมายรายแถวเป็นแนวทางที่อมตเทวาออกแบบเอง ส่วนความหมายของเลขเป็นความเชื่อตามตำราโหราศาสตร์ไทยแบบประยุกต์ ไม่ใช่การรับประกันผล</p>
     </div>
     <a class="btn" href="#studio" style="margin-top:14px">ไปแต่งภาพ</a>
   </section>
@@ -174,14 +186,15 @@ footer a{color:inherit}
       <div class="stage"><canvas id="view" width="640" height="1387" role="img" aria-label="ภาพตัวอย่างวอลเปเปอร์"></canvas><div class="busy" id="busy"></div></div>
       <div class="card">
         <div class="ctl"><h3>ภาพองค์เทพ</h3><div class="thumbs" id="thumbs"></div></div>
-        <div class="ctl"><h3>ลายตารางเลขด้านหลัง</h3><div class="chips" id="frames"></div><p class="help" id="frameNote"></p><p class="help">ลายเป็นงานออกแบบของอมตเทวา เลือกตามที่ชอบได้เลย ไม่มีลายไหนผิด</p></div>
+        <div class="ctl"><h3>ลายตารางเลขด้านหลัง</h3><div class="chips" id="frames"></div><p class="help" id="frameNote"></p><p class="help">เลือกตามที่ชอบได้เลย ไม่มีลายไหนผิด</p><div class="gridpick" style="margin-top:12px"></div></div>
         <div class="ctl"><h3>เลขมงคลบนภาพ</h3><div class="chips" id="numberPick"></div>
           <h3 style="margin-top:12px">แบบตัวเลข</h3><div class="chips" id="numberStyle"></div>
           <h3 style="margin-top:12px">ตำแหน่ง</h3><div class="chips" id="sidePick"></div></div>
         <div class="ctl"><h3>คำมงคลในตราแดง</h3><div class="chips" id="words"></div>
           <input type="text" id="ownWord" maxlength="14" placeholder="หรือพิมพ์คำที่คุณชอบเอง" autocomplete="off" style="margin-top:10px" aria-label="พิมพ์คำมงคลเอง">
           <p class="help">ตราเป็นสีแดง คนไทยจำนวนมากถือเรื่องเขียนชื่อตัวเองด้วยสีแดง จึงไม่แนะนำให้ใส่ชื่อในตรา</p></div>
-        <div class="ctl"><h3>ชื่อหมึกดำบนภาพ</h3><input type="text" id="name" maxlength="30" placeholder="ไม่ใส่ก็ได้" autocomplete="off" aria-label="ชื่อใต้ภาพ"></div>
+        <div class="ctl"><h3>ชื่อหมึกดำบนภาพ</h3><input type="text" id="name" maxlength="30" placeholder="ไม่ใส่ก็ได้" autocomplete="off" aria-label="ชื่อใต้ภาพ">
+          <h3 style="margin-top:12px">ตำแหน่งชื่อ</h3><div class="chips" id="namePlace"></div><p class="help">ถ้าตั้งวอลเปเปอร์แล้วชื่อตกขอบจอ เลือก "ขยับขึ้น" หรือย่อภาพตอนตั้งวอลเปเปอร์</p></div>
       </div>
     </div>
   </section>
@@ -202,6 +215,7 @@ footer a{color:inherit}
         <p class="help" style="margin-top:6px">ชื่อที่ขึ้นตอนโอนคือ <b id="payHolder"></b> เจ้าของร้านอมตเทวา</p>
         <button class="btn alt" id="saveQr" type="button">บันทึก QR</button>
         <label for="slip">แนบสลิป</label>
+        <p class="help" style="margin:0 0 6px">เคยซื้อแล้วแต่ภาพหายจากเครื่อง แนบสลิปเดิมและใช้วันเกิดเดิม เพื่อโหลดต่อได้ภายใน 30 วัน</p>
         <input id="slip" type="file" accept="image/*">
         <button class="btn solid" id="sendSlip" type="button">ส่งสลิปและรับภาพ</button>
         <div class="err" id="payErr" hidden></div>
@@ -231,9 +245,9 @@ footer a{color:inherit}
 </div>
 <div class="saveov" id="saveov" hidden><div>กดค้างที่ภาพเพื่อบันทึก</div><img id="saveImg" alt="ภาพสำหรับบันทึก"><button class="btn alt" id="saveClose" type="button" style="width:auto">ปิด</button></div>
 <script src="config.js?v=202611031"></script>
-<script src="calc.js?v=202611031"></script>
-<script src="compose.js?v=202611031"></script>
+<script src="calc.js?v=202611032"></script>
+<script src="compose.js?v=202611032"></script>
 <script src="qr.js?v=202611021"></script>
-<script src="shop.js?v=202611031"></script>
+<script src="shop.js?v=202611032"></script>
 </body>
 </html>
