@@ -47,8 +47,10 @@
   document.addEventListener('contextmenu', e => { if (e.target.closest('img,canvas')) e.preventDefault() })
   document.addEventListener('dragstart', e => { if (e.target.closest('img,canvas')) e.preventDefault() })
 
-  const S = { image: 'shiva-ganesha', frame: 'plain', frameChosen: false, grid: null, variant: 0, tried: [0], nameHigh: false, showNumber: true, number: null, thaiNumber: false, side: null, showSeal: true, word: 'มั่งคั่ง', showName: false, name: '', plan: 'one' }
-  const DESIGN_KEYS = ['frame', 'frameChosen', 'grid', 'variant', 'tried', 'showNumber', 'number', 'thaiNumber', 'side', 'showSeal', 'word', 'showName', 'name', 'nameHigh']
+  const S = { image: 'shiva-ganesha', frame: 'plain', frameChosen: false, grid: null, variant: 0, tried: [0], diagonal: false, nameHigh: false, showNumber: true, number: null, thaiNumber: false, side: null, showSeal: true, word: 'มั่งคั่ง', showName: false, name: '', plan: 'one' }
+  // แต่งแยกรายภาพ ยกเว้นตารางและชื่อที่ติดตัวเจ้าของดวงเสมอแม้เปลี่ยนภาพ
+  const DESIGN_KEYS = ['frame', 'frameChosen', 'showNumber', 'number', 'thaiNumber', 'side', 'showSeal', 'word']
+  const SHARED_KEYS = ['grid', 'variant', 'tried', 'diagonal', 'showName', 'name', 'nameHigh']
   let chart = null, allPairs = [], picked = [], owner = null, gridOptions = []
 
   // ---------- เก็บในเครื่องลูกค้า ----------
@@ -57,10 +59,16 @@
     set: (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)) } catch {} },
   }
   const passes = keep.get('amt-passes', {})
-  const allDesigns = keep.get('amt-designs', {}), allSaved = keep.get('amt-saved', {})
+  const allDesigns = keep.get('amt-designs', {}), allSaved = keep.get('amt-saved', {}), allShared = keep.get('amt-shared', {})
   const designs = () => allDesigns[owner] || (allDesigns[owner] = {})
   const savedFiles = () => allSaved[owner] || (allSaved[owner] = {})
-  const saveDesign = () => { if (!owner) return; const d = {}; DESIGN_KEYS.forEach(k => { d[k] = S[k] }); designs()[S.image] = d; keep.set('amt-designs', allDesigns) }
+  const saveDesign = () => {
+    if (!owner) return
+    const d = {}, sh = { picked }
+    DESIGN_KEYS.forEach(k => { d[k] = S[k] }); SHARED_KEYS.forEach(k => { sh[k] = S[k] })
+    designs()[S.image] = d; allShared[owner] = sh
+    keep.set('amt-designs', allDesigns); keep.set('amt-shared', allShared)
+  }
   const passNow = () => { const p = owner && passes[owner]; return p && p.exp > Date.now() ? p : null }
   const covers = () => { const p = passNow(); return p && (p.scope === 'set' || p.image === S.image) }
 
@@ -79,11 +87,26 @@
 
   // มือถือ: ภาพใหญ่เลื่อนตามหน้าปกติ พอเลื่อนลงไปแต่ง มีภาพเล็กมุมจอให้เห็นผล กดแล้วกลับไปดูภาพใหญ่
   const mini = $('miniView'), mobile = window.matchMedia('(max-width:799px)')
-  let stageVisible = true, studioVisible = false
-  const syncMini = () => { mini.hidden = !(mobile.matches && studioVisible && !stageVisible) }
-  new IntersectionObserver(([e]) => { stageVisible = e.isIntersecting; syncMini() }, { threshold: .25 }).observe($('stage'))
-  new IntersectionObserver(([e]) => { studioVisible = e.isIntersecting; syncMini() }).observe($('studio'))
+  let stagePassed = false, buyReached = false
+  const syncMini = () => { mini.hidden = !(mobile.matches && stagePassed && !buyReached) }
+  // ขึ้นเมื่อเลื่อนผ่านภาพใหญ่ในข้อ 3 ไปแล้วเท่านั้น และหายทันทีที่ข้อ 4 โผล่เกิน 15% ของจอ
+  new IntersectionObserver(([e]) => { stagePassed = !e.isIntersecting && e.boundingClientRect.top < 0; syncMini() }, { threshold: .25 }).observe($('stage'))
+  new IntersectionObserver(([e]) => { buyReached = e.isIntersecting || e.boundingClientRect.top < 0; syncMini() }, { rootMargin: '0px 0px -15% 0px' }).observe($('buy'))
   mini.onclick = () => $('stage').scrollIntoView({ block: 'center' })
+
+  // มือถือ: แตะช่องเลือกวัน เดือน ปี จังหวัด แล้วหน้าจอต้องอยู่นิ่ง จนกว่าลูกค้าจะแตะจอครั้งถัดไป
+  let touchTop = 0, holdTop = null
+  const holdStill = () => {
+    if (holdTop === null) return
+    if (document.body.scrollTop !== holdTop) document.body.scrollTop = holdTop
+    if (document.documentElement.scrollTop) document.documentElement.scrollTop = 0
+    requestAnimationFrame(holdStill)
+  }
+  const startHold = () => { if (!mobile.matches || holdTop !== null) return; holdTop = touchTop; holdStill() }
+  document.addEventListener('touchstart', () => { touchTop = document.body.scrollTop; holdTop = null }, { capture: true, passive: true })
+  document.addEventListener('focusin', e => { if (e.target.matches('select')) startHold() })
+  document.addEventListener('click', e => { if (e.target.matches('select')) startHold() })
+  document.addEventListener('focusout', e => { if (e.target.matches('select')) holdTop = null })
 
   // ---------- ตัวเลือก ----------
   const chips = (box, items, isOn, onTap) => {
@@ -109,8 +132,20 @@
   }
   const applyDesign = () => {
     const d = designs()[S.image]
-    if (d) { DESIGN_KEYS.forEach(k => { S[k] = d[k] }); if (gridOptions[S.variant] && gridOptions[S.variant] !== (S.grid || []).join('')) { S.variant = Math.max(0, gridOptions.indexOf((S.grid || []).join(''))); S.grid = gridOptions[S.variant].split('').map(Number) } if (!S.tried) S.tried = [S.variant]; $('name').value = S.name; $('ownWord').value = WORDS.includes(S.word) ? '' : S.word }
-    else { S.side = null; S.variant = 0; S.tried = [0]; if (gridOptions[0]) S.grid = gridOptions[0].split('').map(Number); if (!S.frameChosen) S.frame = DEFAULT_FRAME[S.image.split('-')[0]] }
+    if (d) { DESIGN_KEYS.forEach(k => { S[k] = d[k] }); $('ownWord').value = WORDS.includes(S.word) ? '' : S.word }
+    else { S.side = null; if (!S.frameChosen) S.frame = DEFAULT_FRAME[S.image.split('-')[0]] }
+  }
+  // กลับมาวันเกิดเดิมแล้วได้ตารางและชื่อเดิม ตารางที่เลิกมีในชุดตัวเลือกแล้วกลับไปแบบแนะนำ
+  const applyShared = () => {
+    const sh = allShared[owner]
+    S.diagonal = !!(sh && sh.diagonal)
+    if (sh && sh.picked) picked = allPairs.map(p => p.num).filter(n => sh.picked.includes(n))
+    const g = rebuildGrid()
+    if (!sh) return g
+    const at = gridOptions.indexOf((sh.grid || []).join(''))
+    if (at >= 0) { S.variant = at; S.grid = gridOptions[at].split('').map(Number); S.tried = [...new Set([...(sh.tried || []).filter(i => i < gridOptions.length), 0, at])].sort((a, b) => a - b) }
+    S.name = sh.name || ''; S.showName = !!sh.showName; S.nameHigh = !!sh.nameHigh; $('name').value = S.name
+    return g
   }
   meta.deities.forEach(d => {
     const b = el('button', 'thumb'); b.type = 'button'; b.dataset.id = d.id
@@ -132,7 +167,7 @@
   const rowPair = key => { const p = allPairs.find(x => x.key === key) || (key === 'fame' ? allPairs.find(x => x.key === 'flow') : null); return p || null }
   const rebuildGrid = (keepGrid = false) => {
     const pool = allPairs.map(p => p.num), rows = ROWS.map(r => { const p = rowPair(r[3]); return p ? p.num : null })
-    const g = window.Lucky.grid(chart.kal, picked.length ? picked : pool, pool, { rank: chart.rank, salt: chart.salt, rows })
+    const g = window.Lucky.grid(chart.kal, picked.length ? picked : pool, pool, { rank: chart.rank, salt: chart.salt, rows, diagonal: S.diagonal })
     gridOptions = g.options
     if (!keepGrid) { S.variant = 0; S.tried = [0] }
     S.variant = Math.min(S.variant, gridOptions.length - 1)
@@ -144,8 +179,12 @@
     S.tried = i === null ? [0] : S.tried.filter(x => x !== i)
     if (!S.tried.includes(S.variant)) goGrid(0); else { saveDesign(); renderGridWhy(); renderControls() }
   }
+  const setLevel = diagonal => { if (S.diagonal === diagonal) return; S.diagonal = diagonal; const g = rebuildGrid(); note(g); saveDesign(); renderGridWhy(); renderControls(); draw() }
   const renderGridPicker = () => document.querySelectorAll('.gridpick').forEach(box => {
     box.textContent = ''
+    const levels = el('div', 'chips')
+    ;[[false, 'มงคล 4 ทิศ'], [true, 'มงคลทุกแนว รวมเฉียง']].forEach(([v, t]) => { const b = el('button', 'chip', t); b.type = 'button'; b.setAttribute('aria-pressed', S.diagonal === v); b.onclick = () => setLevel(v); levels.append(b) })
+    box.append(levels, el('p', 'help', S.diagonal ? 'เข้มที่สุด เลขเฉียงก็เป็นคู่มงคลด้วย แต่บางเลขจะไม่ขึ้นในตาราง และเรื่องรายแถวตรงน้อยลง' : 'เลขที่ติดกันซ้าย ขวา บน ล่าง เป็นคู่มงคล เลขหลากหลายกว่า และเรื่องรายแถวตรงได้มากกว่า'))
     const nav = el('div', 'gridnav'), prev = el('button', 'chip', '◀ แบบก่อนหน้า'), next = el('button', 'chip', 'แบบถัดไป ▶')
     prev.type = next.type = 'button'; prev.onclick = () => goGrid(S.variant - 1); next.onclick = () => goGrid(S.variant + 1)
     nav.append(prev, el('b', '', `แบบที่ ${S.variant + 1} จาก ${gridOptions.length}`), next); box.append(nav)
@@ -180,16 +219,16 @@
   const note = g => { const n = $('gridMiss'); if (n) n.textContent = g.missing.length ? `ตารางมีช่องจำกัด คู่ ${g.missing.join(' ')} จึงยังไม่ได้อยู่ติดกัน ลองเอาติ๊กบางคู่ออกได้` : '' }
 
   // ทำไมต้องเลข 9 ตัวนี้ อธิบายจากดวงของเจ้าของจริง
-  const GRID_EDGES = window.Lucky.GRID_EDGES
   const renderGridWhy = () => {
     if (!S.grid) return
+    const GRID_EDGES = S.diagonal ? window.Lucky.GRID_ALL : window.Lucky.GRID_STRAIGHT
     const g = S.grid, mini = $('miniGrid'); mini.textContent = ''
     g.forEach(n => mini.append(el('span', '', thai(n))))
     const center = [window.Lucky.NAME[g[4]] || 'เกตุ']
     const reasons = $('gridReasons'); reasons.textContent = ''
     ;[`ไม่มีเลข ${chart.avoidDigit} เพราะเป็นเลขกาลกิณีของคนเกิดวัน${chart.day}`,
       `ช่องกลางคือเลข ${g[4]} ดาว${center[0]} ${chart.strong.length && chart.strong[0].n === g[4] ? 'ซึ่งเป็นดาวที่แข็งที่สุดในดวงของคุณ' : 'เลือกจากดาวที่มีกำลังและเป็นคุณกับดวงของคุณ'}`,
-      `เลขที่อยู่ติดกันทั้งซ้าย ขวา บน ล่าง และแนวเฉียงทุกแนว รวม ${GRID_EDGES.length} คู่ เป็นคู่มงคลทุกคู่`].forEach(t => reasons.append(el('li', '', t)))
+      `เลขที่อยู่ติดกันทั้งซ้าย ขวา บน ล่าง${S.diagonal ? ' และแนวเฉียงทุกแนว' : ''} รวม ${GRID_EDGES.length} คู่ เป็นคู่มงคลทุกคู่`].forEach(t => reasons.append(el('li', '', t)))
     const rowsBox = $('gridRows'); rowsBox.textContent = ''
     ROWS.forEach((r, i) => {
       const cells = g.slice(i * 3, i * 3 + 3), wanted = rowPair(r[3]), inRow = [`${cells[0]}${cells[1]}`, `${cells[1]}${cells[2]}`]
@@ -225,7 +264,7 @@
     owner = await sha(`amatathewa:${y}-${m}-${d}-${noTime ? `n${night ? 1 : 0}` : `${inp.hh}-${inp.mm}`}`)
     allPairs = [...chart.pairs, ...chart.extras]; picked = allPairs.map(p => p.num)
     S.number = allPairs[0].num; S.showNumber = true
-    const g = rebuildGrid()
+    const g = applyShared()
     applyDesign()
     if (!allPairs.some(p => p.num === S.number)) S.number = allPairs[0].num
     renderPairs(); note(g); renderGridWhy(); renderControls()
