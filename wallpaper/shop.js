@@ -71,7 +71,7 @@
   const draw = async () => {
     if (drawing) { again = true; return }
     drawing = true; $('busy').textContent = 'กำลังวาดภาพ'
-    try { await window.Compose.render(view, S, meta, `assets/base/${S.image}.jpg?v=202611031`); $('busy').textContent = ''; view.dataset.ready = (+view.dataset.ready || 0) + 1; showPaidPreview(); $('miniView').getContext('2d').drawImage(view, 0, 0, 168, 364) }
+    try { await window.Compose.render(view, S, meta, `assets/base/${S.image}.jpg?v=202611031`); $('busy').textContent = ''; view.dataset.ready = (+view.dataset.ready || 0) + 1; showPaidPreview(); $('miniView').getContext('2d').drawImage(view, 0, 0, 336, 728) }
     catch (e) { $('busy').textContent = 'โหลดภาพไม่สำเร็จ ลองแตะอีกครั้ง'; console.error(e) }
     drawing = false
     if (again) { again = false; draw() }
