@@ -183,7 +183,7 @@
   const renderGridPicker = () => document.querySelectorAll('.gridpick').forEach(box => {
     box.textContent = ''
     const levels = el('div', 'chips')
-    ;[[false, 'มงคล 4 ทิศ'], [true, 'มงคลทุกแนว รวมเฉียง']].forEach(([v, t]) => { const b = el('button', 'chip', t); b.type = 'button'; b.setAttribute('aria-pressed', S.diagonal === v); b.onclick = () => setLevel(v); levels.append(b) })
+    ;[[false, 'มงคล 4 ทิศ'], [true, 'มงคล 8 ทิศ']].forEach(([v, t]) => { const b = el('button', 'chip', t); b.type = 'button'; b.setAttribute('aria-pressed', S.diagonal === v); b.onclick = () => setLevel(v); levels.append(b) })
     box.append(levels, el('p', 'help', S.diagonal ? 'เข้มที่สุด เลขเฉียงก็เป็นคู่มงคลด้วย แต่บางเลขจะไม่ขึ้นในตาราง และเรื่องรายแถวตรงน้อยลง' : 'เลขที่ติดกันซ้าย ขวา บน ล่าง เป็นคู่มงคล เลขหลากหลายกว่า และเรื่องรายแถวตรงได้มากกว่า'))
     const nav = el('div', 'gridnav'), prev = el('button', 'chip', '◀ แบบก่อนหน้า'), next = el('button', 'chip', 'แบบถัดไป ▶')
     prev.type = next.type = 'button'; prev.onclick = () => goGrid(S.variant - 1); next.onclick = () => goGrid(S.variant + 1)
@@ -228,7 +228,7 @@
     const reasons = $('gridReasons'); reasons.textContent = ''
     ;[`ไม่มีเลข ${chart.avoidDigit} เพราะเป็นเลขกาลกิณีของคนเกิดวัน${chart.day}`,
       `ช่องกลางคือเลข ${g[4]} ดาว${center[0]} ${chart.strong.length && chart.strong[0].n === g[4] ? 'ซึ่งเป็นดาวที่แข็งที่สุดในดวงของคุณ' : 'เลือกจากดาวที่มีกำลังและเป็นคุณกับดวงของคุณ'}`,
-      `เลขที่อยู่ติดกันทั้งซ้าย ขวา บน ล่าง${S.diagonal ? ' และแนวเฉียงทุกแนว' : ''} รวม ${GRID_EDGES.length} คู่ เป็นคู่มงคลทุกคู่`].forEach(t => reasons.append(el('li', '', t)))
+      `เลขที่อยู่ติดกันทั้งซ้าย ขวา บน ล่าง${S.diagonal ? ' และแนวเฉียง' : ''} รวม ${GRID_EDGES.length} คู่ เป็นคู่มงคลทุกคู่`].forEach(t => reasons.append(el('li', '', t)))
     const rowsBox = $('gridRows'); rowsBox.textContent = ''
     ROWS.forEach((r, i) => {
       const cells = g.slice(i * 3, i * 3 + 3), wanted = rowPair(r[3]), inRow = [`${cells[0]}${cells[1]}`, `${cells[1]}${cells[2]}`]
