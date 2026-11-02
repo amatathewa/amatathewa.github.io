@@ -4,7 +4,7 @@
   const meta = await (await fetch('assets/meta.json?v=202611031')).json()
   const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text !== undefined) e.textContent = text; return e }
   const fill = (s, list) => list.forEach(([v, t]) => s.add(new Option(t, v)))
-  const SET_IMAGES = 10
+  const SET_IMAGES = 6
   const MONTH = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม']
   const WORDS = ['มั่งคั่ง', 'เมตตา', 'รุ่งเรือง', 'สำเร็จ', 'มั่นคง', 'ร่มเย็น', 'ราบรื่น', 'โชคดี', 'สงบสุข']
   const SRC = { chart: 'คำนวณจากดวงเกิดของคุณ', taksa: 'คำนวณจากทักษาวันเกิดของคุณ', general: 'คู่มาตรฐานที่ไม่ขัดกับเลขกาลกิณีของคุณ' }
@@ -180,7 +180,7 @@
   const note = g => { const n = $('gridMiss'); if (n) n.textContent = g.missing.length ? `ตารางมีช่องจำกัด คู่ ${g.missing.join(' ')} จึงยังไม่ได้อยู่ติดกัน ลองเอาติ๊กบางคู่ออกได้` : '' }
 
   // ทำไมต้องเลข 9 ตัวนี้ อธิบายจากดวงของเจ้าของจริง
-  const GRID_EDGES = [[0, 1], [1, 2], [3, 4], [4, 5], [6, 7], [7, 8], [0, 3], [3, 6], [1, 4], [4, 7], [2, 5], [5, 8]]
+  const GRID_EDGES = window.Lucky.GRID_EDGES
   const renderGridWhy = () => {
     if (!S.grid) return
     const g = S.grid, mini = $('miniGrid'); mini.textContent = ''
@@ -189,7 +189,7 @@
     const reasons = $('gridReasons'); reasons.textContent = ''
     ;[`ไม่มีเลข ${chart.avoidDigit} เพราะเป็นเลขกาลกิณีของคนเกิดวัน${chart.day}`,
       `ช่องกลางคือเลข ${g[4]} ดาว${center[0]} ${chart.strong.length && chart.strong[0].n === g[4] ? 'ซึ่งเป็นดาวที่แข็งที่สุดในดวงของคุณ' : 'เลือกจากดาวที่มีกำลังและเป็นคุณกับดวงของคุณ'}`,
-      `เลขที่อยู่ติดกันทั้งซ้าย ขวา บน ล่าง รวม ${GRID_EDGES.length} คู่ เป็นคู่มงคลทุกคู่`].forEach(t => reasons.append(el('li', '', t)))
+      `เลขที่อยู่ติดกันทั้งซ้าย ขวา บน ล่าง และแนวเฉียงทุกแนว รวม ${GRID_EDGES.length} คู่ เป็นคู่มงคลทุกคู่`].forEach(t => reasons.append(el('li', '', t)))
     const rowsBox = $('gridRows'); rowsBox.textContent = ''
     ROWS.forEach((r, i) => {
       const cells = g.slice(i * 3, i * 3 + 3), wanted = rowPair(r[3]), inRow = [`${cells[0]}${cells[1]}`, `${cells[1]}${cells[2]}`]
@@ -197,7 +197,7 @@
       const row = el('div', 'grid-row'), head = el('div', 'grid-row-num', cells.map(thai).join(' ')), body = el('div')
       body.append(el('b', '', `${r[0]} · ${r[1]}`), el('p', '', r[2]))
       const use = match || inRow.find(x => allPairs.some(p => norm(p.num) === norm(x))) || inRow[0], name = pairName(+use[0], +use[1])
-      body.append(el('p', 'rowuse', match ? `เลขที่ควรใช้ ${use}${name ? ` ${name}` : ''} ซึ่งเป็นคู่เรื่อง${wanted.label}ของคุณ` : `แถวนี้มีคู่ ${use}${name ? ` ${name}` : ''}${wanted ? ` ส่วนคู่เรื่อง${wanted.label} ${wanted.num} ลองกดแบบถัดไป` : ''}`))
+      body.append(el('p', 'rowuse', match ? `เลขที่ควรใช้ ${use}${name ? ` ${name}` : ''} ซึ่งเป็นคู่เรื่อง${wanted.label}ของคุณ` : `แถวนี้มีคู่ ${use}${name ? ` ${name}` : ''}${wanted ? ` ส่วนคู่เรื่อง${wanted.label} ${wanted.num} ยังเลือกใส่เป็นเลขใหญ่บนภาพได้` : ''}`))
       row.append(head, body); rowsBox.append(row)
     })
     const pairs = $('gridPairs'); pairs.textContent = ''
