@@ -69,8 +69,22 @@
     designs()[S.image] = d; allShared[owner] = sh
     keep.set('amt-designs', allDesigns); keep.set('amt-shared', allShared)
   }
-  const passNow = () => { const p = owner && passes[owner]; return p && p.exp > Date.now() ? p : null }
-  const covers = () => { const p = passNow(); return p && (p.scope === 'set' || p.image === S.image) }
+  // วันเกิดหนึ่งดวงซื้อได้หลายครั้ง เก็บการซื้อเป็นรายการ (ข้อมูลเก่าที่เก็บเป็นชิ้นเดียวแปลงเป็นรายการ)
+  const passList = () => {
+    if (!owner) return []
+    let l = passes[owner]
+    if (!Array.isArray(l)) { l = passes[owner] = l ? [l] : []; l.forEach(p => { if (p.scope === 'set' && !p.images) p.images = Object.keys(savedFiles()) }); keep.set('amt-passes', passes) }
+    return l.filter(p => p.exp > Date.now())
+  }
+  const setLeft = p => SET_IMAGES - Math.max((p.images || []).length, p.used || 0)
+  // ภาพนี้ใช้สิทธิ์จากการซื้อครั้งไหน: ครั้งที่เคยใช้กับภาพนี้แล้วก่อน แล้วค่อยชุดที่ยังมีสิทธิ์เหลือ
+  const passFor = img => {
+    const l = passList()
+    return l.find(p => (p.images || []).includes(img) || (p.scope === 'one' && p.image === img)) || l.find(p => p.scope === 'set' && setLeft(p) > 0) || null
+  }
+  const passNow = () => passFor(S.image)
+  const covers = () => !!passNow()
+  let buyMore = false
 
   // ---------- วาดภาพ ----------
   const view = $('view')
@@ -288,8 +302,11 @@
     for (let r = 0; r < n; r++) for (let k = 0; k < n; k++) if (qr.isDark(r, k)) x.fillRect(off + k * size, off + r * size, size, size)
   }
   const syncPay = () => {
-    const open = SHOP.paymentsOpen, paid = covers(), p = passNow()
+    const open = SHOP.paymentsOpen, p = passNow(), paid = !!p && !buyMore, had = passList().length > 0
     $('notice').hidden = open
+    $('buyBack').hidden = !(buyMore && p)
+    $('passNote').hidden = paid || !had || buyMore
+    $('passNote').textContent = 'สิทธิ์ที่ซื้อไว้ใช้ครบแล้ว หรือไม่รวมภาพนี้ ซื้อเพิ่มเพื่อรับภาพนี้ได้เลย'
     $('payClosed').hidden = open
     $('paid').hidden = !paid; $('payOpen').hidden = !open || paid
     $('plans').hidden = !!paid
@@ -303,9 +320,10 @@
       drawQr(amount)
     }
     if (paid) {
-      const count = Math.max(Object.keys(savedFiles()).length, p.used || 0), thisOne = savedFiles()[S.image]
+      const thisOne = (p.images || []).includes(S.image)
+      const left = passList().filter(q => q.scope === 'set').reduce((n, q) => n + setLeft(q), 0)
       $('paidNote').textContent = p.scope === 'set'
-        ? `ใช้สิทธิ์แล้ว ${count} จาก ${SET_IMAGES} ภาพ · ${thisOne ? 'ภาพนี้ใช้สิทธิ์แล้ว แก้แล้วโหลดซ้ำไม่เสียสิทธิ์เพิ่ม' : 'ภาพนี้ยังไม่ใช้สิทธิ์ กดบันทึกจะนับ 1 สิทธิ์'} · กดเลือกองค์เทพด้านบนเพื่อแต่งภาพถัดไป ระบบจำการแต่งแยกรายภาพให้ในเครื่องนี้`
+        ? `ชุดนี้ใช้สิทธิ์แล้ว ${SET_IMAGES - setLeft(p)} จาก ${SET_IMAGES} ภาพ (สิทธิ์เหลือรวม ${left} ภาพ) · ${thisOne ? 'ภาพนี้ใช้สิทธิ์แล้ว แก้แล้วโหลดซ้ำไม่เสียสิทธิ์เพิ่ม' : 'ภาพนี้ยังไม่ใช้สิทธิ์ กดบันทึกจะนับ 1 สิทธิ์'} · กดเลือกองค์เทพด้านบนเพื่อแต่งภาพถัดไป ระบบจำการแต่งแยกรายภาพให้ในเครื่องนี้`
         : 'บันทึกภาพนี้เป็นไฟล์เต็มได้'
       showPaidPreview()
     }
@@ -337,7 +355,9 @@
       const fd = new FormData(); fd.append('plan', S.plan); fd.append('image', S.image); fd.append('owner', owner); fd.append('slip', file)
       const r = await fetch(`${SHOP.api}/order`, { method: 'POST', body: fd }), j = await r.json()
       if (!r.ok) throw new Error(j.message || 'ตรวจสลิปไม่ผ่าน')
-      passes[owner] = { token: j.token, scope: j.scope, image: j.image, exp: j.exp }; keep.set('amt-passes', passes); renderControls()
+      const l = passList(); passes[owner] = l
+      if (!l.some(q => q.id && q.id === j.id)) l.push({ token: j.token, scope: j.scope, image: j.image, exp: j.exp, id: j.id, images: [] })
+      keep.set('amt-passes', passes); buyMore = false; renderControls()
       $('buy').scrollIntoView()
     } catch (e) { err.textContent = e.message + ' ถ้าโอนแล้วแต่ไม่ผ่าน ทักมาที่ LINE ของอมตเทวาพร้อมสลิป'; err.hidden = false }
     b.disabled = false; b.textContent = 'ส่งสลิปและรับภาพ'
@@ -345,19 +365,24 @@
   $('saveFull').onclick = async () => {
     const b = $('saveFull'), err = $('fullErr'); err.hidden = true; b.disabled = true; b.textContent = 'กำลังสร้างไฟล์เต็ม'
     try {
-      const r = await fetch(`${SHOP.api}/asset/${S.image}`, { headers: { Authorization: `Bearer ${passNow().token}`, 'X-Owner': owner } })
+      const pass = passNow()
+      const r = await fetch(`${SHOP.api}/asset/${S.image}`, { headers: { Authorization: `Bearer ${pass.token}`, 'X-Owner': owner } })
       if (!r.ok) throw new Error((await r.json()).message || 'โหลดไฟล์ไม่ได้')
       const left = r.headers.get('X-Downloads-Left')
       const url = URL.createObjectURL(await r.blob()), c = document.createElement('canvas'); c.width = meta.full[0]; c.height = meta.full[1]
       await window.Compose.render(c, S, meta, url)
       await saveBlob(await blobOf(c), `amatathewa-${S.image}.jpg`); URL.revokeObjectURL(url)
       savedFiles()[S.image] = 1; keep.set('amt-saved', allSaved)
-      const usedNow = +r.headers.get('X-Images-Used'); if (usedNow) { passNow().used = usedNow; keep.set('amt-passes', passes) }
+      if (pass.scope === 'set') { pass.images = pass.images || []; if (!pass.images.includes(S.image)) pass.images.push(S.image) }
+      const usedNow = +r.headers.get('X-Images-Used'); if (usedNow) pass.used = usedNow
+      keep.set('amt-passes', passes)
       $('fullLeft').textContent = left !== null ? `ภาพนี้โหลดได้อีก ${left} ครั้ง` : ''
       renderControls()
     } catch (e) { err.textContent = e.message + (/ครบ/.test(e.message) ? ' ถ้าไฟล์มีปัญหา ทักมาที่ LINE ของอมตเทวา' : ' ลองกดอีกครั้ง'); err.hidden = false }
     b.disabled = false; b.textContent = 'บันทึกภาพเต็ม'
   }
+  $('buyMoreBtn').onclick = () => { buyMore = true; renderControls(); $('plans').scrollIntoView({ block: 'center' }) }
+  $('buyBack').onclick = () => { buyMore = false; renderControls() }
   renderControls()
   window.__shop = { S, meta, draw, get options() { return gridOptions }, set: o => { Object.assign(S, o); renderControls(); return draw() }, get chart() { return chart }, get owner() { return owner } }
 })()

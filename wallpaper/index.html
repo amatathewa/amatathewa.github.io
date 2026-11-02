@@ -227,6 +227,7 @@ footer a{color:inherit}
   <section id="buy" hidden>
     <h2>4. รับภาพ</h2>
     <div class="card narrow">
+      <p class="help" id="passNote" hidden></p>
       <div class="plans" id="plans"></div>
       <p class="help" id="planNote">แบบ 399 บาท เลือกภาพที่ชอบได้ 6 ภาพจาก 22 ภาพ แต่ละภาพแต่งเลข ลาย และคำมงคลต่างกันได้ การซื้อผูกกับวันเกิดนี้ 1 ดวง แก้แล้วโหลดซ้ำได้ภาพละ 3 ครั้ง ภายใน 30 วัน</p>
       <div class="pay" id="payClosed">
@@ -246,6 +247,7 @@ footer a{color:inherit}
         <input id="slip" type="file" accept="image/*">
         <button class="btn solid" id="sendSlip" type="button">ส่งสลิปและรับภาพ</button>
         <div class="err" id="payErr" hidden></div>
+        <button class="btn alt" id="buyBack" type="button" hidden>กลับไปใช้สิทธิ์ที่ซื้อไว้</button>
       </div>
       <div class="pay" id="paid" hidden>
         <p style="margin:14px 0 0"><b>ชำระเงินแล้ว</b> <span id="paidNote"></span></p>
@@ -255,6 +257,8 @@ footer a{color:inherit}
         <button class="btn solid" id="saveFull" type="button">บันทึกภาพเต็ม</button>
         <p class="help center" id="fullLeft"></p>
         <div class="err" id="fullErr" hidden></div>
+        <button class="btn alt" id="buyMoreBtn" type="button">ซื้อเพิ่ม</button>
+        <p class="help center">ซื้อให้คนอื่น ให้เปลี่ยนวันเกิดในข้อ 1 เป็นของคนนั้นก่อน</p>
       </div>
     </div>
   </section>
@@ -276,6 +280,6 @@ footer a{color:inherit}
 <script src="calc.js?v=202611037"></script>
 <script src="compose.js?v=202611037"></script>
 <script src="qr.js?v=202611021"></script>
-<script src="shop.js?v=202611038"></script>
+<script src="shop.js?v=202611039"></script>
 </body>
 </html>
