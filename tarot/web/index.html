@@ -2,6 +2,11 @@
 <html lang="th"><head><meta charset="utf-8"><meta name="color-scheme" content="dark only">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>เปิดไพ่ทาโรต์ · AMATATHEWA</title>
+<meta name="description" content="เปิดไพ่ทาโรต์ออนไลน์ฟรีกับอมตเทวา ตั้งจิตให้นิ่ง เลือกไพ่ด้วยตัวเอง แล้วอ่านคำทำนายภาษาไทยได้ทันที">
+<link rel="canonical" href="https://amatathewa.com/tarot/web/">
+<meta property="og:title" content="เปิดไพ่ทาโรต์ฟรี · AMATATHEWA อมตเทวา">
+<meta property="og:description" content="ตั้งจิตให้นิ่ง เชื่อความรู้สึกจากภายใน เลือกไพ่แล้วอ่านคำทำนายได้ทันที">
+<meta property="og:url" content="https://amatathewa.com/tarot/web/">
 <style>
 /* กรอบของทุกฉาก: ฉากปัจจุบันอยู่หน้า · ฉากถัดไปโหลดอยู่ข้างหลังแบบมองไม่เห็น จนพร้อมครบแล้วค่อยสลับขึ้นมา
    มือถือไม่ต้องเปลี่ยนหน้าเว็บจริง จึงไม่มีจังหวะล้างจอ/กระพริบ */
@@ -18,7 +23,7 @@ iframe.in.soft{transition:opacity .75s cubic-bezier(.45,0,.25,1)}
 let cur=null,next=null,pres={},timer=0,ask=0,st={};
 const O=location.origin;
 // รุ่นของเว็บ: สคริปต์ขึ้นเว็บใส่เลขให้ทุกครั้ง → ทุกฉากโหลดไฟล์รุ่นใหม่ ไม่ติดของเก่าที่มือถือจำไว้ (ในเครื่องว่างไว้)
-const V='202611040347';
+const V='202611040551';
 function mk(src){const f=document.createElement('iframe');f.src=V?src+(src.includes('?')?'&':'?')+'v='+V:src;f.dataset.src=src;document.body.appendChild(f);return f}
 function load(src,hand){
   if(pres[src]){next=pres[src];delete pres[src]}else next=mk(src);
