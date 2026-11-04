@@ -334,6 +334,8 @@
         : 'บันทึกภาพนี้เป็นไฟล์เต็มได้'
       showPaidPreview()
     }
+    const savedThis = paid && !!savedFiles()[S.image]
+    $('bless').hidden = !savedThis; $('rateLink').hidden = !savedThis
   }
   const saveBlob = async (blob, name) => {
     const inApp = /Line\/|FBAN|FBAV|Instagram/i.test(navigator.userAgent)
@@ -385,9 +387,70 @@
       keep.set('amt-passes', passes)
       $('fullLeft').textContent = left !== null ? `ภาพนี้โหลดได้อีก ${left} ครั้ง` : ''
       renderControls()
+      afterSave()
     } catch (e) { err.textContent = e.message + (/ครบ/.test(e.message) ? ' ถ้าไฟล์มีปัญหา ทักมาที่ LINE ของอมตเทวา' : ' ลองกดอีกครั้ง'); err.hidden = false }
     b.disabled = false; b.textContent = 'บันทึกภาพเต็ม'
   }
+  // ── รีวิว (5 พ.ย. 2569) ─ หลังบันทึกภาพเต็ม: คำอวยพร → 3 วินาที → แผ่นดาวเลื่อนขึ้นครึ่งจอ (ไม่บังภาพ) ─
+  const WORD = ['', 'ยังไม่ถูกใจ', 'พอใช้', 'ดี', 'ชอบมาก', 'ประทับใจที่สุด']
+  const rated = keep.get('amt-rated', {})   // ภาพที่ให้ดาวแล้วหรือปิดแผ่นแล้ว จะไม่เด้งซ้ำ
+  let rStars = 0, rShowName = true, rImage = null, rTimer = 0
+  const starBtns = [1, 2, 3, 4, 5].map(n => { const b = el('button', '', '★'); b.type = 'button'; b.setAttribute('aria-label', `${n} ดาว`); b.onclick = () => rate(n); $('rStars').append(b); return b })
+  const paintStars = () => { starBtns.forEach((b, i) => b.classList.toggle('on', i < rStars)); $('rWord').textContent = rStars ? WORD[rStars] : 'แตะดาวเพื่อให้คะแนน' }
+  const mineOf = img => (rated[owner] || {})[img] || {}
+  const postReview = async extra => {
+    const pass = passFor(rImage); if (!pass) throw new Error('สิทธิ์หมดอายุแล้ว')
+    const r = await fetch(`${SHOP.api}/review`, { method: 'POST', headers: { Authorization: `Bearer ${pass.token}`, 'X-Owner': owner, 'Content-Type': 'application/json' }, body: JSON.stringify({ image: rImage, stars: rStars, ...extra }) })
+    if (!r.ok) throw new Error((await r.json().catch(() => ({}))).message || 'ส่งไม่สำเร็จ ลองอีกครั้ง')
+  }
+  const openSheet = () => {
+    rImage = S.image; rStars = mineOf(rImage).stars || 0; paintStars()
+    $('rMore').hidden = !rStars; $('rErr').hidden = true; $('sheetForm').hidden = false; $('sheetThanks').hidden = true
+    $('sheet').hidden = false; requestAnimationFrame(() => requestAnimationFrame(() => $('sheet').classList.add('open')))
+  }
+  const closeSheet = () => { $('sheet').classList.remove('open'); setTimeout(() => { $('sheet').hidden = true }, 450) }
+  const markRated = o => { const m = rated[owner] || (rated[owner] = {}); m[rImage] = { ...(m[rImage] || {}), ...o }; keep.set('amt-rated', rated) }
+  const rate = async n => {
+    rStars = n; paintStars(); $('rMore').hidden = false; $('rErr').hidden = true
+    try { await postReview({}); markRated({ stars: n }) } catch (e) { $('rErr').textContent = e.message; $('rErr').hidden = false }
+  }
+  const nameMode = show => { rShowName = show; $('rShow').setAttribute('aria-pressed', show); $('rHide').setAttribute('aria-pressed', !show); $('rName').hidden = !show }
+  $('rShow').onclick = () => nameMode(true); $('rHide').onclick = () => nameMode(false)
+  $('rSend').onclick = async () => {
+    const b = $('rSend'); b.disabled = true; $('rErr').hidden = true
+    try {
+      await postReview({ text: $('rText').value.trim(), showName: rShowName, name: rShowName ? $('rName').value.trim() : '' })
+      markRated({ stars: rStars, sent: true }); $('sheetForm').hidden = true; $('sheetThanks').hidden = false; setTimeout(closeSheet, 2200)
+    } catch (e) { $('rErr').textContent = e.message; $('rErr').hidden = false }
+    b.disabled = false
+  }
+  $('sheetX').onclick = () => { if (rImage) markRated({ closed: true }); closeSheet() }
+  $('rateLink').onclick = openSheet
+  // หลังบันทึกภาพ: รอลูกค้าปิดหน้ากดค้างบันทึกภาพ (แอป LINE/Facebook) ก่อน แล้วค่อยนับ 3 วินาที
+  const afterSave = () => {
+    clearTimeout(rTimer)
+    const m = mineOf(S.image); if (m.stars || m.closed) return
+    const wait = () => { if (!$('saveov').hidden) { rTimer = setTimeout(wait, 600); return } rTimer = setTimeout(() => { if (savedFiles()[S.image] && $('sheet').hidden) openSheet() }, 3000) }
+    wait()
+  }
+  // รีวิวบนหน้าร้าน: ดาวเฉลี่ยขึ้นเมื่อครบ 5 รีวิว · ข้อความขึ้นเฉพาะที่ผ่านการตรวจ
+  ;(async () => {
+    try {
+      const r = await fetch(`${SHOP.api}/reviews`); if (!r.ok) return
+      const d = await r.json(), list = $('rvList')
+      if (d.avg) { $('rvAvg').textContent = d.avg.toFixed(1); $('rvLine').textContent = '★★★★★'; $('rvFrom').textContent = `จาก ${d.count} รีวิว`; $('rvScore').hidden = false }
+      d.items.forEach((x, i) => {
+        const box = el('div', 'rv'); if (i >= 3) box.hidden = true
+        box.append(el('div', 's', '★'.repeat(x.stars) + '☆'.repeat(5 - x.stars)), el('p', '', `“${x.text}”`), el('div', 'who', `${x.who} · ${x.deity}`))
+        list.append(box)
+      })
+      if (d.items.length > 3) { $('rvMore').hidden = false; $('rvMore').onclick = () => { list.querySelectorAll('.rv').forEach(b => { b.hidden = false }); $('rvMore').hidden = true } }
+      if (d.avg || d.items.length) $('reviews').hidden = false
+    } catch {}
+  })()
+  // ทางเข้าหลังร้านแบบแอบ (ณัทกรขอ 5 พ.ย. 2569): แตะข้อความท้ายหน้า 5 ครั้งภายใน 3 วินาที · ยังต้องใช้รหัสแอดมินเหมือนเดิม
+  ;(() => { const f = document.querySelector('footer'); if (!f) return; let n = 0, t = 0
+    f.addEventListener('click', () => { clearTimeout(t); t = setTimeout(() => { n = 0 }, 3000); if (++n >= 5) location.href = 'admin/' }) })()
   $('buyMoreBtn').onclick = () => { buyMore = true; renderControls(); $('plans').scrollIntoView({ block: 'center' }) }
   $('buyBack').onclick = () => { buyMore = false; renderControls() }
   renderControls()

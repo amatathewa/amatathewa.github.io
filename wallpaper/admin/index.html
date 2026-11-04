@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>รีวิวหลังร้าน · อมตเทวา</title>
+<!-- หน้าแอดมินตรวจรีวิว (5 พ.ย. 2569) · ต้องมีรหัสแอดมินถึงจะเห็นข้อมูล · รหัสจำไว้ในเครื่องนี้เท่านั้น -->
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;700&family=Trirong:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f1e8;--ink:#26211c;--soft:#5d5346;--line:#e6ddcf;--gold:#b07f1c;--blue-bg:#CFE2FF;--blue-ink:#0B4A8B;--org-bg:#FFD3A8;--org-ink:#7A3300;--yel-bg:#FFE14D;--yel-ink:#4A3B00}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 "IBM Plex Sans Thai",sans-serif}
+.wrap{max-width:640px;margin:0 auto;padding:22px 16px 60px}
+h1{font:500 24px/1.3 Trirong,serif;margin:0 0 4px}
+.sub{color:var(--soft);font-size:14px;margin:0 0 16px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.tabs button{font:500 14px "IBM Plex Sans Thai",sans-serif;padding:7px 14px;border-radius:99px;border:1px solid rgba(38,33,28,.3);background:none;color:var(--ink);cursor:pointer;min-height:40px}
+.tabs button[aria-pressed=true]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.item{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:10px}
+.s{color:var(--gold);letter-spacing:2px}
+.item p{margin:6px 0;font-size:16px;white-space:pre-wrap;word-break:break-word}
+.item .empty{color:var(--soft);font-style:italic}
+.meta{font-size:13px;color:var(--soft)}
+.flag{display:inline-block;font-size:13px;font-weight:600;border-radius:6px;padding:1px 8px;margin:4px 6px 0 0}
+.ok{background:var(--blue-bg);color:var(--blue-ink)}
+.warn{background:var(--org-bg);color:var(--org-ink)}
+.note{background:var(--yel-bg);color:var(--yel-ink)}
+.acts{display:flex;gap:8px;margin-top:10px}
+.acts button{flex:1;font:600 14px "IBM Plex Sans Thai",sans-serif;padding:9px;border-radius:8px;cursor:pointer;min-height:42px}
+.show{background:var(--ink);color:#fff;border:0}
+.keep{background:none;border:1px solid rgba(38,33,28,.35);color:var(--ink)}
+.login input{width:100%;font:inherit;min-height:46px;padding:8px 12px;border:1px solid var(--line);border-radius:8px}
+.login button,.out{margin-top:10px;font:600 15px "IBM Plex Sans Thai",sans-serif;padding:10px 16px;border-radius:8px;border:0;background:var(--ink);color:#fff;cursor:pointer;min-height:44px}
+.out{background:none;color:var(--soft);border:1px solid var(--line);font-weight:400;margin-top:24px}
+.err{color:var(--org-ink);font-weight:600}
+.none{color:var(--soft);text-align:center;padding:30px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>รีวิวหลังร้าน</h1>
+<p class="sub" id="sum">อมตเทวา · ร้านวอลเปเปอร์</p>
+
+<div class="login" id="login" hidden>
+<p>ใส่รหัสแอดมินของร้าน เครื่องนี้จะจำไว้ ครั้งหน้าไม่ต้องใส่อีก</p>
+<input type="password" id="key" autocomplete="current-password" placeholder="รหัสแอดมิน">
+<button id="go" type="button">เข้าหลังร้าน</button>
+<p class="err" id="loginErr" hidden></p>
+</div>
+
+<div id="main" hidden>
+<div class="tabs" id="tabs"></div>
+<div id="list"></div>
+<button class="out" id="out" type="button">ออกจากระบบในเครื่องนี้</button>
+</div>
+</div>
+<script>
+const API = 'https://amatathewa-wallpaper.amatathewa.workers.dev'
+const $ = id => document.getElementById(id)
+const TABS = [['pending', 'รอตรวจ'], ['shown', 'ขึ้นหน้าร้าน'], ['kept', 'เก็บไว้']]
+let key = '', data = null, tab = 'pending'
+try { key = localStorage.getItem('amt-admin') || '' } catch {}
+const el = (t, c, x) => { const e = document.createElement(t); if (c) e.className = c; if (x !== undefined) e.textContent = x; return e }
+const day = t => new Date(t).toLocaleDateString('th-TH', { day: 'numeric', month: 'short' })
+async function load() {
+  const r = await fetch(API + '/admin/reviews', { headers: { 'X-Admin-Key': key } })
+  if (r.status === 401) { $('main').hidden = true; $('login').hidden = false; if (key) { $('loginErr').textContent = 'รหัสไม่ถูกต้อง'; $('loginErr').hidden = false } return }
+  data = await r.json(); $('login').hidden = true; $('main').hidden = false; render()
+}
+function render() {
+  const s = data.summary
+  $('sum').textContent = `ดาวทั้งหมด ${s.count} รีวิว` + (s.avg ? ` · เฉลี่ย ${s.avg} (โชว์หน้าร้านแล้ว)` : ' · ดาวเฉลี่ยจะขึ้นหน้าร้านเมื่อครบ 5 รีวิว')
+  $('tabs').textContent = ''
+  TABS.forEach(([k, t]) => { const n = data.reviews.filter(x => x.status === k).length, b = el('button', '', `${t} ${n}`); b.type = 'button'; b.setAttribute('aria-pressed', tab === k); b.onclick = () => { tab = k; render() }; $('tabs').append(b) })
+  const L = $('list'); L.textContent = ''
+  const items = data.reviews.filter(x => x.status === tab)
+  if (!items.length) { L.append(el('div', 'none', 'ยังไม่มีรีวิวในหมวดนี้')); return }
+  items.forEach(x => {
+    const box = el('div', 'item')
+    box.append(el('div', 's', '★'.repeat(x.stars) + '☆'.repeat(5 - x.stars)))
+    box.append(x.text ? el('p', '', `“${x.text}”`) : el('p', 'empty', 'ให้ดาวอย่างเดียว ไม่มีข้อความ'))
+    box.append(el('div', 'meta', `${x.showName ? 'แสดงชื่อ: ' + (x.name || '(ไม่ได้ใส่ชื่อ)') : 'ไม่แสดงชื่อ'} · ${x.deity} · ${day(x.edited || x.at)}${x.edited ? ' (แก้ไข)' : ''}`))
+    ;(x.flags || []).forEach(f => box.append(el('span', 'flag warn', '▼ ' + f)))
+    if (x.note) box.append(el('span', 'flag note', '● ' + x.note))
+    if (x.text) {
+      const a = el('div', 'acts')
+      if (x.status !== 'shown') { const b = el('button', 'show', 'ขึ้นหน้าร้าน'); b.onclick = () => act(x.id, 'shown'); a.append(b) }
+      if (x.status !== 'kept') { const b = el('button', 'keep', x.status === 'shown' ? 'เอาลงจากหน้าร้าน' : 'เก็บไว้'); b.onclick = () => act(x.id, 'kept'); a.append(b) }
+      box.append(a)
+    }
+    L.append(box)
+  })
+}
+async function act(id, status) {
+  const r = await fetch(API + '/admin/review', { method: 'POST', headers: { 'X-Admin-Key': key, 'Content-Type': 'application/json' }, body: JSON.stringify({ id, status }) })
+  if (!r.ok) { $('sum').textContent = (await r.json().catch(() => ({}))).message || 'ทำไม่สำเร็จ ลองอีกครั้ง'; return }
+  await load()
+}
+$('go').onclick = () => { key = $('key').value.trim(); try { localStorage.setItem('amt-admin', key) } catch {} ; $('loginErr').hidden = true; load() }
+$('out').onclick = () => { try { localStorage.removeItem('amt-admin') } catch {} ; key = ''; $('main').hidden = true; $('login').hidden = false }
+if (key) load(); else $('login').hidden = false
+</script>
+</body>
+</html>

@@ -145,6 +145,38 @@ footer a{color:inherit}
  canvas#view{width:min(100%,calc(84vh*852/1846))}
  .card.narrow{max-width:620px}
 }
+.bless{font:400 21px/1.5 Trirong,serif;color:var(--goldsoft);text-align:center;margin:14px 0 4px;text-shadow:0 1px 10px rgba(0,0,0,.8)}
+.rateLink{display:block;margin:2px auto 0;background:none;border:0;color:var(--goldsoft);font:400 15px "IBM Plex Sans Thai",sans-serif;text-decoration:underline;text-underline-offset:3px;cursor:pointer;min-height:40px}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:40;max-width:520px;margin:0 auto;background:var(--paper);color:var(--ink);border-radius:16px 16px 0 0;padding:10px 18px calc(18px + env(safe-area-inset-bottom));box-shadow:0 -12px 40px rgba(0,0,0,.55);transform:translateY(105%);transition:transform .45s cubic-bezier(.2,.8,.2,1);max-height:88vh;overflow-y:auto}
+.sheet.open{transform:none}
+.sheet .grab{width:44px;height:5px;border-radius:9px;background:rgba(38,33,28,.22);margin:0 auto 6px}
+.sheet .x{position:absolute;right:8px;top:6px;width:44px;height:44px;border:0;background:none;font-size:26px;color:var(--inksoft);cursor:pointer}
+.sheet h3{font:400 23px/1.35 Trirong,serif;text-align:center;margin:6px 0 2px}
+.rstars{display:flex;justify-content:center;gap:4px;margin:6px 0 0}
+.rstars button{border:0;background:none;font-size:40px;line-height:1;width:52px;height:56px;color:rgba(38,33,28,.22);cursor:pointer;padding:0}
+.rstars button.on{color:var(--gold)}
+.rword{text-align:center;font-size:14px;color:var(--inksoft);min-height:22px;margin:0}
+.sheet textarea{width:100%;min-height:92px;font:inherit;padding:10px;border:1px solid rgba(38,33,28,.2);border-radius:3px;background:#fbf7ef;color:var(--ink);resize:vertical}
+.sheet input[type=text]{border-color:rgba(38,33,28,.2);background:#fbf7ef;margin-top:10px}
+.sheet label{margin:12px 0 6px}
+.sheet .help{color:var(--inksoft);text-align:center}
+.namechoice{display:flex;gap:8px}
+.namechoice button{flex:1;min-height:44px;border:1px solid rgba(38,33,28,.4);border-radius:99px;background:none;color:var(--ink);font:500 15px "IBM Plex Sans Thai",sans-serif;cursor:pointer}
+.namechoice button[aria-pressed=true]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.sheet .btn.solid{margin-top:14px}
+.thanks{font:400 21px/1.5 Trirong,serif;text-align:center;margin:18px 0 10px}
+.rvbox{max-width:560px;margin:0 auto}
+.rvscore{text-align:center;padding:4px 0 16px;border-bottom:1px solid var(--line)}
+.rvscore .big{font:400 54px/1 Trirong,serif;color:var(--goldsoft)}
+.rvscore .line{color:var(--gold);letter-spacing:4px;font-size:20px}
+.rvscore .from{font-size:14px;color:var(--muted)}
+.rvbadge{display:inline-block;margin-top:8px;font-size:13px;color:var(--goldsoft);border:1px solid var(--line);border-radius:99px;padding:2px 12px}
+.rv{padding:16px 0;border-bottom:1px solid var(--line)}
+.rv:last-of-type{border-bottom:0}
+.rv .s{color:var(--gold);letter-spacing:2px;font-size:15px}
+.rv p{margin:6px 0 4px;font:400 17px/1.6 Trirong,serif}
+.rv .who{font-size:14px;color:var(--muted)}
+.rvmore{display:block;margin:12px auto 0;background:none;border:0;color:var(--goldsoft);font:400 15px "IBM Plex Sans Thai",sans-serif;cursor:pointer;min-height:44px}
 </style>
 <script>try{const b=new URLSearchParams(location.search).get('bg');if(b==='1'||b==='2')document.documentElement.style.setProperty('--bgm','url(assets/bg'+b+'-m.jpg)')}catch{}</script>
 </head>
@@ -260,6 +292,8 @@ footer a{color:inherit}
         <p class="help center">ลายน้ำมีเฉพาะภาพตัวอย่างนี้ ไฟล์เต็มไม่มีลายน้ำ</p>
         <button class="btn solid" id="saveFull" type="button">บันทึกภาพเต็ม</button>
         <p class="help center" id="fullLeft"></p>
+        <p class="bless" id="bless" hidden>ขอให้ภาพนี้เป็นสิริมงคลแก่คุณ</p>
+        <button class="rateLink" id="rateLink" type="button" hidden>ให้คะแนนภาพนี้</button>
         <div class="err" id="fullErr" hidden></div>
         <p class="help center">ไฟล์มีปัญหา <a class="lineLink" href="https://line.me/R/ti/p/@671omwgd" target="_blank" rel="noopener">ทัก LINE อมตเทวา</a></p>
         <button class="btn alt" id="buyMoreBtn" type="button">ซื้อเพิ่ม</button>
@@ -271,6 +305,15 @@ footer a{color:inherit}
   <section id="deities">
     <h2>ดูภาพแยกตามองค์เทพ</h2>
     <p class="lead deities"><a href="ganesha/">วอลเปเปอร์พระพิฆเนศ</a> · <a href="shiva/">วอลเปเปอร์พระศิวะ</a> · <a href="lakshmi/">วอลเปเปอร์พระแม่ลักษมี</a> · <a href="parvati/">วอลเปเปอร์พระแม่ปารวตี</a> · <a href="saraswati/">วอลเปเปอร์พระแม่สรัสวตี</a> · <a href="vishnu/">วอลเปเปอร์พระวิษณุ</a> · <a href="brahma/">วอลเปเปอร์พระพรหม</a> · <a href="trimurti/">วอลเปเปอร์พระตรีมูรติ</a> · <a href="trishakti/">วอลเปเปอร์พระตรีศักติ</a></p>
+  </section>
+
+  <section id="reviews" hidden>
+    <h2>เสียงจากผู้ที่ได้ภาพไปแล้ว</h2>
+    <div class="card rvbox">
+      <div class="rvscore" id="rvScore" hidden><div class="big" id="rvAvg"></div><div class="line" id="rvLine"></div><div class="from" id="rvFrom"></div><span class="rvbadge">รีวิวจากผู้ศรัทธาจริงทุกข้อความ</span></div>
+      <div id="rvList"></div>
+      <button class="rvmore" id="rvMore" type="button" hidden>อ่านรีวิวทั้งหมด</button>
+    </div>
   </section>
 
   <section>
@@ -285,11 +328,30 @@ footer a{color:inherit}
   <footer>อมตเทวา ความดีงามอันเป็นนิรันดร์<br>© 2569 AMATATHEWA · ภาพทั้งหมดเป็นลิขสิทธิ์ของอมตเทวา ห้ามคัดลอกหรือนำไปขายต่อ · <a href="../tarot/web/">เปิดไพ่ทาโรต์</a><br><a class="lineLink" href="https://line.me/R/ti/p/@671omwgd" target="_blank" rel="noopener">ติดต่อเรา LINE @671omwgd</a> · <a href="/privacy/">นโยบายความเป็นส่วนตัว</a></footer>
 </div>
 <canvas class="miniview" id="miniView" width="336" height="728" role="button" aria-label="กลับไปดูภาพใหญ่" hidden></canvas>
+<div class="sheet" id="sheet" role="dialog" aria-labelledby="sheetTitle" hidden>
+  <div class="grab"></div><button class="x" id="sheetX" type="button" aria-label="ปิด">×</button>
+  <div id="sheetForm">
+    <h3 id="sheetTitle">ภาพนี้เป็นอย่างไรบ้าง</h3>
+    <div class="rstars" id="rStars"></div>
+    <p class="rword" id="rWord">แตะดาวเพื่อให้คะแนน</p>
+    <div id="rMore" hidden>
+      <label for="rText">เล่าให้เราฟังสักนิด <span class="help" style="display:inline">(ไม่เขียนก็ได้)</span></label>
+      <textarea id="rText" maxlength="500" placeholder="ชอบตรงไหน ตั้งเป็นหน้าจอแล้วรู้สึกอย่างไร"></textarea>
+      <label>แสดงชื่อของคุณไหม</label>
+      <div class="namechoice"><button type="button" id="rShow" aria-pressed="true">แสดงชื่อ</button><button type="button" id="rHide" aria-pressed="false">ไม่แสดงชื่อ</button></div>
+      <input type="text" id="rName" maxlength="30" placeholder="ชื่อที่อยากให้แสดง เช่น พลอย" autocomplete="nickname">
+      <button class="btn solid" id="rSend" type="button">ส่งความคิดเห็น</button>
+      <p class="help">ทุกคำของคุณมีความหมายกับเราเสมอ</p>
+    </div>
+    <div class="err" id="rErr" hidden></div>
+  </div>
+  <p class="thanks" id="sheetThanks" hidden>ขอบคุณที่เล่าให้เราฟัง</p>
+</div>
 <div class="saveov" id="saveov" hidden><div>กดค้างที่ภาพเพื่อบันทึก</div><img id="saveImg" alt="ภาพสำหรับบันทึก"><button class="btn alt" id="saveClose" type="button" style="width:auto">ปิด</button></div>
 <script src="config.js?v=202611037"></script>
 <script src="calc.js?v=202611052"></script>
 <script src="compose.js?v=202611037"></script>
 <script src="qr.js?v=202611021"></script>
-<script src="shop.js?v=202611041"></script>
+<script src="shop.js?v=202611054"></script>
 </body>
 </html>
