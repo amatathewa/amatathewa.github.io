@@ -49,6 +49,8 @@
 
   const S = { image: 'shiva-ganesha', frame: 'plain', frameChosen: false, grid: null, variant: 0, tried: [0], diagonal: false, nameHigh: false, showNumber: true, number: null, thaiNumber: false, side: null, showSeal: true, word: 'มั่งคั่ง', showName: false, name: '', plan: 'one' }
   // แต่งแยกรายภาพ ยกเว้นตารางและชื่อที่ติดตัวเจ้าของดวงเสมอแม้เปลี่ยนภาพ
+  // ลิงก์ที่เลือกองค์เทพไว้ให้แล้ว เช่น /wallpaper/?image=ganesha-mouse (ใช้กับหน้าแยกองค์เทพ)
+  try { const q = new URLSearchParams(location.search).get('image'); if (q && meta.deities.some(d => d.id === q)) S.image = q } catch {}
   const DESIGN_KEYS = ['frame', 'frameChosen', 'showNumber', 'number', 'thaiNumber', 'side', 'showSeal', 'word']
   const SHARED_KEYS = ['grid', 'variant', 'tried', 'diagonal', 'showName', 'name', 'nameHigh']
   let chart = null, allPairs = [], picked = [], owner = null, gridOptions = []
