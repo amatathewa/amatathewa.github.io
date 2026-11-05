@@ -33,6 +33,7 @@ h1{font:500 24px/1.3 Trirong,serif;margin:0 0 4px}
 .keep{background:none;border:1px solid rgba(38,33,28,.35);color:var(--ink)}
 .login input{width:100%;font:inherit;min-height:46px;padding:8px 12px;border:1px solid var(--line);border-radius:8px}
 .login button,.out{margin-top:10px;font:600 15px "IBM Plex Sans Thai",sans-serif;padding:10px 16px;border-radius:8px;border:0;background:var(--ink);color:#fff;cursor:pointer;min-height:44px}
+.book{display:block;text-align:center;text-decoration:none;font:600 16px "IBM Plex Sans Thai",sans-serif;padding:12px 16px;border-radius:8px;background:var(--ink);color:#fff;min-height:46px;margin:0 0 16px}
 .out{background:none;color:var(--soft);border:1px solid var(--line);font-weight:400;margin-top:24px}
 .err{color:var(--org-ink);font-weight:600}
 .none{color:var(--soft);text-align:center;padding:30px 0}
@@ -55,6 +56,7 @@ h1{font:500 24px/1.3 Trirong,serif;margin:0 0 4px}
 <div id="list"></div>
 <h1 style="margin-top:34px">สมุดบัญชีออนไลน์</h1>
 <p class="sub" id="vsum">กำลังโหลด…</p>
+<a class="book" id="book" hidden>📒 เปิดสมุดบัญชี</a>
 <div id="vault"></div>
 <button class="out" id="out" type="button">ออกจากระบบในเครื่องนี้</button>
 </div>
@@ -113,6 +115,7 @@ async function loadVault(post) {
   const v = await r.json().catch(() => ({})), box = $('vault')
   if (post && post.action === 'revoke' && !r.ok) { const e = [...box.querySelectorAll('.err')].find(x => x.textContent); if (e) e.textContent = v.message || 'ถอดไม่สำเร็จ'; return false }
   box.textContent = ''
+  if (v.book) { $('book').href = new URL(v.book, location.origin === 'https://amatathewa.com' ? location.origin : 'https://amatathewa.com').href; $('book').hidden = false }   // ลิงก์ลับได้มาจากหลังบ้านหลังใส่รหัสแอดมินเท่านั้น
   if (!r.ok) { $('vsum').textContent = v.message || 'ยังไม่ได้เปิดใช้สมุดออนไลน์'; return }
   if (!v.exists) { $('vsum').textContent = 'ยังไม่ได้ย้ายสมุดขึ้นออนไลน์'; return }
   $('vsum').textContent = `บันทึกล่าสุด ${day(v.at)} · ${v.devices.length} เครื่อง`
