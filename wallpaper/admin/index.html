@@ -4,8 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>รีวิวหลังร้าน · อมตเทวา</title>
-<!-- หน้าแอดมินตรวจรีวิว (5 พ.ย. 2569) · ต้องมีรหัสแอดมินถึงจะเห็นข้อมูล · รหัสจำไว้ในเครื่องนี้เท่านั้น -->
+<title>ระบบหลังบ้าน · อมตเทวา</title>
+<!-- ระบบหลังบ้าน (5 พ.ย. 2569 ณัทกรตั้งชื่อ) · หน้าแรก = เมนูงาน · รีวิวแยกหน้า (#reviews) · จัดการเครื่องสมุดพับไว้ล่างสุด
+     ต้องมีรหัสแอดมินถึงจะเห็นข้อมูล · รหัสจำไว้ในเครื่องนี้เท่านั้น · ลิงก์ลับสมุดได้จาก worker หลังใส่รหัสแอดมิน ไม่ฝังในหน้านี้ -->
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;700&family=Trirong:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#f6f1e8;--ink:#26211c;--soft:#5d5346;--line:#e6ddcf;--gold:#b07f1c;--blue-bg:#CFE2FF;--blue-ink:#0B4A8B;--org-bg:#FFD3A8;--org-ink:#7A3300;--yel-bg:#FFE14D;--yel-ink:#4A3B00}
@@ -13,8 +14,23 @@
 [hidden]{display:none!important}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 "IBM Plex Sans Thai",sans-serif}
 .wrap{max-width:640px;margin:0 auto;padding:22px 16px 60px}
-h1{font:500 24px/1.3 Trirong,serif;margin:0 0 4px}
-.sub{color:var(--soft);font-size:14px;margin:0 0 16px}
+h1{font:500 26px/1.3 Trirong,serif;margin:0 0 2px}
+h2{font:500 22px/1.3 Trirong,serif;margin:0 0 2px}
+.sub{color:var(--soft);font-size:14px;margin:0 0 18px}
+.label{font-size:13px;color:var(--soft);letter-spacing:.5px;margin:0 0 8px}
+/* ปุ่มเมนูงาน */
+.tile{display:flex;align-items:center;gap:14px;width:100%;text-align:left;text-decoration:none;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:10px;cursor:pointer;font:inherit;min-height:76px}
+.tile:active{transform:scale(.99)}
+.tile .ic{font-size:26px;width:44px;height:44px;display:grid;place-items:center;background:var(--bg);border-radius:12px;flex:none}
+.tile .tx{flex:1;min-width:0}
+.tile b{display:block;font:500 19px/1.35 Trirong,serif}
+.tile small{display:block;font-size:14px;color:var(--soft)}
+.tile .go{color:var(--soft);font-size:22px}
+.badge{display:inline-block;font-size:13px;font-weight:600;border-radius:99px;padding:0 9px;margin-left:6px;background:var(--yel-bg);color:var(--yel-ink);vertical-align:2px}
+.alert{white-space:pre-line;background:var(--org-bg);color:var(--org-ink);border-radius:12px;padding:12px 14px;margin:4px 0 10px;font-weight:600}
+.alert button{display:block;width:100%;margin-top:8px}
+/* หน้ารีวิว */
+.back{background:none;border:0;font:500 15px "IBM Plex Sans Thai",sans-serif;color:var(--soft);padding:6px 0;margin-bottom:6px;cursor:pointer;min-height:40px}
 .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
 .tabs button{font:500 14px "IBM Plex Sans Thai",sans-serif;padding:7px 14px;border-radius:99px;border:1px solid rgba(38,33,28,.3);background:none;color:var(--ink);cursor:pointer;min-height:40px}
 .tabs button[aria-pressed=true]{background:var(--ink);color:#fff;border-color:var(--ink)}
@@ -24,42 +40,67 @@ h1{font:500 24px/1.3 Trirong,serif;margin:0 0 4px}
 .item .empty{color:var(--soft);font-style:italic}
 .meta{font-size:13px;color:var(--soft)}
 .flag{display:inline-block;font-size:13px;font-weight:600;border-radius:6px;padding:1px 8px;margin:4px 6px 0 0}
-.ok{background:var(--blue-bg);color:var(--blue-ink)}
 .warn{background:var(--org-bg);color:var(--org-ink)}
 .note{background:var(--yel-bg);color:var(--yel-ink)}
 .acts{display:flex;gap:8px;margin-top:10px}
-.acts button{flex:1;font:600 14px "IBM Plex Sans Thai",sans-serif;padding:9px;border-radius:8px;cursor:pointer;min-height:42px}
+.acts button{flex:1}
+button.show,button.keep{font:600 14px "IBM Plex Sans Thai",sans-serif;padding:9px;border-radius:8px;cursor:pointer;min-height:42px}
 .show{background:var(--ink);color:#fff;border:0}
 .keep{background:none;border:1px solid rgba(38,33,28,.35);color:var(--ink)}
+/* ส่วนลึกด้านล่าง */
+details.deep{margin-top:40px;border-top:1px solid var(--line);padding-top:14px}
+details.deep summary{cursor:pointer;color:var(--soft);font-size:14px;list-style:none;min-height:40px;display:flex;align-items:center;gap:6px}
+details.deep summary::-webkit-details-marker{display:none}
+details.deep summary::before{content:'›';display:inline-block;transition:transform .15s;font-size:18px}
+details.deep[open] summary::before{transform:rotate(90deg)}
+details.deep .in{padding-top:8px}
 .login input{width:100%;font:inherit;min-height:46px;padding:8px 12px;border:1px solid var(--line);border-radius:8px}
 .login button,.out{margin-top:10px;font:600 15px "IBM Plex Sans Thai",sans-serif;padding:10px 16px;border-radius:8px;border:0;background:var(--ink);color:#fff;cursor:pointer;min-height:44px}
-.book{display:block;text-align:center;text-decoration:none;font:600 16px "IBM Plex Sans Thai",sans-serif;padding:12px 16px;border-radius:8px;background:var(--ink);color:#fff;min-height:46px;margin:0 0 16px}
-.out{background:none;color:var(--soft);border:1px solid var(--line);font-weight:400;margin-top:24px}
+.out{background:none;color:var(--soft);border:1px solid var(--line);font-weight:400;margin-top:18px}
 .err{color:var(--org-ink);font-weight:600}
 .none{color:var(--soft);text-align:center;padding:30px 0}
 </style>
 </head>
 <body>
 <div class="wrap">
-<h1>รีวิวหลังร้าน</h1>
-<p class="sub" id="sum">อมตเทวา · ร้านวอลเปเปอร์</p>
 
 <div class="login" id="login" hidden>
-<p>ใส่รหัสแอดมินของร้าน เครื่องนี้จะจำไว้ ครั้งหน้าไม่ต้องใส่อีก</p>
+<h1>ระบบหลังบ้าน</h1>
+<p class="sub">อมตเทวา</p>
+<p>ใส่รหัสแอดมิน เครื่องนี้จะจำไว้ ครั้งหน้าไม่ต้องใส่อีก</p>
 <input type="password" id="key" autocomplete="current-password" placeholder="รหัสแอดมิน">
-<button id="go" type="button">เข้าหลังร้าน</button>
+<button id="go" type="button">เข้าระบบหลังบ้าน</button>
 <p class="err" id="loginErr" hidden></p>
 </div>
 
-<div id="main" hidden>
+<!-- หน้าแรก: เมนูงาน -->
+<div id="home" hidden>
+<h1>ระบบหลังบ้าน</h1>
+<p class="sub">อมตเทวา</p>
+<p class="label">งานของร้าน</p>
+<button class="tile" id="tReviews" type="button"><span class="ic">⭐</span><span class="tx"><b>รีวิวลูกค้า<span class="badge" id="rBadge" hidden></span></b><small id="rSub">กำลังโหลด…</small></span><span class="go">›</span></button>
+<a class="tile" id="tBook" aria-disabled="true"><span class="ic">📒</span><span class="tx"><b>สมุดบัญชี</b><small id="bSub">กำลังโหลด…</small></span><span class="go">›</span></a>
+<div id="lockAlert"></div>
+
+<details class="deep" id="deep">
+<summary>จัดการเครื่องที่เข้าสมุดบัญชี</summary>
+<div class="in">
+<p class="meta">ใช้เมื่อมือถือหายหรือเลิกใช้เครื่องไหน · ถอดแล้วเครื่องนั้นต้องใส่รหัสหลักใหม่ถึงจะเข้าได้</p>
+<div id="vault"></div>
+<button class="out" id="out" type="button">ออกจากระบบหลังบ้านในเครื่องนี้</button>
+</div>
+</details>
+</div>
+
+<!-- หน้ารีวิว -->
+<div id="reviews" hidden>
+<button class="back" id="back" type="button">‹ ระบบหลังบ้าน</button>
+<h2>รีวิวลูกค้า</h2>
+<p class="sub" id="sum"></p>
 <div class="tabs" id="tabs"></div>
 <div id="list"></div>
-<h1 style="margin-top:34px">สมุดบัญชีออนไลน์</h1>
-<p class="sub" id="vsum">กำลังโหลด…</p>
-<a class="book" id="book" hidden>📒 เปิดสมุดบัญชี</a>
-<div id="vault"></div>
-<button class="out" id="out" type="button">ออกจากระบบในเครื่องนี้</button>
 </div>
+
 </div>
 <script>
 const API = 'https://amatathewa-wallpaper.amatathewa.workers.dev'
@@ -69,11 +110,30 @@ let key = '', data = null, tab = 'pending'
 try { key = localStorage.getItem('amt-admin') || '' } catch {}
 const el = (t, c, x) => { const e = document.createElement(t); if (c) e.className = c; if (x !== undefined) e.textContent = x; return e }
 const day = t => new Date(t).toLocaleDateString('th-TH', { day: 'numeric', month: 'short' })
+const mins = m => m >= 60 ? Math.round(m / 60) + ' ชั่วโมง' : m + ' นาที'
+
+// สลับหน้า: ใช้ #reviews ในลิงก์ ปุ่มย้อนกลับของมือถือจึงพากลับหน้าแรกได้
+function route() {
+  if (!data) return
+  const rv = location.hash === '#reviews'
+  $('home').hidden = rv; $('reviews').hidden = !rv
+  if (rv) render()
+  window.scrollTo(0, 0)
+}
+window.addEventListener('hashchange', route)
+$('tReviews').onclick = () => { location.hash = 'reviews' }
+$('back').onclick = () => { if (history.length > 1 && location.hash === '#reviews') history.back(); else location.hash = '' }
+
 async function load() {
   const r = await fetch(API + '/admin/reviews', { headers: { 'X-Admin-Key': key } })
-  if (r.status === 401) { $('main').hidden = true; $('login').hidden = false; if (key) { $('loginErr').textContent = 'รหัสไม่ถูกต้อง'; $('loginErr').hidden = false } return }
-  data = await r.json(); $('login').hidden = true; $('main').hidden = false; render(); loadVault()
+  if (r.status === 401) { $('home').hidden = $('reviews').hidden = true; $('login').hidden = false; if (key) { $('loginErr').textContent = 'รหัสไม่ถูกต้อง'; $('loginErr').hidden = false } return }
+  data = await r.json(); $('login').hidden = true
+  const n = k => data.reviews.filter(x => x.status === k).length, p = n('pending')
+  $('rSub').textContent = `ทั้งหมด ${data.summary.count} รีวิว · ขึ้นหน้าร้าน ${n('shown')}` + (data.summary.avg ? ` · ดาวเฉลี่ย ${data.summary.avg}` : '')
+  $('rBadge').hidden = !p; $('rBadge').textContent = `รอตรวจ ${p}`
+  route(); loadVault()
 }
+
 function render() {
   const s = data.summary
   $('sum').textContent = `ดาวทั้งหมด ${s.count} รีวิว` + (s.avg ? ` · เฉลี่ย ${s.avg} (โชว์หน้าร้านแล้ว)` : ' · ดาวเฉลี่ยจะขึ้นหน้าร้านเมื่อครบ 5 รีวิว')
@@ -103,8 +163,9 @@ async function act(id, status) {
   if (!r.ok) { $('sum').textContent = (await r.json().catch(() => ({}))).message || 'ทำไม่สำเร็จ ลองอีกครั้ง'; return }
   await load()
 }
-// สมุดบัญชี: ปลดล็อกลัดคิว + ถอดเครื่อง (5 พ.ย. 2569)
-async function vAuth(p) {   // รหัสหลัก → บัตรผ่าน (PBKDF2 ครึ่งหลัง) เหมือนในหน้าสมุด
+
+// สมุดบัญชี: ปุ่มเปิดสมุด + ปลดล็อกลัดคิว (โผล่เฉพาะตอนมีล็อก) + ถอดเครื่อง (ลึกสุด)
+async function vAuth(p) {   // รหัสหลัก → บัตรผ่าน (PBKDF2 ครึ่งหลัง) เหมือนในหน้าสมุด · รหัสหลักไม่ถูกส่งออกไป
   const m = await (await fetch(API + '/vault/meta', { cache: 'no-store' })).json()
   const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(p), 'PBKDF2', false, ['deriveBits'])
   const bits = new Uint8Array(await crypto.subtle.deriveBits({ name: 'PBKDF2', salt: Uint8Array.from(atob(m.salt), c => c.charCodeAt(0)), iterations: m.iter || 600000, hash: 'SHA-256' }, base, 512))
@@ -114,23 +175,25 @@ async function loadVault(post) {
   const r = await fetch(API + '/admin/vault', post ? { method: 'POST', headers: { 'X-Admin-Key': key, 'Content-Type': 'application/json' }, body: JSON.stringify(post) } : { headers: { 'X-Admin-Key': key } })
   const v = await r.json().catch(() => ({})), box = $('vault')
   if (post && post.action === 'revoke' && !r.ok) { const e = [...box.querySelectorAll('.err')].find(x => x.textContent); if (e) e.textContent = v.message || 'ถอดไม่สำเร็จ'; return false }
-  box.textContent = ''
-  if (v.book) { $('book').href = new URL(v.book, location.origin === 'https://amatathewa.com' ? location.origin : 'https://amatathewa.com').href; $('book').hidden = false }   // ลิงก์ลับได้มาจากหลังบ้านหลังใส่รหัสแอดมินเท่านั้น
-  if (!r.ok) { $('vsum').textContent = v.message || 'ยังไม่ได้เปิดใช้สมุดออนไลน์'; return }
-  if (!v.exists) { $('vsum').textContent = 'ยังไม่ได้ย้ายสมุดขึ้นออนไลน์'; return }
-  $('vsum').textContent = `บันทึกล่าสุด ${day(v.at)} · ${v.devices.length} เครื่อง`
-  const lk = el('div', 'item')
-  lk.append(el('p', '', v.locks.length ? v.locks.map(l => `▼ ${l.who} ถูกล็อกอีก ${l.mins >= 60 ? Math.round(l.mins / 60) + ' ชั่วโมง' : l.mins + ' นาที'}`).join('\n') : '▲ ไม่มีเครื่องไหนถูกล็อก'))
-  if (v.locks.length) { const a = el('div', 'acts'), b = el('button', 'show', 'ปลดล็อกทั้งหมด (ลัดคิว)'); b.onclick = () => loadVault({ action: 'unlock' }); a.append(b); lk.append(a) }
-  box.append(lk)
+  box.textContent = ''; $('lockAlert').textContent = ''
+  if (v.book) { $('tBook').href = new URL(v.book, location.origin === 'https://amatathewa.com' ? location.origin : 'https://amatathewa.com').href; $('tBook').removeAttribute('aria-disabled') }
+  if (!r.ok) { $('bSub').textContent = v.message || 'ยังไม่ได้เปิดใช้สมุดออนไลน์'; return }
+  if (!v.exists) { $('bSub').textContent = 'ยังไม่ได้ย้ายสมุดขึ้นออนไลน์'; return }
+  $('bSub').textContent = `บันทึกล่าสุด ${day(v.at)} · ใช้อยู่ ${v.devices.length} เครื่อง`
+  // มีเครื่องถูกล็อก = เตือนบนหน้าแรก พร้อมปุ่มลัดคิว
+  if (v.locks.length) {
+    const a = el('div', 'alert', v.locks.map(l => `▼ ${l.who} ถูกล็อกอีก ${mins(l.mins)}`).join('\n'))
+    const b = el('button', 'show', 'ปลดล็อกทั้งหมด (ลัดคิว)'); b.type = 'button'; b.onclick = () => loadVault({ action: 'unlock' })
+    a.append(b); $('lockAlert').append(a)
+  }
   v.devices.sort((a, b) => b.seen - a.seen).forEach(d => {
     const it = el('div', 'item')
     it.append(el('p', '', d.name), el('div', 'meta', `ลงทะเบียน ${day(d.at)} · ใช้ล่าสุด ${day(d.seen)}`))
-    const a = el('div', 'acts'), b = el('button', 'keep', 'ถอดเครื่องนี้ (มือถือหาย)')
-    // ถอดเครื่องต้องใส่รหัสหลักสมุด · คิดบัตรผ่านในเครื่องแบบเดียวกับสมุด รหัสหลักไม่ถูกส่งออกไป
+    const a = el('div', 'acts'), b = el('button', 'keep', 'ถอดเครื่องนี้'); b.type = 'button'
+    // ถอดเครื่องต้องใส่รหัสหลักสมุด (ณัทกรขอ)
     const f = el('div', 'login'); f.hidden = true
     const pw = el('input'); pw.type = 'password'; pw.placeholder = 'รหัสหลักสมุด'; pw.autocomplete = 'off'
-    const ok = el('button', 'keep', 'ยืนยันถอดเครื่อง'), er = el('p', 'err')
+    const ok = el('button', 'keep', 'ยืนยันถอดเครื่อง'), er = el('p', 'err'); ok.type = 'button'
     ok.onclick = async () => {
       if (!pw.value) return; ok.disabled = true; er.textContent = 'กำลังตรวจรหัส…'
       try { if (await loadVault({ action: 'revoke', id: d.id, auth: await vAuth(pw.value) }) === false) { ok.disabled = false; pw.value = '' } } catch { er.textContent = 'ต่ออินเทอร์เน็ตไม่ได้ ลองใหม่'; ok.disabled = false }
@@ -142,7 +205,8 @@ async function loadVault(post) {
   })
 }
 $('go').onclick = () => { key = $('key').value.trim(); try { localStorage.setItem('amt-admin', key) } catch {} ; $('loginErr').hidden = true; load() }
-$('out').onclick = () => { try { localStorage.removeItem('amt-admin') } catch {} ; key = ''; $('main').hidden = true; $('login').hidden = false }
+$('key').onkeydown = e => { if (e.key === 'Enter') $('go').onclick() }
+$('out').onclick = () => { try { localStorage.removeItem('amt-admin') } catch {} ; key = ''; data = null; $('home').hidden = $('reviews').hidden = true; $('login').hidden = false }
 if (key) load(); else $('login').hidden = false
 </script>
 </body>
