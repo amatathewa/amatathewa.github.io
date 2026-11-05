@@ -5,6 +5,10 @@
   const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text !== undefined) e.textContent = text; return e }
   const fill = (s, list) => list.forEach(([v, t]) => s.add(new Option(t, v)))
   const SET_IMAGES = 6
+  // Meta Pixel: ส่งแค่ชื่อเหตุการณ์และยอดเงิน ห้ามส่งวันเกิด ชื่อ หรือคำที่ลูกค้าพิมพ์
+  const fb = (ev, data) => { try { if (window.fbq) window.fbq('track', ev, data) } catch {} }
+  let fbCheckout = false
+  const fbStartPay = () => { if (fbCheckout) return; fbCheckout = true; fb('InitiateCheckout', { value: S.plan === 'set' ? SHOP.price.set : SHOP.price.one, currency: 'THB' }) }
   const MONTH = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม']
   const WORDS = ['มั่งคั่ง', 'เมตตา', 'รุ่งเรือง', 'สำเร็จ', 'มั่นคง', 'ร่มเย็น', 'ราบรื่น', 'โชคดี', 'สงบสุข']
   const SRC = { chart: 'คำนวณจากดวงเกิดของคุณ', taksa: 'คำนวณจากทักษาวันเกิดของคุณ', general: 'คู่มาตรฐานที่ไม่ขัดกับเลขกาลกิณีของคุณ' }
@@ -293,6 +297,7 @@
     renderPairs(); note(g); renderGridWhy(); renderControls()
     ;['numbers', 'gridWhy', 'studio', 'buy'].forEach(id => { $(id).hidden = false })
     draw(); $('numbers').scrollIntoView()
+    fb('ViewContent')
   }
 
   // ---------- รับภาพ ----------
@@ -352,8 +357,10 @@
   const blobOf = c => new Promise(ok => c.toBlob(ok, 'image/jpeg', .93))
   $('saveClose').onclick = () => { $('saveov').hidden = true }
   $('savePreview').onclick = async () => { while (drawing) await new Promise(r => setTimeout(r, 60)); saveBlob(await blobOf(view), `amatathewa-ตัวอย่าง-${S.image}.jpg`) }
-  $('saveQr').onclick = async () => saveBlob(await blobOf($('payQr')), `amatathewa-qr-${S.plan === 'set' ? SHOP.price.set : SHOP.price.one}.jpg`)
+  $('slip').addEventListener('change', fbStartPay)
+  $('saveQr').onclick = async () => fbStartPay() || saveBlob(await blobOf($('payQr')), `amatathewa-qr-${S.plan === 'set' ? SHOP.price.set : SHOP.price.one}.jpg`)
   $('copyAccount').onclick = async () => {
+    fbStartPay()
     const b = $('copyAccount'), number = SHOP.bank.account.replace(/-/g, '')
     try { await navigator.clipboard.writeText(number); b.textContent = 'คัดลอกแล้ว' } catch { b.textContent = number }
     setTimeout(() => { b.textContent = 'คัดลอกเลขบัญชี' }, 2500)
@@ -368,6 +375,7 @@
       if (!r.ok) throw new Error(j.message || 'ตรวจสลิปไม่ผ่าน')
       const l = passList(); passes[owner] = l
       if (!l.some(q => q.id && q.id === j.id)) l.push({ token: j.token, scope: j.scope, image: j.image, exp: j.exp, id: j.id, images: [] })
+      fb('Purchase', { value: S.plan === 'set' ? SHOP.price.set : SHOP.price.one, currency: 'THB' })
       keep.set('amt-passes', passes); buyMore = false; renderControls()
       $('buy').scrollIntoView()
     } catch (e) { err.textContent = e.message + ' ถ้าโอนแล้วแต่ไม่ผ่าน ทักมาที่ LINE ของอมตเทวาพร้อมสลิป'; err.hidden = false }
