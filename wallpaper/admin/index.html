@@ -102,9 +102,17 @@ async function act(id, status) {
   await load()
 }
 // สมุดบัญชี: ปลดล็อกลัดคิว + ถอดเครื่อง (5 พ.ย. 2569)
+async function vAuth(p) {   // รหัสหลัก → บัตรผ่าน (PBKDF2 ครึ่งหลัง) เหมือนในหน้าสมุด
+  const m = await (await fetch(API + '/vault/meta', { cache: 'no-store' })).json()
+  const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(p), 'PBKDF2', false, ['deriveBits'])
+  const bits = new Uint8Array(await crypto.subtle.deriveBits({ name: 'PBKDF2', salt: Uint8Array.from(atob(m.salt), c => c.charCodeAt(0)), iterations: m.iter || 600000, hash: 'SHA-256' }, base, 512))
+  return btoa(String.fromCharCode(...bits.slice(32)))
+}
 async function loadVault(post) {
   const r = await fetch(API + '/admin/vault', post ? { method: 'POST', headers: { 'X-Admin-Key': key, 'Content-Type': 'application/json' }, body: JSON.stringify(post) } : { headers: { 'X-Admin-Key': key } })
-  const v = await r.json().catch(() => ({})), box = $('vault'); box.textContent = ''
+  const v = await r.json().catch(() => ({})), box = $('vault')
+  if (post && post.action === 'revoke' && !r.ok) { const e = [...box.querySelectorAll('.err')].find(x => x.textContent); if (e) e.textContent = v.message || 'ถอดไม่สำเร็จ'; return false }
+  box.textContent = ''
   if (!r.ok) { $('vsum').textContent = v.message || 'ยังไม่ได้เปิดใช้สมุดออนไลน์'; return }
   if (!v.exists) { $('vsum').textContent = 'ยังไม่ได้ย้ายสมุดขึ้นออนไลน์'; return }
   $('vsum').textContent = `บันทึกล่าสุด ${day(v.at)} · ${v.devices.length} เครื่อง`
@@ -116,8 +124,18 @@ async function loadVault(post) {
     const it = el('div', 'item')
     it.append(el('p', '', d.name), el('div', 'meta', `ลงทะเบียน ${day(d.at)} · ใช้ล่าสุด ${day(d.seen)}`))
     const a = el('div', 'acts'), b = el('button', 'keep', 'ถอดเครื่องนี้ (มือถือหาย)')
-    b.onclick = () => { if (b.dataset.sure) loadVault({ action: 'revoke', id: d.id }); else { b.dataset.sure = 1; b.textContent = 'แตะอีกครั้งเพื่อยืนยัน' } }
-    a.append(b); it.append(a); box.append(it)
+    // ถอดเครื่องต้องใส่รหัสหลักสมุด · คิดบัตรผ่านในเครื่องแบบเดียวกับสมุด รหัสหลักไม่ถูกส่งออกไป
+    const f = el('div', 'login'); f.hidden = true
+    const pw = el('input'); pw.type = 'password'; pw.placeholder = 'รหัสหลักสมุด'; pw.autocomplete = 'off'
+    const ok = el('button', 'keep', 'ยืนยันถอดเครื่อง'), er = el('p', 'err')
+    ok.onclick = async () => {
+      if (!pw.value) return; ok.disabled = true; er.textContent = 'กำลังตรวจรหัส…'
+      try { if (await loadVault({ action: 'revoke', id: d.id, auth: await vAuth(pw.value) }) === false) { ok.disabled = false; pw.value = '' } } catch { er.textContent = 'ต่ออินเทอร์เน็ตไม่ได้ ลองใหม่'; ok.disabled = false }
+    }
+    pw.onkeydown = e => { if (e.key === 'Enter') ok.onclick() }
+    f.append(pw, ok, er)
+    b.onclick = () => { f.hidden = false; b.hidden = true; pw.focus() }
+    a.append(b); it.append(a, f); box.append(it)
   })
 }
 $('go').onclick = () => { key = $('key').value.trim(); try { localStorage.setItem('amt-admin', key) } catch {} ; $('loginErr').hidden = true; load() }
