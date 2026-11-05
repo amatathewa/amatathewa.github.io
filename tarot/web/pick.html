@@ -24,7 +24,7 @@ html,body{height:100%;background:#05070E;color:var(--ivory);font-family:'IBM Ple
 .bg{position:fixed;inset:0;background:#05070E center 80%/cover no-repeat}
 .veil{position:fixed;inset:0;background:linear-gradient(180deg,rgba(5,7,14,.6) 0%,rgba(5,7,14,.3) 50%,rgba(5,7,14,.45) 100%)}
 header{position:relative;z-index:3;flex:none;display:flex;justify-content:space-between;align-items:center;padding:min(30px,3.4vh) 6vw}
-.brand{font-family:'Jost',sans-serif;letter-spacing:.42em;font-size:13px}
+.brand{color:inherit;text-decoration:none;cursor:pointer;font-family:'Jost',sans-serif;letter-spacing:.42em;font-size:13px}
 .back{font-size:14px;color:var(--dim);cursor:pointer}
 main{position:relative;z-index:2;flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 0 4vh}
 .kicker{font-family:'Jost',sans-serif;font-size:16px;letter-spacing:.42em;color:var(--gold);margin-bottom:min(14px,1.6vh)}
@@ -56,7 +56,7 @@ h1 em{font-style:normal;color:var(--gold-light)}
 </style></head><body>
 <div class="stage">
   <div class="bg" id="bg"></div><div class="veil"></div><div class="bgin" id="bgin"></div>
-  <header><div class="brand">AMATATHEWA</div><div class="back" onclick="go('shuffle.html')">ย้อนกลับ</div></header>
+  <header><a class="brand" href="/" target="_top" aria-label="กลับหน้าแรก AMATATHEWA">AMATATHEWA</a><div class="back" onclick="go('shuffle.html')">ย้อนกลับ</div></header>
   <main>
     <div class="kicker fadein">CHOOSE YOUR CARDS</div>
     <h1 class="fadein">เลือกไพ่ <em>ที่ดึงดูดคุณ</em></h1>
@@ -64,7 +64,7 @@ h1 em{font-style:normal;color:var(--gold-light)}
     <div class="bar fadein"><div class="cnt">เลือกแล้ว<b id="n">0</b>/ <span id="need">3</span> ใบ</div><div class="btn off" id="go">เปิดไพ่</div></div>
   </main>
 </div>
-<script src="flow.js?v=202611051613"></script>
+<script src="flow.js?v=202611051626"></script>
 <script>
 const NEED=SPREADS[ST.sp].length;
 document.getElementById('bg').style.backgroundImage=`url("${D.marble}")`;

@@ -18,7 +18,7 @@ html,body{height:100%;background:#0A0510;color:var(--ivory);font-family:'IBM Ple
 .bg{position:absolute;left:0;right:0;height:100%;bottom:calc(-1 * var(--down,24vh));transform-origin:50% 100%;background:#0A0510 url("../ภาพพื้นหลัง/moon-gemini-desktop.jpg") 50% 100%/max(100vw,170vh) auto no-repeat;animation:rise 50s ease-in-out infinite alternate}
 @keyframes rise{from{transform:scale(1)}to{transform:scale(1.03)}}
 header{position:relative;z-index:2;flex:none;display:flex;justify-content:space-between;align-items:center;padding:min(30px,3.4vh) 6vw}
-.brand{font-family:'Jost',sans-serif;letter-spacing:.42em;font-size:13px}
+.brand{color:inherit;text-decoration:none;cursor:pointer;font-family:'Jost',sans-serif;letter-spacing:.42em;font-size:13px}
 .nav{display:flex;gap:34px;font-size:14px;color:var(--dim)}
 .nav b{color:var(--ivory);font-weight:400;border-bottom:1px solid var(--gold);padding-bottom:3px}
 main{position:relative;z-index:2;flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;text-align:center;padding:3vh 24px 0}
@@ -183,7 +183,7 @@ h1 em{font-size:1em}
 </style></head><body>
 <div class="stage">
   <div class="bg"></div><div class="veil"></div>
-  <header><div class="brand">AMATATHEWA</div>
+  <header><a class="brand" href="/" target="_top" aria-label="กลับหน้าแรก AMATATHEWA">AMATATHEWA</a>
     <nav class="nav"><span>ตรวจดาวจร</span><b>เปิดไพ่ทาโรต์</b><span>ดูดวงกับหมอเก่ง</span></nav></header>
   <main>
     <div class="kicker">TAROT READING</div>
@@ -212,7 +212,7 @@ h1 em{font-size:1em}
     <div class="close" id="pk-close">CLOSE</div>
   </div>
 </div>
-<script src="flow.js?v=202611051613"></script>
+<script src="flow.js?v=202611051626"></script>
 <script>
 document.body.classList.add('b6'); // ปุ่มกระจกฝ้า (ณัทกรเลือก)
 // สำรับที่เลือกไว้ครั้งก่อน (จำในเครื่องนี้)
