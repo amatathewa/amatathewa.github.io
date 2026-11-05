@@ -256,13 +256,20 @@ async function filePerm() {
   try { const o = {mode:"readwrite"}; if (await fileHandle.queryPermission(o) === "granted") return true; return await fileHandle.requestPermission(o) === "granted"; } catch (e) { return false; }
 }
 
-let saveT;
+let saveT, pushing = false, pushAgain = false;
 function save() {
   clearTimeout(saveT);
   saveT = setTimeout(async () => {
     if (!key) return;
     const blob = await seal(), ok = store(VKEY, blob), fok = await writeFile(blob);
-    const sk = syncAuth ? await pushSync(blob) : null;
+    // ส่งขึ้นออนไลน์ทีละรอบ (แก้บัค 5 พ.ย.: พิมพ์ต่อระหว่างเน็ตช้า เคยส่งซ้อนจนชนกับตัวเอง) · พิมพ์เพิ่มระหว่างรอ = ส่งต่ออีกรอบด้วยข้อมูลล่าสุด
+    if (syncAuth && pushing) { pushAgain = true; return; }
+    let sk = null;
+    if (syncAuth) {
+      pushing = true;
+      try { sk = await pushSync(blob); while (sk === "ok" && pushAgain && syncAuth && key) { pushAgain = false; sk = await pushSync(await seal()); } }
+      finally { pushing = false; pushAgain = false; }
+    }
     if (sk === "conflict") { msg("อีกเครื่องเพิ่งแก้สมุด โหลดฉบับล่าสุดมาให้แล้ว ลองแก้อีกครั้ง"); return; }
     if (sk === "fail") { msg("บันทึกในเครื่องแล้ว แต่ส่งขึ้นออนไลน์ไม่ได้ · ลองแก้อีกครั้งเมื่อมีเน็ต"); return; }
     msg(!fok ? "บันทึกในเครื่องแล้ว แต่เขียนลงไฟล์สมุดไม่ได้ · กด 💾 ผูกไฟล์สมุด อีกครั้ง"
