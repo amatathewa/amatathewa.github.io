@@ -221,7 +221,7 @@
       const row = el('div', 'pair'), num = el('div', 'num', p.num), txt = el('div')
       num.append(el('small', '', `หรือ ${p.back}`))
       txt.append(el('b', '', p.name ? `${p.label} · ${p.name}` : p.label))
-      const meaning = clean(p.meaning)
+      const full = (window.PAIR_TEXT || {})[[...p.num].sort().join('')], meaning = full || clean(p.meaning)
       if (meaning) txt.append(el('p', '', meaning))
       txt.append(el('p', 'why', `ที่มาของเลขนี้: ${p.why}`), el('p', 'motive', MOTIVE[p.key]))
       const lab = el('label', 'check'), c = el('input'); c.type = 'checkbox'; c.checked = picked.includes(p.num)
