@@ -223,6 +223,8 @@
       txt.append(el('b', '', p.name ? `${p.label} · ${p.name}` : p.label))
       const full = (window.PAIR_TEXT || {})[[...p.num].sort().join('')], meaning = full || clean(p.meaning)
       if (meaning) txt.append(el('p', '', meaning))
+      const TOPIC = { wealth: 'ด้านการเงิน', charm: 'ด้านความรัก', fame: 'ด้านการงาน' }, side = full && TOPIC[p.key] && clean(p.meaning)
+      if (side) { const t = el('p', 'topic'); t.append(el('b', '', TOPIC[p.key] + ' '), side); txt.append(t) }
       txt.append(el('p', 'why', `ที่มาของเลขนี้: ${p.why}`), el('p', 'motive', MOTIVE[p.key]))
       const lab = el('label', 'check'), c = el('input'); c.type = 'checkbox'; c.checked = picked.includes(p.num)
       c.onchange = () => { picked = allPairs.map(x => x.num).filter(n => n === p.num ? c.checked : picked.includes(n)); const g = rebuildGrid(); note(g); saveDesign(); renderGridWhy(); renderControls(); draw() }
