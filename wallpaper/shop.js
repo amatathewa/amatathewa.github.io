@@ -24,9 +24,9 @@
   }
   // ความหมายของแถวเป็นแนวทางที่อมตเทวาออกแบบเอง ไม่ใช่หลักจากตำราโดยตรง
   const ROWS = [
-    ['แถวบน', 'งานและชื่อเสียง', 'ส่วนบนเหมือนสิ่งที่คนมองเห็นเรา จึงวางเลขเรื่องงานไว้ตรงนี้', 'fame'],
-    ['แถวกลาง', 'ตัวเราและความรัก', 'ใจกลางของตารางเหมือนใจของเรา จึงวางเลขเรื่องเสน่ห์และความสัมพันธ์ไว้ตรงนี้', 'charm'],
-    ['แถวล่าง', 'เงินและฐานชีวิต', 'ส่วนล่างเหมือนรากฐาน จึงวางเลขเรื่องทรัพย์ไว้ตรงนี้', 'wealth'],
+    ['แถวบน', 'งานและชื่อเสียง', 'แถวบนเปรียบเหมือนภาพลักษณ์แรกที่คนมองเห็นเรา จึงเป็นตำแหน่งของเลขเรื่องงานและชื่อเสียง', 'fame'],
+    ['แถวกลาง', 'ตัวเราและความรัก', 'แถวกลางเหมือนหัวใจของเรา จึงเป็นตำแหน่งของเลขเรื่องตัวเราและความสัมพันธ์', 'charm'],
+    ['แถวล่าง', 'เงินและความมั่นคง', 'แถวล่างเหมือนฐานบ้านที่ต้องแน่น จึงเป็นตำแหน่งของเลขเรื่องเงินและการตั้งตัว', 'wealth'],
   ]
   const DEFAULT_FRAME = { ganesha: 'mountain', lakshmi: 'lotus', parvati: 'heart', saraswati: 'lotus', shiva: 'plain', vishnu: 'plain', brahma: 'lotus', trimurti: 'plain', trishakti: 'heart' }
   const THAI = '๐๑๒๓๔๕๖๗๘๙', thai = n => String(n).replace(/\d/g, d => THAI[d])
@@ -257,7 +257,7 @@
       const star = d => (window.Lucky.NAME || {})[d] || (d === 9 ? 'เกตุ' : '')
       body.append(el('p', 'rowuse', `ดาว${cells.map(star).join(' ')}`))
       const extra = (window.ROW_STAR || {})[r[3]], lines = cells.map(d => extra && extra[d]).filter(Boolean)
-      if (lines.length) body.append(el('p', 'rowuse', lines.join(' ')))
+      if (lines.length) body.append(el('p', 'rowuse', lines.join(' · ')))
       inRow.forEach(x => { const nm = pairName(+x[0], +x[1]); body.append(el('p', 'rowuse', `คู่ ${x}${nm ? ` ${nm}` : ''}${match === x ? ` · คู่เรื่อง${wanted.label}ของคุณ` : ''}`)) })
       if (wanted && !match) body.append(el('p', 'rowuse', `คู่เรื่อง${wanted.label}ของคุณ ${wanted.num} ยังเลือกใส่เป็นเลขใหญ่บนภาพได้`))
       row.append(head, body); rowsBox.append(row)
