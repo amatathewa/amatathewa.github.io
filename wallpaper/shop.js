@@ -43,8 +43,19 @@
   const fillAmp = () => { $('amp').length = 0; fill($('amp'), [['', 'ตัวจังหวัด / ไม่ทราบ'], ...((window.AMPHOE || {})[$('prov').value] || []).map(([n]) => [n, n])]) }
   $('prov').value = 'กรุงเทพมหานคร'; fillAmp(); $('prov').onchange = fillAmp
   const isWed = () => new Date(Date.UTC(+$('y').value - 543, +$('m').value - 1, +$('d').value)).getUTCDay() === 3
-  const sync = () => { $('timeBox').hidden = $('noTime').checked; $('nightBox').hidden = !($('noTime').checked && isWed()) }
-  ;['noTime', 'd', 'm', 'y'].forEach(id => $(id).addEventListener('change', sync)); sync()
+  // กรอกแค่วันเดือนปีก็ดูตารางได้ เวลาและที่เกิดเป็นทางเลือกให้แม่นขึ้น (ณัทกร 9 พ.ย. 2569: ลดขั้นตอนให้ลองเล่นง่าย)
+  const sync = () => {
+    const nt = $('noTime').checked
+    $('timeBox').hidden = nt; $('addTime').hidden = !nt
+    $('wedBox').hidden = !(nt && isWed())
+    $('wedDay').setAttribute('aria-pressed', !$('night').checked); $('wedNight').setAttribute('aria-pressed', $('night').checked)
+  }
+  const setNight = v => { $('night').checked = v; sync() }
+  $('wedDay').onclick = () => setNight(false); $('wedNight').onclick = () => setNight(true)
+  const openTime = () => { $('noTime').checked = false; sync() }
+  $('addTime').onclick = openTime
+  $('refineBtn').onclick = () => { openTime(); $('birth').scrollIntoView(); $('hh').focus() }
+  ;['d', 'm', 'y'].forEach(id => $(id).addEventListener('change', sync)); sync()
   const lonOf = () => { const p = $('prov').value, a = $('amp').value, r = ((window.AMPHOE || {})[p] || []).find(x => x[0] === a); return r ? r[1] : (PROV.find(x => x.province === p) || {}).longitude }
 
   // กันดึงภาพออกแบบง่ายๆ แคปหน้าจอยังทำได้ ภาพที่แสดงจึงมีลายน้ำเสมอ
@@ -284,7 +295,7 @@
     const y = +$('y').value - 543, m = +$('m').value, d = +$('d').value, ok = new Date(Date.UTC(y, m - 1, d)).getUTCMonth() === m - 1
     $('err').hidden = ok
     if (!ok) { $('err').textContent = 'เดือนนี้ไม่มีวันที่นี้ ลองเลือกวันใหม่'; return }
-    const noTime = $('noTime').checked, night = $('night').checked
+    const noTime = $('noTime').checked, night = $('night').checked && isWed()
     const inp = noTime ? { y, m, d, hh: null, mm: null, night } : { y, m, d, hh: +$('hh').value, mm: +$('mm').value, lon: lonOf(), province: $('prov').value }
     chart = window.Lucky.build(window.Health, window.Reader, inp)
     // วันเกิดไม่ออกจากเครื่อง ส่งเฉพาะรหัสที่แฮชแล้วตอนซื้อ เพื่อผูกการซื้อกับเจ้าของวันเกิด
@@ -296,6 +307,7 @@
     if (!allPairs.some(p => p.num === S.number)) S.number = allPairs[0].num
     renderPairs(); note(g); renderGridWhy(); renderControls()
     ;['numbers', 'gridWhy', 'studio', 'buy'].forEach(id => { $(id).hidden = false })
+    $('refine').hidden = !noTime
     draw(); $('numbers').scrollIntoView()
     fb('ViewContent')
   }

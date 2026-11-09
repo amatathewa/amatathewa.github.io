@@ -47,6 +47,9 @@ select,input[type=text],input[type=file]{width:100%;font:inherit;min-height:48px
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .check{display:flex;gap:10px;align-items:center;font-weight:400;margin:12px 0 0;min-height:44px;cursor:pointer}
 .check input{width:24px;height:24px;flex:none;accent-color:var(--gold)}
+.linkbtn{background:none;border:0;padding:10px 0;min-height:44px;color:var(--gold);font:400 16px "IBM Plex Sans Thai",sans-serif;text-decoration:underline;cursor:pointer;text-align:left}
+.chips.wed{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+.refine{margin-bottom:10px}
 .btn{display:block;width:100%;min-height:54px;border:1px solid rgba(244,236,221,.4);border-radius:3px;background:rgba(244,236,221,.14);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);color:var(--ivory);font:500 18px "IBM Plex Sans Thai",sans-serif;padding:12px 18px;text-align:center;text-decoration:none;cursor:pointer}
 .btn.solid{background:var(--burgundy);color:var(--ivory);border-color:rgba(227,200,139,.55);font-weight:700}
 .btn.alt{background:transparent}
@@ -208,14 +211,20 @@ fbq('track','PageView');
     <form class="card narrow" id="f">
       <label>วันเกิด</label>
       <div class="row3"><select id="d" aria-label="วัน"></select><select id="m" aria-label="เดือน"></select><select id="y" aria-label="ปี พ.ศ."></select></div>
-      <label class="check"><input type="checkbox" id="noTime"> ไม่รู้เวลาเกิด</label>
-      <div id="timeBox">
+      <div id="wedBox" hidden>
+        <label>เกิดวันพุธช่วงไหน</label>
+        <div class="chips wed"><button type="button" class="chip" id="wedDay" aria-pressed="true">พุธกลางวัน</button><button type="button" class="chip" id="wedNight" aria-pressed="false">พุธกลางคืน</button></div>
+        <p class="help">พุธกลางคืน คือเกิดหลัง 18:00 น. ของวันพุธ ตำราไทยนับเป็นอีกวันหนึ่ง</p>
+      </div>
+      <input type="checkbox" id="noTime" checked hidden>
+      <input type="checkbox" id="night" hidden>
+      <button type="button" class="linkbtn" id="addTime">+ ใส่เวลาและที่เกิด (ไม่บังคับ ช่วยให้แม่นขึ้น)</button>
+      <div id="timeBox" hidden>
         <label>เวลาเกิด</label>
         <div class="row2"><select id="hh" aria-label="ชั่วโมง"></select><select id="mm" aria-label="นาที"></select></div>
         <label for="prov">จังหวัดที่เกิด</label><select id="prov"></select>
         <label for="amp">อำเภอที่เกิด</label><select id="amp"></select>
       </div>
-      <label class="check" id="nightBox" hidden><input type="checkbox" id="night"> เกิดวันพุธตอนกลางคืน</label>
       <button class="btn solid" style="margin-top:16px">คำนวณเลขมงคล</button>
       <div class="err" id="err" hidden></div>
     </form>
@@ -223,6 +232,7 @@ fbq('track','PageView');
 
   <section id="numbers" hidden>
     <h2>2. เลขมงคลของคุณ</h2>
+    <p class="help refine" id="refine" hidden>คำนวณจากวันเกิดอย่างเดียว · <button type="button" class="linkbtn" id="refineBtn">ใส่เวลาและที่เกิดเพิ่ม ให้แม่นขึ้น</button></p>
     <p class="lead">เลขแต่ละคู่คำนวณจากวันเกิดของคุณ อ่านที่มาและความหมายตามตำรา แล้วเลือกคู่ที่ตรงกับเรื่องที่คุณตั้งใจ</p>
     <div class="card paper narrow" id="pairs"></div>
   </section>
@@ -363,6 +373,6 @@ fbq('track','PageView');
 <script src="qr.js?v=202611021"></script>
 <script src="pair-text.js?v=202611056"></script>
 <script src="row-star.js?v=202611057"></script>
-<script src="shop.js?v=202611061"></script>
+<script src="shop.js?v=202611091"></script>
 </body>
 </html>
