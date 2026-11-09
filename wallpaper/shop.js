@@ -43,21 +43,21 @@
   const fillAmp = () => { $('amp').length = 0; fill($('amp'), [['', 'ตัวจังหวัด / ไม่ทราบ'], ...((window.AMPHOE || {})[$('prov').value] || []).map(([n]) => [n, n])]) }
   $('prov').value = 'กรุงเทพมหานคร'; fillAmp(); $('prov').onchange = fillAmp
   const isWed = () => new Date(Date.UTC(+$('y').value - 543, +$('m').value - 1, +$('d').value)).getUTCDay() === 3
-  let wedPick = 'unsure'
+  let wedPick = 'day', dateTouched = false
   // กรอกแค่วันเดือนปีก็ดูตารางได้ เวลาและที่เกิดเป็นทางเลือกให้แม่นขึ้น (ณัทกร 9 พ.ย. 2569: ลดขั้นตอนให้ลองเล่นง่าย)
   const sync = () => {
     const nt = $('noTime').checked
     $('timeBox').hidden = nt; $('addTime').hidden = !nt
-    $('wedBox').hidden = !(nt && isWed())
-    ;[['wedDay', 'day'], ['wedNight', 'night'], ['wedUnsure', 'unsure']].forEach(([id, v]) => $(id).setAttribute('aria-pressed', wedPick === v))
+    $('wedBox').hidden = !(nt && dateTouched && isWed())   // โชว์เฉพาะคนที่เลือกวันเกิดแล้วตรงกับวันพุธ
+    ;[['wedDay', 'day'], ['wedNight', 'night']].forEach(([id, v]) => $(id).setAttribute('aria-pressed', wedPick === v))
   }
-  // เกิดวันพุธ: เลือกกลางวัน กลางคืน หรือไม่แน่ใจ (ไม่แน่ใจ = คิดแบบกลางวัน) · กดซ้ำปุ่มเดิม = กลับเป็นไม่แน่ใจ
-  const setWed = v => { wedPick = wedPick === v ? 'unsure' : v; $('night').checked = wedPick === 'night'; sync() }
-  $('wedDay').onclick = () => setWed('day'); $('wedNight').onclick = () => setWed('night'); $('wedUnsure').onclick = () => setWed('unsure')
+  // เกิดวันพุธ: เลือกกลางวัน (เริ่มต้น) หรือกลางคืน
+  const setWed = v => { wedPick = v; $('night').checked = v === 'night'; sync() }
+  $('wedDay').onclick = () => setWed('day'); $('wedNight').onclick = () => setWed('night')
   const openTime = () => { $('noTime').checked = false; sync() }
   $('addTime').onclick = openTime
   $('refineBtn').onclick = () => { openTime(); $('birth').scrollIntoView(); $('hh').focus() }
-  ;['d', 'm', 'y'].forEach(id => $(id).addEventListener('change', sync)); sync()
+  ;['d', 'm', 'y'].forEach(id => $(id).addEventListener('change', () => { dateTouched = true; sync() })); sync()
   const lonOf = () => { const p = $('prov').value, a = $('amp').value, r = ((window.AMPHOE || {})[p] || []).find(x => x[0] === a); return r ? r[1] : (PROV.find(x => x.province === p) || {}).longitude }
 
   // กันดึงภาพออกแบบง่ายๆ แคปหน้าจอยังทำได้ ภาพที่แสดงจึงมีลายน้ำเสมอ
