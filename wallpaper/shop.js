@@ -43,15 +43,17 @@
   const fillAmp = () => { $('amp').length = 0; fill($('amp'), [['', 'ตัวจังหวัด / ไม่ทราบ'], ...((window.AMPHOE || {})[$('prov').value] || []).map(([n]) => [n, n])]) }
   $('prov').value = 'กรุงเทพมหานคร'; fillAmp(); $('prov').onchange = fillAmp
   const isWed = () => new Date(Date.UTC(+$('y').value - 543, +$('m').value - 1, +$('d').value)).getUTCDay() === 3
+  let wedPick = 'unsure'
   // กรอกแค่วันเดือนปีก็ดูตารางได้ เวลาและที่เกิดเป็นทางเลือกให้แม่นขึ้น (ณัทกร 9 พ.ย. 2569: ลดขั้นตอนให้ลองเล่นง่าย)
   const sync = () => {
     const nt = $('noTime').checked
     $('timeBox').hidden = nt; $('addTime').hidden = !nt
     $('wedBox').hidden = !(nt && isWed())
-    $('wedDay').setAttribute('aria-pressed', !$('night').checked); $('wedNight').setAttribute('aria-pressed', $('night').checked)
+    ;[['wedDay', 'day'], ['wedNight', 'night'], ['wedUnsure', 'unsure']].forEach(([id, v]) => $(id).setAttribute('aria-pressed', wedPick === v))
   }
-  const setNight = v => { $('night').checked = v; sync() }
-  $('wedDay').onclick = () => setNight(false); $('wedNight').onclick = () => setNight(true)
+  // เกิดวันพุธ: เลือกกลางวัน กลางคืน หรือไม่แน่ใจ (ไม่แน่ใจ = คิดแบบกลางวัน) · กดซ้ำปุ่มเดิม = กลับเป็นไม่แน่ใจ
+  const setWed = v => { wedPick = wedPick === v ? 'unsure' : v; $('night').checked = wedPick === 'night'; sync() }
+  $('wedDay').onclick = () => setWed('day'); $('wedNight').onclick = () => setWed('night'); $('wedUnsure').onclick = () => setWed('unsure')
   const openTime = () => { $('noTime').checked = false; sync() }
   $('addTime').onclick = openTime
   $('refineBtn').onclick = () => { openTime(); $('birth').scrollIntoView(); $('hh').focus() }

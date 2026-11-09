@@ -213,8 +213,8 @@ fbq('track','PageView');
       <div class="row3"><select id="d" aria-label="วัน"></select><select id="m" aria-label="เดือน"></select><select id="y" aria-label="ปี พ.ศ."></select></div>
       <div id="wedBox" hidden>
         <label>เกิดวันพุธช่วงไหน</label>
-        <div class="chips wed"><button type="button" class="chip" id="wedDay" aria-pressed="true">พุธกลางวัน</button><button type="button" class="chip" id="wedNight" aria-pressed="false">พุธกลางคืน</button></div>
-        <p class="help">พุธกลางคืน คือเกิดหลัง 18:00 น. ของวันพุธ ตำราไทยนับเป็นอีกวันหนึ่ง</p>
+        <div class="chips wed"><button type="button" class="chip" id="wedDay" aria-pressed="false">พุธกลางวัน</button><button type="button" class="chip" id="wedNight" aria-pressed="false">พุธกลางคืน</button><button type="button" class="chip" id="wedUnsure" aria-pressed="true">ไม่แน่ใจ</button></div>
+        <p class="help">พุธกลางคืน คือเกิดหลัง 18:00 น. ของวันพุธ ตำราไทยนับเป็นอีกวันหนึ่ง · ถ้าไม่แน่ใจ ระบบคิดแบบพุธกลางวัน</p>
       </div>
       <input type="checkbox" id="noTime" checked hidden>
       <input type="checkbox" id="night" hidden>
@@ -373,6 +373,6 @@ fbq('track','PageView');
 <script src="qr.js?v=202611021"></script>
 <script src="pair-text.js?v=202611056"></script>
 <script src="row-star.js?v=202611057"></script>
-<script src="shop.js?v=202611091"></script>
+<script src="shop.js?v=202611092"></script>
 </body>
 </html>
