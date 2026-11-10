@@ -324,15 +324,22 @@
     $('refine').hidden = !noTime
     // กดคำนวณแล้วเลื่อนไปหน้าคำนายเอง (ณัทกร 10 พ.ย.) · ปล่อยตัวล็อกจอของช่องเลือกวันก่อน ไม่งั้นมือถือดึงจอกลับ
     holdTop = null; draw()
-    requestAnimationFrame(() => $(o ? 'oracle' : 'studio').scrollIntoView({ behavior: 'smooth', block: 'start' }))
+    setTimeout(() => goTo($(o ? 'oracle' : 'studio')), 250)
     fb('ViewContent')
   }
   // ที่มาเลขมงคลและตาราง 9 ช่อง พับไว้ คนอยากอ่านกดเปิดเอง
   $('originBtn').onclick = () => { ;['numbers', 'gridWhy'].forEach(id => { $(id).hidden = false }); $('originBtn').hidden = true; $('numbers').scrollIntoView({ behavior: 'smooth' }) }
-  // ปุ่ม "รับพร": เลื่อนไปภาพมงคล แล้วมีป้าย "ตกแต่งเพิ่มเติมเองได้" ขึ้นใต้ภาพ แตะแล้วเปิดส่วนเลือกภาพและปรับเอง
+  // เลื่อนจอไปยังส่วนที่ต้องการ · มือถือใช้ body เป็นตัวเลื่อน (html ล็อกไว้) scrollIntoView บางเครื่องไม่ขยับ จึงสั่งตัวเลื่อนตรงๆ
+  const goTo = (node, offset = 8) => {
+    const sc = getComputedStyle(document.body).overflowY === 'auto' ? document.body : (document.scrollingElement || document.documentElement)
+    holdTop = null
+    const y = () => node.getBoundingClientRect().top + sc.scrollTop - offset
+    sc.scrollTo({ top: y(), behavior: 'smooth' })
+    setTimeout(() => { if (Math.abs(node.getBoundingClientRect().top - offset) > 40) sc.scrollTop = y() }, 900)
+  }  // ปุ่ม "รับพร": เลื่อนไปภาพมงคล แล้วมีป้าย "ตกแต่งเพิ่มเติมเองได้" ขึ้นใต้ภาพ แตะแล้วเปิดส่วนเลือกภาพและปรับเอง
   let tipTimer = 0
   $('getBlessing').onclick = () => {
-    $('studio').scrollIntoView({ behavior: 'smooth', block: 'start' })
+    goTo($('studio'))
     const tip = $('decorTip'); clearTimeout(tipTimer); tip.hidden = false; tip.classList.remove('show')
     setTimeout(() => tip.classList.add('show'), 700)
     tipTimer = setTimeout(() => { tip.classList.remove('show'); setTimeout(() => { tip.hidden = true }, 400) }, 10000)
@@ -340,7 +347,7 @@
   $('decorTip').onclick = () => {
     clearTimeout(tipTimer); $('decorTip').classList.remove('show'); $('decorTip').hidden = true
     $('adjust').open = true
-    $('thumbs').scrollIntoView({ behavior: 'smooth', block: 'center' })
+    setTimeout(() => goTo($('adjust'), 90), 50)
   }
   $('oracleTime').onclick = () => { openTime(); $('birth').scrollIntoView(); $('hh').focus() }
   const markRecommended = id => {
