@@ -1,7 +1,7 @@
 // หน้าร้านวอลเปเปอร์: คำนวณเลข → แต่งภาพ → รับภาพ · ลูกค้าเลือกเองทุกอย่าง เรามีหน้าที่ให้ข้อเสนอ
 ;(async function () {
   const $ = id => document.getElementById(id), L = window.ThaiAstro, SHOP = window.SHOP
-  const meta = await (await fetch('assets/meta.json?v=202611031')).json()
+  const meta = await (await fetch('assets/meta.json?v=202611101')).json()
   const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text !== undefined) e.textContent = text; return e }
   const fill = (s, list) => list.forEach(([v, t]) => s.add(new Option(t, v)))
   const SET_IMAGES = 6
@@ -32,7 +32,7 @@
     ['แถวกลาง', 'ตัวเราและความรัก', 'แถวกลางเหมือนหัวใจของเรา จึงเป็นตำแหน่งของเลขเรื่องตัวเราและความสัมพันธ์', 'charm'],
     ['แถวล่าง', 'เงินและความมั่นคง', 'แถวล่างเหมือนฐานบ้านที่ต้องแน่น จึงเป็นตำแหน่งของเลขเรื่องเงินและการตั้งตัว', 'wealth'],
   ]
-  const DEFAULT_FRAME = { ganesha: 'mountain', lakshmi: 'lotus', parvati: 'heart', saraswati: 'lotus', shiva: 'plain', vishnu: 'plain', brahma: 'lotus', trimurti: 'plain', trishakti: 'heart' }
+  const DEFAULT_FRAME = { ganesha: 'mountain', lakshmi: 'lotus', parvati: 'heart', saraswati: 'lotus', shiva: 'plain', vishnu: 'plain', brahma: 'lotus', trimurti: 'plain', trishakti: 'heart', skanda: 'mountain' }
   const THAI = '๐๑๒๓๔๕๖๗๘๙', thai = n => String(n).replace(/\d/g, d => THAI[d])
   const pad = n => String(n).padStart(2, '0'), range = (a, b) => Array.from({ length: b - a + 1 }, (_, i) => a + i)
   fill($('d'), range(1, 31).map(n => [n, n])); fill($('m'), MONTH.map((t, i) => [i + 1, t])); fill($('y'), range(2460, 2569).reverse().map(n => [n, n]))
@@ -67,7 +67,8 @@
   const S = { image: 'shiva-ganesha', frame: 'plain', frameChosen: false, grid: null, variant: 0, tried: [0], diagonal: false, nameHigh: false, showNumber: true, number: null, thaiNumber: false, side: null, showSeal: true, word: 'มั่งคั่ง', showName: false, name: '', plan: 'one' }
   // แต่งแยกรายภาพ ยกเว้นตารางและชื่อที่ติดตัวเจ้าของดวงเสมอแม้เปลี่ยนภาพ
   // ลิงก์ที่เลือกองค์เทพไว้ให้แล้ว เช่น /wallpaper/?image=ganesha-mouse (ใช้กับหน้าแยกองค์เทพ)
-  try { const q = new URLSearchParams(location.search).get('image'); if (q && meta.deities.some(d => d.id === q)) S.image = q } catch {}
+  let linkImage = false
+  try { const q = new URLSearchParams(location.search).get('image'); if (q && meta.deities.some(d => d.id === q)) { S.image = q; linkImage = true } } catch {}
   const DESIGN_KEYS = ['frame', 'frameChosen', 'showNumber', 'number', 'thaiNumber', 'side', 'showSeal', 'word']
   const SHARED_KEYS = ['grid', 'variant', 'tried', 'diagonal', 'showName', 'name', 'nameHigh']
   let chart = null, allPairs = [], picked = [], owner = null, gridOptions = []
@@ -304,14 +305,35 @@
     owner = await sha(`amatathewa:${y}-${m}-${d}-${noTime ? `n${night ? 1 : 0}` : `${inp.hh}-${inp.mm}`}`)
     allPairs = [...chart.pairs, ...chart.extras]; picked = allPairs.map(p => p.num)
     S.number = allPairs[0].num; S.showNumber = true
+    // องค์เทพอยากบอกอะไร: คำนายดาวจร + องค์ที่หนุนที่สุด (ลิงก์ที่ระบุภาพไว้แล้วยังใช้ภาพนั้น)
+    let o = null
+    try { o = window.Oracle.read(inp, chart, id => meta.deities.some(d => d.id === id)) } catch (e) { console.error(e) }
+    if (o) {
+      $('oracleEye').textContent = `${o.deity}อยากบอกคุณว่า`
+      $('oracleText').textContent = ''; o.lines.forEach(t => $('oracleText').append(el('p', '', t)))
+      $('oracleDeity').textContent = `ทำไมเป็น${o.deity}`; $('oracleWhy').textContent = o.why; $('oracleHint').hidden = o.hasTime
+      if (!linkImage) S.image = o.image
+      markRecommended(o.image)
+    }
     const g = applyShared()
     applyDesign()
     if (!allPairs.some(p => p.num === S.number)) S.number = allPairs[0].num
     renderPairs(); note(g); renderGridWhy(); renderControls()
-    ;['numbers', 'gridWhy', 'studio', 'buy'].forEach(id => { $(id).hidden = false })
+    ;['oracle', 'studio', 'buy', 'origin'].forEach(id => { $(id).hidden = false })
+    ;['numbers', 'gridWhy'].forEach(id => { $(id).hidden = true }); $('originBtn').hidden = false
     $('refine').hidden = !noTime
-    draw(); $('numbers').scrollIntoView()
+    draw(); $(o ? 'oracle' : 'studio').scrollIntoView({ behavior: 'smooth' })
     fb('ViewContent')
+  }
+  // ที่มาเลขมงคลและตาราง 9 ช่อง พับไว้ คนอยากอ่านกดเปิดเอง
+  $('originBtn').onclick = () => { ;['numbers', 'gridWhy'].forEach(id => { $(id).hidden = false }); $('originBtn').hidden = true; $('numbers').scrollIntoView({ behavior: 'smooth' }) }
+  $('oracleTime').onclick = () => { openTime(); $('birth').scrollIntoView(); $('hh').focus() }
+  const markRecommended = id => {
+    const box = $('thumbs')
+    box.querySelectorAll('.rec').forEach(x => x.remove())
+    const b = box.querySelector(`[data-id="${id}"]`)
+    if (!b) return
+    b.append(el('span', 'rec', 'แนะนำ')); box.prepend(b); box.scrollLeft = 0
   }
 
   // ---------- รับภาพ ----------
