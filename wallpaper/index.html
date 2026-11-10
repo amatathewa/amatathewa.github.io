@@ -72,6 +72,24 @@ html.goldbtn .btn.shine::after{background:linear-gradient(100deg,transparent,rgb
 details.adjust{border-top:1px solid var(--line);padding-top:6px}
 details.adjust summary{cursor:pointer;min-height:48px;display:flex;align-items:center;color:var(--goldsoft);font-size:17px}
 details.adjust[open] summary{margin-bottom:10px}
+input[type=tel]{width:100%;font:inherit;font-size:22px;letter-spacing:.06em;min-height:52px;padding:9px 12px;border:1px solid transparent;border-radius:3px;background:var(--ivory);color:var(--ink)}
+.presult{margin-top:16px}
+.phead{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;border-bottom:1px solid rgba(38,33,28,.2);padding-bottom:12px;margin-bottom:6px}
+.phead .pnum{font:400 20px Trirong,serif;color:var(--ink);flex:1 1 auto}
+.phead .pscore{font:400 46px/1 Trirong,serif;color:var(--burgundy)}
+.phead small{color:var(--inksoft);font-size:13px}
+.psec{padding:12px 0 2px}
+.psec h3{margin:0 0 6px;font:500 17px "IBM Plex Sans Thai",sans-serif;color:var(--burgundy)}
+.psec p,.pself li{margin:0 0 6px;color:var(--ink)}
+.pself{margin:0;padding-left:0;list-style:none}
+.pself b,.plist b{color:var(--ink)}
+.pgood b{color:#1f5f9e}.pbad b{color:#b4500f}.pmid b{color:#8a6d00}
+.presult .btn{margin-top:14px}
+#oracleEye{font:400 clamp(26px,6.4vw,34px)/1.35 Trirong,serif;color:var(--goldsoft);letter-spacing:.02em;margin-bottom:14px;text-shadow:0 1px 12px rgba(0,0,0,.85)}
+#getBlessing{margin:4px 0 18px}
+.stage{position:relative}
+.decor-tip{position:fixed;z-index:30;left:50%;bottom:22px;transform:translate(-50%,20px);opacity:0;transition:opacity .35s,transform .35s;white-space:nowrap;min-height:48px;padding:10px 20px;border-radius:999px;border:1px solid rgba(227,200,139,.8);background:rgba(20,17,14,.88);color:#fff6e3;font:500 17px "IBM Plex Sans Thai",sans-serif;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.45)}
+.decor-tip.show{opacity:1;transform:translate(-50%,0)}
 .thumb .rec{position:absolute;top:4px;left:4px;padding:1px 6px;border-radius:3px;background:var(--burgundy);color:#fff6e3;font-size:11px}
 .btn:disabled{opacity:.55;cursor:not-allowed}
 .err{color:#ffb25e;font-weight:700;margin-top:10px}
@@ -255,20 +273,33 @@ fbq('track','PageView');
     <p class="eyebrow center" id="oracleEye">องค์เทพอยากบอกคุณว่า</p>
     <div class="card oracle narrow">
       <div id="oracleText"></div>
+      <button type="button" class="btn solid shine" id="getBlessing">รับพร</button>
       <div class="whydeity"><b id="oracleDeity"></b><p id="oracleWhy"></p></div>
       <p class="help" id="oracleHint" hidden><button type="button" class="linkbtn" id="oracleTime">ใส่เวลาเกิดเพิ่ม องค์เทพจะบอกได้ชัดขึ้น</button></p>
     </div>
+  </section>
+
+  <section id="phone" hidden>
+    <h2>เบอร์ที่ใช้อยู่ บอกอะไรเกี่ยวกับคุณ</h2>
+    <p class="lead">ลองให้เราอ่านเบอร์มือถือของคุณ แล้วดูว่าตรงไหม เบอร์อ่านในเครื่องของคุณ ไม่ถูกส่งไปที่ไหน</p>
+    <form class="card narrow" id="pf">
+      <label for="pn">เบอร์มือถือ</label>
+      <input type="tel" id="pn" inputmode="numeric" maxlength="12" placeholder="08x-xxx-xxxx" autocomplete="off">
+      <button class="btn solid shine" style="margin-top:14px">อ่านเบอร์ของฉัน</button>
+      <div class="err" id="perr" hidden></div>
+    </form>
+    <div class="card paper narrow presult" id="pres" hidden></div>
   </section>
 
   <section id="studio" hidden>
     <h2>ภาพมงคลของคุณ</h2>
     <p class="lead">จัดให้ครบแล้ว ทั้งองค์เทพ เลขมงคล ตาราง และคำมงคล อยากได้องค์อื่นก็แตะเลือกได้เลย</p>
     <div class="studio">
-      <div class="stage" id="stage"><canvas id="view" width="640" height="1387" role="img" aria-label="ภาพตัวอย่างวอลเปเปอร์"></canvas><div class="busy" id="busy"></div></div>
+      <div class="stage" id="stage"><canvas id="view" width="640" height="1387" role="img" aria-label="ภาพตัวอย่างวอลเปเปอร์"></canvas><div class="busy" id="busy"></div><button type="button" class="decor-tip" id="decorTip" hidden>ตกแต่งเพิ่มเติมเองได้ ▾</button></div>
       <div class="card">
         <div class="ctl"><h3>ภาพองค์เทพ</h3><div class="thumbs" id="thumbs"></div></div>
         <a class="btn solid shine" href="#buy" id="toBuy">รับภาพนี้</a>
-        <details class="adjust"><summary>ปรับเอง · เลข ตาราง คำมงคล ชื่อ</summary>
+        <details class="adjust" id="adjust"><summary>ปรับเอง · เลข ตาราง คำมงคล ชื่อ</summary>
         <div class="ctl"><h3>ลายตารางเลขด้านหลัง</h3><div class="chips" id="frames"></div><p class="help" id="frameNote"></p><p class="help">เลือกตามที่ชอบได้เลย ไม่มีลายไหนผิด</p><div class="gridpick" style="margin-top:12px"></div></div>
         <div class="ctl"><h3>เลขมงคลบนภาพ</h3><div class="chips" id="numberPick"></div>
           <h3 style="margin-top:12px">แบบตัวเลข</h3><div class="chips" id="numberStyle"></div>
@@ -411,6 +442,6 @@ fbq('track','PageView');
 <script src="pair-text.js?v=202611056"></script>
 <script src="row-star.js?v=202611057"></script>
 <script src="oracle.js?v=202611104"></script>
-<script src="shop.js?v=202611103"></script>
+<script src="shop.js?v=202611106"></script>
 </body>
 </html>

@@ -319,14 +319,29 @@
     applyDesign()
     if (!allPairs.some(p => p.num === S.number)) S.number = allPairs[0].num
     renderPairs(); note(g); renderGridWhy(); renderControls()
-    ;['oracle', 'studio', 'buy', 'origin'].forEach(id => { $(id).hidden = false })
+    ;['oracle', 'studio', 'buy', 'origin'].forEach(id => { $(id).hidden = false })   // อ่านเบอร์ (#phone) ซ่อนไว้จนกว่าณัทกรตรวจผ่าน
     ;['numbers', 'gridWhy'].forEach(id => { $(id).hidden = true }); $('originBtn').hidden = false
     $('refine').hidden = !noTime
-    draw(); $(o ? 'oracle' : 'studio').scrollIntoView({ behavior: 'smooth' })
+    // กดคำนวณแล้วเลื่อนไปหน้าคำนายเอง (ณัทกร 10 พ.ย.) · ปล่อยตัวล็อกจอของช่องเลือกวันก่อน ไม่งั้นมือถือดึงจอกลับ
+    holdTop = null; draw()
+    requestAnimationFrame(() => $(o ? 'oracle' : 'studio').scrollIntoView({ behavior: 'smooth', block: 'start' }))
     fb('ViewContent')
   }
   // ที่มาเลขมงคลและตาราง 9 ช่อง พับไว้ คนอยากอ่านกดเปิดเอง
   $('originBtn').onclick = () => { ;['numbers', 'gridWhy'].forEach(id => { $(id).hidden = false }); $('originBtn').hidden = true; $('numbers').scrollIntoView({ behavior: 'smooth' }) }
+  // ปุ่ม "รับพร": เลื่อนไปภาพมงคล แล้วมีป้าย "ตกแต่งเพิ่มเติมเองได้" ขึ้นใต้ภาพ แตะแล้วเปิดส่วนเลือกภาพและปรับเอง
+  let tipTimer = 0
+  $('getBlessing').onclick = () => {
+    $('studio').scrollIntoView({ behavior: 'smooth', block: 'start' })
+    const tip = $('decorTip'); clearTimeout(tipTimer); tip.hidden = false; tip.classList.remove('show')
+    setTimeout(() => tip.classList.add('show'), 700)
+    tipTimer = setTimeout(() => { tip.classList.remove('show'); setTimeout(() => { tip.hidden = true }, 400) }, 10000)
+  }
+  $('decorTip').onclick = () => {
+    clearTimeout(tipTimer); $('decorTip').classList.remove('show'); $('decorTip').hidden = true
+    $('adjust').open = true
+    $('thumbs').scrollIntoView({ behavior: 'smooth', block: 'center' })
+  }
   $('oracleTime').onclick = () => { openTime(); $('birth').scrollIntoView(); $('hh').focus() }
   const markRecommended = id => {
     const box = $('thumbs')
