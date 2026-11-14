@@ -78,6 +78,11 @@
     get: (k, d) => { try { return JSON.parse(localStorage.getItem(k)) || d } catch { return d } },
     set: (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)) } catch {} },
   }
+  // จำวันเกิด ภาพ และแบบที่เลือกไว้ในเครื่องลูกค้า 3 วัน (ไม่ส่งออกจากเครื่อง)
+  // ลูกค้าออกไปโอนในแอปธนาคาร แล้วเบราว์เซอร์ใน Facebook/LINE มักโหลดหน้าใหม่ กลับมาจะได้ไม่ต้องกรอกใหม่ (ณัทกร 14 พ.ย. 2569)
+  const remember = o => keep.set('amt-last', Object.assign(keep.get('amt-last', {}), o, { t: Date.now() }))
+  const lastVisit = (() => { const l = keep.get('amt-last', null); return l && l.birth && Date.now() - l.t < 3 * 864e5 ? l : null })()
+  let restoring = false
   const passes = keep.get('amt-passes', {})
   const allDesigns = keep.get('amt-designs', {}), allSaved = keep.get('amt-saved', {}), allShared = keep.get('amt-shared', {})
   const designs = () => allDesigns[owner] || (allDesigns[owner] = {})
@@ -185,12 +190,12 @@
     const b = el('button', 'thumb'); b.type = 'button'; b.dataset.id = d.id
     const i = el('img'); i.src = `assets/thumb/${d.id}.jpg?v=202611011`; i.alt = ''; i.loading = 'lazy'; i.width = 180; i.height = 390; i.draggable = false
     b.append(i, el('span', '', d.label))
-    b.onclick = () => { saveDesign(); S.image = d.id; applyDesign(); renderGridWhy(); renderControls(); draw() }
+    b.onclick = () => { saveDesign(); S.image = d.id; remember({ image: d.id }); applyDesign(); renderGridWhy(); renderControls(); draw() }
     $('thumbs').append(b)
   })
   ;[['one', SHOP.price.one, 'ภาพนี้ 1 ภาพ'], ['set', SHOP.price.set, `เลือกได้ ${SET_IMAGES} ภาพ`]].forEach(([k, p, t]) => {
     const b = el('button', 'plan'); b.type = 'button'; b.dataset.plan = k; b.append(el('b', '', `${p} บาท`), el('span', '', t))
-    b.onclick = () => { S.plan = k; renderControls() }; $('plans').append(b)
+    b.onclick = () => { S.plan = k; remember({ plan: k }); renderControls() }; $('plans').append(b)
   })
   $('ownWord').oninput = () => { const v = $('ownWord').value.trim(); if (v) { S.showSeal = true; S.word = v } else S.word = WORDS[0]; saveDesign(); renderControls(); draw() }
   $('name').oninput = () => { S.name = $('name').value.trim(); S.showName = !!S.name; saveDesign(); draw() }
@@ -303,6 +308,7 @@
     chart = window.Lucky.build(window.Health, window.Reader, inp)
     // วันเกิดไม่ออกจากเครื่อง ส่งเฉพาะรหัสที่แฮชแล้วตอนซื้อ เพื่อผูกการซื้อกับเจ้าของวันเกิด
     owner = await sha(`amatathewa:${y}-${m}-${d}-${noTime ? `n${night ? 1 : 0}` : `${inp.hh}-${inp.mm}`}`)
+    if (!restoring) remember({ birth: { d: $('d').value, m: $('m').value, y: $('y').value, noTime, wed: wedPick, hh: $('hh').value, mm: $('mm').value, prov: $('prov').value, amp: $('amp').value }, image: null, plan: null, atBuy: false })
     allPairs = [...chart.pairs, ...chart.extras]; picked = allPairs.map(p => p.num)
     S.number = allPairs[0].num; S.showNumber = true
     // องค์เทพอยากบอกอะไร: คำนายดาวจร + องค์ที่หนุนที่สุด (ลิงก์ที่ระบุภาพไว้แล้วยังใช้ภาพนั้น)
@@ -324,6 +330,7 @@
     $('refine').hidden = !noTime
     // กดคำนวณแล้วเลื่อนไปหน้าคำนายเอง (ณัทกร 10 พ.ย.) · ปล่อยตัวล็อกจอของช่องเลือกวันก่อน ไม่งั้นมือถือดึงจอกลับ
     holdTop = null; draw()
+    if (restoring) return
     setTimeout(() => goTo($(o ? 'oracle' : 'studio')), 250)
     fb('ViewContent')
   }
@@ -523,4 +530,28 @@
   $('buyBack').onclick = () => { buyMore = false; renderControls() }
   renderControls()
   window.__shop = { S, meta, draw, get options() { return gridOptions }, set: o => { Object.assign(S, o); renderControls(); return draw() }, get chart() { return chart }, get owner() { return owner } }
+
+  // ไปขั้นจ่ายเงินแล้ว: จำไว้ว่าถ้ากลับมาให้พาไปที่ช่องแนบสลิปเลย
+  const atBuy = () => remember({ atBuy: true })
+  ;['toBuy', 'copyAccount', 'saveQr'].forEach(id => $(id).addEventListener('click', atBuy)); $('slip').addEventListener('change', atBuy)
+  // กลับมาภายใน 3 วัน: ใส่วันเกิดเดิม คำนวณใหม่ในเครื่อง เลือกภาพและแบบเดิม (ไม่นับเป็น ViewContent ซ้ำ)
+  if (lastVisit) {
+    try {
+      const b = lastVisit.birth
+      ;['d', 'm', 'y'].forEach(k => { $(k).value = b[k] }); dateTouched = true
+      $('noTime').checked = b.noTime !== false
+      if (b.noTime === false) { $('hh').value = b.hh; $('mm').value = b.mm; $('prov').value = b.prov; fillAmp(); $('amp').value = b.amp || '' }
+      setWed(b.wed === 'night' ? 'night' : 'day')
+      restoring = true
+      await $('f').onsubmit({ preventDefault() {} })
+      if (lastVisit.image && lastVisit.image !== S.image && meta.deities.some(d => d.id === lastVisit.image)) {
+        saveDesign(); S.image = lastVisit.image; applyDesign(); renderGridWhy(); draw()
+      }
+      if (lastVisit.plan === 'one' || lastVisit.plan === 'set') S.plan = lastVisit.plan
+      renderControls()
+      $('backNote').hidden = !lastVisit.atBuy
+      setTimeout(() => goTo($(lastVisit.atBuy ? 'buy' : 'studio')), 300)
+    } catch (e) { console.error(e) }
+    restoring = false
+  }
 })()

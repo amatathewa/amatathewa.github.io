@@ -69,9 +69,14 @@ html.goldbtn .btn.shine::after{background:linear-gradient(100deg,transparent,rgb
 .oracle .whydeity b{display:block;font:500 16px "IBM Plex Sans Thai",sans-serif;color:var(--goldsoft);margin-bottom:4px}
 .oracle .whydeity p{margin:0;color:var(--ivory)}
 #toBuy{margin:6px 0 14px}
-details.adjust{border-top:1px solid var(--line);padding-top:6px}
-details.adjust summary{cursor:pointer;min-height:48px;display:flex;align-items:center;color:var(--goldsoft);font-size:17px}
-details.adjust[open] summary{margin-bottom:10px}
+details.adjust{padding-top:2px}
+details.adjust summary{cursor:pointer;min-height:52px;display:flex;align-items:center;justify-content:center;gap:10px;color:var(--goldsoft);font-size:17px;border:1px solid var(--gold);border-radius:3px;padding:8px 14px;text-align:center;list-style:none}
+details.adjust summary::-webkit-details-marker{display:none}
+details.adjust summary::after{content:'▾';font-size:15px;transition:transform .2s}
+details.adjust[open] summary::after{transform:rotate(180deg)}
+details.adjust summary:hover{background:rgba(201,162,90,.08)}
+details.adjust[open] summary{margin-bottom:14px}
+.backnote{margin:14px 0 0;padding:10px 12px;border:1px solid var(--gold);border-radius:3px;color:var(--goldsoft)}
 input[type=tel]{width:100%;font:inherit;font-size:22px;letter-spacing:.06em;min-height:52px;padding:9px 12px;border:1px solid transparent;border-radius:3px;background:var(--ivory);color:var(--ink)}
 .presult{margin-top:16px}
 .phead{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;border-bottom:1px solid rgba(38,33,28,.2);padding-bottom:12px;margin-bottom:6px}
@@ -299,7 +304,7 @@ fbq('track','PageView');
       <div class="card">
         <div class="ctl"><h3>ภาพองค์เทพ</h3><div class="thumbs" id="thumbs"></div></div>
         <a class="btn solid shine" href="#buy" id="toBuy">รับภาพนี้</a>
-        <details class="adjust" id="adjust"><summary>ปรับเอง · เลข ตาราง คำมงคล ชื่อ</summary>
+        <details class="adjust" id="adjust"><summary>แต่งภาพเพิ่มเองได้ · ใส่ชื่อ เลข คำมงคล</summary>
         <div class="ctl"><h3>ลายตารางเลขด้านหลัง</h3><div class="chips" id="frames"></div><p class="help" id="frameNote"></p><p class="help">เลือกตามที่ชอบได้เลย ไม่มีลายไหนผิด</p><div class="gridpick" style="margin-top:12px"></div></div>
         <div class="ctl"><h3>เลขมงคลบนภาพ</h3><div class="chips" id="numberPick"></div>
           <h3 style="margin-top:12px">แบบตัวเลข</h3><div class="chips" id="numberStyle"></div>
@@ -314,6 +319,15 @@ fbq('track','PageView');
     </div>
   </section>
 
+  <section id="reviews" hidden>
+    <h2>เสียงจากผู้ที่ได้ภาพไปแล้ว</h2>
+    <div class="card rvbox">
+      <div class="rvscore" id="rvScore" hidden><div class="big" id="rvAvg"></div><div class="line" id="rvLine"></div><div class="from" id="rvFrom"></div><span class="rvbadge">รีวิวจากผู้ศรัทธาจริงทุกข้อความ</span></div>
+      <div id="rvList"></div>
+      <button class="rvmore" id="rvMore" type="button" hidden>อ่านรีวิวทั้งหมด</button>
+    </div>
+  </section>
+
   <section id="buy" hidden>
     <h2>รับภาพ</h2>
     <div class="card narrow">
@@ -325,6 +339,7 @@ fbq('track','PageView');
         <button class="btn alt" id="savePreview" type="button">บันทึกภาพตัวอย่าง</button>
       </div>
       <div class="pay" id="payOpen" hidden>
+        <p class="help backnote" id="backNote" hidden>ภาพและวันเกิดที่เลือกไว้ยังอยู่ครบ โอนแล้วแนบสลิปด้านล่างได้เลย</p>
         <p style="margin:14px 0 0">ยอดที่ต้องโอน <b id="payAmount"></b> บาท</p>
         <div class="bankbox"><span>ธนาคาร</span><b id="payBankName"></b><span>เลขบัญชี</span><b id="payAccount"></b><span>ชื่อบัญชี</span><b id="payHolder"></b></div>
         <button class="btn alt" id="copyAccount" type="button">คัดลอกเลขบัญชี</button>
@@ -393,15 +408,6 @@ fbq('track','PageView');
     <p class="lead deities"><a href="ganesha/">วอลเปเปอร์พระพิฆเนศ</a> · <a href="shiva/">วอลเปเปอร์พระศิวะ</a> · <a href="lakshmi/">วอลเปเปอร์พระแม่ลักษมี</a> · <a href="parvati/">วอลเปเปอร์พระแม่ปารวตี</a> · <a href="saraswati/">วอลเปเปอร์พระแม่สรัสวตี</a> · <a href="vishnu/">วอลเปเปอร์พระวิษณุ</a> · <a href="brahma/">วอลเปเปอร์พระพรหม</a> · <a href="trimurti/">วอลเปเปอร์พระตรีมูรติ</a> · <a href="trishakti/">วอลเปเปอร์พระตรีศักติ</a></p>
   </section>
 
-  <section id="reviews" hidden>
-    <h2>เสียงจากผู้ที่ได้ภาพไปแล้ว</h2>
-    <div class="card rvbox">
-      <div class="rvscore" id="rvScore" hidden><div class="big" id="rvAvg"></div><div class="line" id="rvLine"></div><div class="from" id="rvFrom"></div><span class="rvbadge">รีวิวจากผู้ศรัทธาจริงทุกข้อความ</span></div>
-      <div id="rvList"></div>
-      <button class="rvmore" id="rvMore" type="button" hidden>อ่านรีวิวทั้งหมด</button>
-    </div>
-  </section>
-
   <section>
     <h2>คำถามที่พบบ่อย</h2>
     <details><summary>เลขคำนวณจากอะไร</summary><p>ประยุกต์จากตำราโหราศาสตร์ไทย ถ้ารู้เวลาเกิด ระบบใช้ทั้งดวงเกิดและทักษา ถ้าไม่รู้เวลาเกิด ระบบใช้ทักษาวันเกิดกับคู่เลขมาตรฐาน</p></details>
@@ -442,6 +448,6 @@ fbq('track','PageView');
 <script src="pair-text.js?v=202611056"></script>
 <script src="row-star.js?v=202611057"></script>
 <script src="oracle.js?v=202611104"></script>
-<script src="shop.js?v=202611107"></script>
+<script src="shop.js?v=202611141"></script>
 </body>
 </html>
