@@ -239,6 +239,7 @@ footer a{color:inherit}
 .rv p{margin:6px 0 4px;font:400 17px/1.6 Trirong,serif}
 .rv .who{font-size:14px;color:var(--muted)}
 .rvmore{display:block;margin:12px auto 0;background:none;border:0;color:var(--goldsoft);font:400 15px "IBM Plex Sans Thai",sans-serif;cursor:pointer;min-height:44px}
+.freetag{display:inline-block;color:#1a120c;background:#e3c88b;border-radius:2px;padding:1px 8px;margin-right:6px;font-weight:500}
 </style>
 <script>try{const b=new URLSearchParams(location.search).get('bg');if(b==='1'||b==='2')document.documentElement.style.setProperty('--bgm','url(assets/bg'+b+'-m.jpg)');if(new URLSearchParams(location.search).get('btn')==='gold')document.documentElement.classList.add('goldbtn')}catch{}</script>
 <!-- Meta Pixel (6 พ.ย. 2569) นับแค่การเข้าหน้า · กรอกวันเกิด · เริ่มจ่าย · ซื้อสำเร็จ ไม่ส่งวันเกิด/ชื่อ -->
@@ -261,13 +262,13 @@ fbq('track','PageView');
       <h1>องค์เทพอยากบอก<br>อะไรกับคุณ</h1>
       <p class="lead">กรอกวันเกิด แล้วฟังว่าดาวที่เดินอยู่ช่วงนี้กำลังพาอะไรมาให้คุณ พร้อมภาพองค์เทพที่หนุนคุณที่สุด ใส่เลขมงคลจากวันเกิดของคุณไว้ให้เรียบร้อย ดูได้ฟรีก่อนตัดสินใจ</p>
       <p class="price">1 ภาพ 159 บาท · เลือกได้ 6 ภาพ 399 บาท จากทั้งหมด 25 ภาพ</p>
-      <a class="btn shine" href="#birth">เริ่มเลย</a>
+      <a class="btn shine" href="#birth">เริ่มเลย ดูฟรี</a>
     </div>
   </div>
 
   <section id="birth">
     <h2>กรอกวันเกิดของคุณ</h2>
-    <p class="lead">เราคำนวณในเครื่องของคุณ ไม่ส่งวันเวลาเกิดไปเก็บที่ไหน</p>
+    <p class="lead"><b class="freetag">ดูคำทำนายฟรี ไม่ต้องจ่ายเงิน</b> จ่ายเฉพาะตอนบันทึกภาพเต็ม<br>เราคำนวณในเครื่องของคุณ ไม่ส่งวันเวลาเกิดไปเก็บที่ไหน</p>
     <form class="card narrow" id="f" autocomplete="off">
       <label>วันเกิด</label>
       <div class="row3"><select id="d" aria-label="วัน"></select><select id="m" aria-label="เดือน"></select><select id="y" aria-label="ปี พ.ศ."></select></div>
@@ -285,7 +286,7 @@ fbq('track','PageView');
         <label for="prov">จังหวัดที่เกิด</label><select id="prov"></select>
         <label for="amp">อำเภอที่เกิด</label><select id="amp"></select>
       </div>
-      <button class="btn solid shine" style="margin-top:16px">ดูว่าองค์เทพอยากบอกอะไร</button>
+      <button class="btn solid shine" style="margin-top:16px">ดูฟรี · องค์เทพอยากบอกอะไร</button>
       <div class="err" id="err" hidden></div>
     </form>
   </section>
