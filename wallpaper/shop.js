@@ -56,8 +56,10 @@
   $('wedDay').onclick = () => setWed('day'); $('wedNight').onclick = () => setWed('night')
   const openTime = () => { $('noTime').checked = false; sync() }
   $('addTime').onclick = openTime
+  $('dropTime').onclick = () => { $('noTime').checked = true; sync() }   // เปิดช่องเวลาแล้วปิดกลับได้ (19 พ.ย. 2569)
   $('refineBtn').onclick = () => { openTime(); $('birth').scrollIntoView(); $('hh').focus() }
-  ;['d', 'm', 'y'].forEach(id => $(id).addEventListener('change', () => { dateTouched = true; sync() })); sync()
+  ;['d', 'm', 'y'].forEach(id => $(id).addEventListener('change', () => { dateTouched = true; sync() }))
+  $('noTime').checked = true; $('night').checked = false; sync()   // กันเบราว์เซอร์จำสถานะเดิมตอนรีเฟรช
   const lonOf = () => { const p = $('prov').value, a = $('amp').value, r = ((window.AMPHOE || {})[p] || []).find(x => x[0] === a); return r ? r[1] : (PROV.find(x => x.province === p) || {}).longitude }
 
   // กันดึงภาพออกแบบง่ายๆ แคปหน้าจอยังทำได้ ภาพที่แสดงจึงมีลายน้ำเสมอ
@@ -548,7 +550,8 @@
   const atBuy = () => remember({ atBuy: true })
   ;['toBuy', 'copyAccount', 'saveQr'].forEach(id => $(id).addEventListener('click', atBuy)); $('slip').addEventListener('change', atBuy)
   // กลับมาภายใน 3 วัน: ใส่วันเกิดเดิม คำนวณใหม่ในเครื่อง เลือกภาพและแบบเดิม (ไม่นับเป็น ViewContent ซ้ำ)
-  if (lastVisit) {
+  // ดึงวันเกิดเดิมกลับเฉพาะคนที่ออกไปโอนเงินแล้วกลับมา · กดรีเฟรชธรรมดา = เริ่มฟอร์มใหม่ (ณัทกร 19 พ.ย. 2569)
+  if (lastVisit && lastVisit.atBuy) {
     try {
       const b = lastVisit.birth
       ;['d', 'm', 'y'].forEach(k => { $(k).value = b[k] }); dateTouched = true

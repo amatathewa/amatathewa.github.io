@@ -252,7 +252,7 @@ fbq('track','PageView');
   <section id="birth">
     <h2>กรอกวันเกิดของคุณ</h2>
     <p class="lead">เราคำนวณในเครื่องของคุณ ไม่ส่งวันเวลาเกิดไปเก็บที่ไหน</p>
-    <form class="card narrow" id="f">
+    <form class="card narrow" id="f" autocomplete="off">
       <label>วันเกิด</label>
       <div class="row3"><select id="d" aria-label="วัน"></select><select id="m" aria-label="เดือน"></select><select id="y" aria-label="ปี พ.ศ."></select></div>
       <div id="wedBox" hidden>
@@ -264,7 +264,7 @@ fbq('track','PageView');
       <input type="checkbox" id="night" hidden>
       <button type="button" class="linkbtn" id="addTime">+ ใส่เวลาและที่เกิด (ไม่บังคับ องค์เทพจะบอกได้ชัดขึ้น)</button>
       <div id="timeBox" hidden>
-        <label>เวลาเกิด</label>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px"><label>เวลาเกิด</label><button type="button" class="linkbtn" id="dropTime" style="width:auto;margin:0">ไม่ทราบเวลาเกิด</button></div>
         <div class="row2"><select id="hh" aria-label="ชั่วโมง"></select><select id="mm" aria-label="นาที"></select></div>
         <label for="prov">จังหวัดที่เกิด</label><select id="prov"></select>
         <label for="amp">อำเภอที่เกิด</label><select id="amp"></select>
@@ -448,6 +448,6 @@ fbq('track','PageView');
 <script src="pair-text.js?v=202611056"></script>
 <script src="row-star.js?v=202611057"></script>
 <script src="oracle.js?v=202611104"></script>
-<script src="shop.js?v=202611191"></script>
+<script src="shop.js?v=202611192"></script>
 </body>
 </html>
