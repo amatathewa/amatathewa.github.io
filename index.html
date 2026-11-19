@@ -225,19 +225,24 @@ h1 em{font-style:normal;color:var(--accent)}
     var s1 = pz.querySelector('.s1'), s2 = pz.querySelector('.s2'), br = pz.querySelector('.brush'), bt = pz.querySelector('.bt')
     var L1 = s1.getTotalLength(), L2 = s2.getTotalLength()
     s1.style.strokeDasharray = L1 + ' ' + L1; s2.style.strokeDasharray = L2 + ' ' + L2
-    var T1 = 1700, GAP = 320, T2 = 2000, END = T1 + GAP + T2, run = false, t0 = 0
+    var T1 = 1700, GAP = 320, T2 = 2000, END = T1 + GAP + T2, OUT = 650, run = false, t0 = 0
     var ease = function (p) { return p < 0 ? 0 : p > 1 ? 1 : .5 - Math.cos(Math.PI * p) / 2 }
     var lin = function (p) { return p < 0 ? 0 : p > 1 ? 1 : p * .9 + ease(p) * .1 }
     var put = function (x, y, a, sc) { br.setAttribute('transform', 'translate(' + x.toFixed(1) + ' ' + y.toFixed(1) + ')'); bt.setAttribute('transform', 'rotate(' + a.toFixed(1) + ') scale(' + sc + ')') }
-    var frame = function (now) {
+    var frame = function (now) { try { step(now) } catch (e) { br.setAttribute('opacity', 0); s1.style.strokeDashoffset = 0; s2.style.strokeDashoffset = 0; run = false } }
+    var step = function (now) {
       var t = now - t0, p1 = lin(t / T1), p2 = lin((t - T1 - GAP) / T2), pt, a, sc
       s1.style.strokeDashoffset = L1 * (1 - p1); s2.style.strokeDashoffset = L2 * (1 - p2)
       if (t < T1) { pt = s1.getPointAtLength(L1 * p1); a = 28 + Math.sin(t / 60) * 7; sc = .8 }
       else if (t < T1 + GAP) { var e = s1.getPointAtLength(L1), b = s2.getPointAtLength(0), q = ease((t - T1) / GAP); pt = { x: e.x + (b.x - e.x) * q, y: e.y + (b.y - e.y) * q - Math.sin(Math.PI * q) * 40 }; a = 28 + q * 6; sc = .8 + q * .3 }
-      else { pt = s2.getPointAtLength(L2 * p2); a = 34 + Math.sin(t / 140) * 9; sc = 1.1 }
-      br.setAttribute('opacity', Math.min(1, t / 180, (END + 260 - t) / 260).toFixed(2))
+      else if (t < END) { pt = s2.getPointAtLength(L2 * p2); a = 34 + Math.sin(t / 140) * 9; sc = 1.1 }
+      else { // วาดเสร็จ → ยกพู่กันขึ้นแล้วเก็บออกนอกภาพทางขวาบน (ณัทกร 20 พ.ย. ไม่ให้แช่ค้าง)
+        var z = s2.getPointAtLength(L2), q = Math.min(1, (t - END) / OUT), k = q * q
+        pt = { x: z.x + (330 - z.x) * k, y: z.y - Math.sin(q * Math.PI / 2) * 40 + (-80 - z.y) * k }; a = 34 - q * 20; sc = 1.1 + q * .15
+      }
+      br.setAttribute('opacity', Math.max(0, Math.min(1, t / 180, (END + OUT - t) / 200)).toFixed(2))
       put(pt.x, pt.y, a, sc)
-      if (t < END + 260) requestAnimationFrame(frame); else { br.setAttribute('opacity', 0); run = false }
+      if (t < END + OUT) requestAnimationFrame(frame); else { br.setAttribute('opacity', 0); run = false }
     }
     var paint = function () {
       if (run) return
