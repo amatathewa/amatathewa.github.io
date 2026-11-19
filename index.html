@@ -4,8 +4,6 @@
 <meta charset="utf-8">
 <script>
 // เปิดจาก LINE / Messenger / Facebook → เด้งไปเบราว์เซอร์จริงเอง เพราะในแอปบันทึกรูปไม่ลงเครื่อง (ณัทกร 19 พ.ย. 2569)
-// LINE: ใส่ openExternalBrowser=1 (ใช้ได้ทั้ง iPhone และ Android) · Android ในแอป Facebook/Messenger/IG: เปิด Chrome ด้วย intent
-// iPhone ในแอป Facebook/Messenger ไม่มีทางเด้งเอง → ใช้หน้าต่างกดค้างบันทึกแทน · ext=1 กันเด้งวน
 (function () {
   try {
     var ua = navigator.userAgent, u = new URL(location.href)
@@ -20,72 +18,244 @@
 </script>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>AMATATHEWA อมตเทวา · ความดีงามอันเป็นนิรันดร์</title>
-<meta name="description" content="อมตเทวา เปิดไพ่ทาโรต์ฟรี วอลเปเปอร์องค์เทพหมึกจีนพร้อมเลขมงคลจากวันเกิด และดูดวงกับหมอเก่ง">
+<meta name="description" content="อมตเทวา วอลเปเปอร์องค์เทพหมึกจีนพร้อมเลขมงคลจากวันเกิด เปิดไพ่ทาโรต์ฟรี และดูดวงกับหมอเก่งด้วยไพ่ทาโรต์และโหราศาสตร์ไทย">
 <link rel="canonical" href="https://amatathewa.com/">
 <meta property="og:type" content="website">
-<meta property="og:title" content="AMATATHEWA อมตเทวา">
-<meta property="og:description" content="เปิดไพ่ทาโรต์ฟรี · วอลเปเปอร์องค์เทพ · ดูดวงกับหมอเก่ง">
+<meta property="og:title" content="AMATATHEWA อมตเทวา · ความดีงามอันเป็นนิรันดร์">
+<meta property="og:description" content="วอลเปเปอร์องค์เทพหมึกจีน · เปิดไพ่ทาโรต์ฟรี · ดูดวงกับหมอเก่ง">
 <meta property="og:url" content="https://amatathewa.com/">
-<meta property="og:image" content="https://amatathewa.com/assets/home/bg3-d.jpg">
-<meta name="theme-color" content="#14110e">
-<script type="application/ld+json">[{"@context":"https://schema.org","@type":"Organization","@id":"https://amatathewa.com/#org","name":"AMATATHEWA อมตเทวา","alternateName":["อมตเทวา","AMATATHEWA"],"url":"https://amatathewa.com/","logo":"https://amatathewa.com/assets/home/logo.png","slogan":"ความดีงามอันเป็นนิรันดร์","description":"อมตเทวา ร้านศิลปะองค์เทพแนวหมึกจีน วอลเปเปอร์มือถือพร้อมเลขมงคลจากวันเกิดที่ประยุกต์จากตำราโหราศาสตร์ไทย เปิดไพ่ทาโรต์ฟรี และดูดวงกับหมอเก่ง","areaServed":"TH","knowsLanguage":"th","sameAs":["https://line.me/R/ti/p/@671omwgd"],"contactPoint":{"@type":"ContactPoint","contactType":"customer service","url":"https://line.me/R/ti/p/@671omwgd","availableLanguage":"th"}},{"@context":"https://schema.org","@type":"WebSite","@id":"https://amatathewa.com/#site","name":"AMATATHEWA อมตเทวา","url":"https://amatathewa.com/","inLanguage":"th","publisher":{"@id":"https://amatathewa.com/#org"}}]</script>
+<meta property="og:image" content="https://amatathewa.com/assets/home/hero-wide.jpg">
+<meta name="theme-color" content="#f2eadb">
+<script type="application/ld+json">[{"@context":"https://schema.org","@type":"Organization","@id":"https://amatathewa.com/#org","name":"AMATATHEWA อมตเทวา","alternateName":["อมตเทวา","AMATATHEWA"],"url":"https://amatathewa.com/","logo":"https://amatathewa.com/assets/home/logo.png","slogan":"ความดีงามอันเป็นนิรันดร์","description":"อมตเทวา ร้านศิลปะองค์เทพแนวหมึกจีน วอลเปเปอร์มือถือพร้อมเลขมงคลจากวันเกิดที่ประยุกต์จากตำราโหราศาสตร์ไทย เปิดไพ่ทาโรต์ฟรี และดูดวงกับหมอเก่ง","areaServed":"TH","knowsLanguage":["th","en"],"sameAs":["https://line.me/R/ti/p/@671omwgd"],"contactPoint":{"@type":"ContactPoint","contactType":"customer service","url":"https://line.me/R/ti/p/@671omwgd","availableLanguage":"th"}},{"@context":"https://schema.org","@type":"WebSite","@id":"https://amatathewa.com/#site","name":"AMATATHEWA อมตเทวา","url":"https://amatathewa.com/","inLanguage":"th","publisher":{"@id":"https://amatathewa.com/#org"}}]</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500&family=Trirong:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500&family=Trirong:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="assets/home/hero-tall.jpg" media="(max-width:899px)">
+<link rel="preload" as="image" href="assets/home/hero-wide.jpg" media="(min-width:900px)">
 <style>
-:root{--ink:#14110e;--deep:#0b0908;--burgundy:#68221e;--gold:#c99b3c;--goldsoft:#e3c88b;--ivory:#f4ecdd;--muted:#c9c0b4;--line:rgba(227,200,139,.28);--glass:rgba(20,17,14,.58)}
-*{box-sizing:border-box}
-html{background:var(--deep)}
-body{margin:0;min-height:100svh;color:var(--ivory);font:400 16px/1.65 "IBM Plex Sans Thai",sans-serif;-webkit-font-smoothing:antialiased}
-/* ภาพพื้นหลังติดจอ ไม่ขยับตามแถบเบราว์เซอร์มือถือ */
-body::before{content:"";position:fixed;top:0;left:0;right:0;height:100lvh;z-index:-1;background:linear-gradient(rgba(11,9,8,.10),rgba(11,9,8,.10)),var(--bgm,url(assets/home/bg3-m.jpg)) center/cover no-repeat}
-a{color:inherit;text-decoration:none}
-.wrap{min-height:100svh;display:flex;flex-direction:column;padding:max(28px,env(safe-area-inset-top)) 20px max(22px,env(safe-area-inset-bottom));max-width:1180px;margin:0 auto}
-.head{text-align:center;padding-top:4vh}
-.logo{width:190px;height:auto;display:block;margin:0 auto;filter:drop-shadow(0 6px 22px rgba(0,0,0,.55))}
-h1{font:400 clamp(23px,6.6vw,30px)/1.4 Trirong,serif;margin:18px 0 6px;letter-spacing:.01em;background:linear-gradient(180deg,#f6e3a1,#c99b3c 70%);-webkit-background-clip:text;background-clip:text;color:transparent}
-.sub{margin:0;color:var(--muted);font-size:15px;font-weight:300;letter-spacing:.02em}
-.rule{width:64px;height:1px;background:var(--gold);opacity:.7;margin:20px auto 0}
-.cards{margin-top:auto;padding-top:26vh;display:grid;gap:12px}
-.card{display:grid;grid-template-columns:1fr auto;align-items:center;gap:10px;padding:17px 18px;background:var(--glass);border:1px solid var(--line);border-radius:4px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:border-color .25s,background .25s,transform .25s}
-.card:hover,.card:focus-visible{border-color:rgba(227,200,139,.7);background:rgba(20,17,14,.72);transform:translateY(-1px);outline:none}
-.card b{display:block;font:500 20px/1.35 Trirong,serif;color:var(--ivory)}
-.card span{display:block;font-size:14px;color:var(--muted);font-weight:300;margin-top:2px}
-.card i{font-style:normal;color:var(--goldsoft);font-size:22px;line-height:1}
-.tag{font-style:normal;display:inline-block;font:500 12px/1 "IBM Plex Sans Thai";color:var(--ink);background:var(--goldsoft);border-radius:2px;padding:4px 7px 3px;margin-left:8px;vertical-align:4px}
-.card.main{border-color:rgba(201,155,60,.6);background:linear-gradient(90deg,rgba(104,34,30,.55),rgba(20,17,14,.6))}
-footer{text-align:center;color:var(--muted);font-size:13px;font-weight:300;padding-top:26px}
-footer a{color:var(--goldsoft)}
+/* หน้าแรกแนว ข1 กระดาษสาหมึกจีน งาช้างชาด (ณัทกรเลือก 19 พ.ย. 2569) */
+:root{--paper:#f2eadb;--paper2:#e9dfcb;--ink:#14110e;--soft:#4f453c;--accent:#9e2b20;--line:rgba(20,17,14,.16)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--paper)}
+body{color:var(--ink);font:400 17px/1.65 "IBM Plex Sans Thai",sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none;-webkit-tap-highlight-color:transparent}
+a:focus{outline:none}
+a:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+img{display:block;max-width:100%}
+.grain{position:fixed;inset:0;pointer-events:none;z-index:50;opacity:.3;background-image:radial-gradient(rgba(0,0,0,.08) 1px,transparent 1px);background-size:3px 3px;mix-blend-mode:multiply}
+.page{max-width:1180px;margin:0 auto}
+
+.page{position:relative}
+.top{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:max(20px,env(safe-area-inset-top)) 22px 20px;position:absolute;left:0;right:0;top:0;z-index:3}
+.brand{font:500 16px/1 Trirong,serif;letter-spacing:.2em}
+.brand small{display:block;font:400 13px "IBM Plex Sans Thai";letter-spacing:.12em;color:var(--accent);margin-top:6px}
+.top nav{display:flex;align-items:center;gap:16px}
+.top .ln{white-space:nowrap;font-size:16px;font-weight:500;border-bottom:1px solid var(--ink);padding-bottom:1px}
+.lang{font:500 14px "IBM Plex Sans Thai";letter-spacing:.06em;border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:20px;padding:5px 12px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.lang:hover{border-color:var(--ink)}
+
+.hero{position:relative;height:min(820px,max(660px,100svh));overflow:hidden}
+/* ภาพหลักเต็มพื้นหลัง: กระดาษของภาพลากยาวไปทางซ้าย ข้อความวางบนกระดาษ (ณัทกร 19 พ.ย.) */
+.hero .art{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 35%}
+.hero:after{content:"";position:absolute;inset:auto 0 0 0;height:120px;background:linear-gradient(transparent,var(--paper));pointer-events:none}
+.hero .t{position:absolute;left:22px;right:22px;top:112px;z-index:2;max-width:440px}
+.kick{font-size:14px;letter-spacing:.24em;color:var(--accent)}
+h1{font:500 clamp(38px,11vw,46px)/1.2 Trirong,serif;margin-top:12px}
+h1 em{font-style:normal;color:var(--accent)}
+.brush{height:9px;width:110px;margin-top:16px;background:var(--ink);border-radius:50%/100% 0 100% 0;opacity:.85}
+.hero p{margin-top:14px;color:var(--soft);font-weight:400;max-width:320px;font-size:17px;text-shadow:0 0 12px var(--paper),0 0 4px var(--paper)}
+.seal{position:absolute;right:24px;top:118px;z-index:2;width:48px;height:48px;border:2px solid var(--accent);color:var(--accent);font:600 14px/1.1 Trirong,serif;display:grid;place-items:center;text-align:center;transform:rotate(-6deg);border-radius:3px;opacity:.9}
+.cta{position:absolute;left:22px;bottom:64px;z-index:2;display:flex;gap:8px;flex-wrap:wrap}
+.cta .btn,.cta .ghost{min-height:40px;padding:0 14px;font-size:14px}
+/* ตัวหนังสือกึ่งกลางปุ่มพอดี */
+.btn,.ghost{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:54px;padding:0 24px;border-radius:2px;font-weight:500;font-size:17px;line-height:1;text-align:center;-webkit-tap-highlight-color:transparent;transition:background .25s,transform .2s}
+.btn{background:var(--ink);color:#f4ecdd}
+.btn:hover{background:#3a302a}
+.ghost{border:1px solid var(--ink);background:rgba(242,234,219,.75)}
+.ghost:hover{background:var(--paper)}
+.btn:active,.ghost:active{transform:scale(.97)}
+
+.sec{padding:10px 22px 20px;position:relative}
+.sec .h{display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid var(--ink);padding-bottom:8px}
+.sec .h b{font:500 15px "IBM Plex Sans Thai";letter-spacing:.22em}
+.sec .h span{font:400 15px Trirong,serif;color:var(--soft)}
+.item{display:grid;grid-template-columns:136px minmax(0,1fr);gap:16px;padding:20px 0;border-bottom:1px solid var(--line);align-items:center;
+ -webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+.n{font:400 15px Trirong,serif;color:var(--accent);letter-spacing:.2em}
+.item b{font:500 24px/1.3 Trirong,serif;display:block;margin-top:2px}
+.item p{font-size:16px;color:var(--soft)}
+.item .go{font-size:16px;font-weight:500;margin-top:6px;letter-spacing:.04em;transition:letter-spacing .25s}
+.item:hover .go,.item.press .go{letter-spacing:.12em}
+.im{aspect-ratio:1/1;position:relative;overflow:hidden;border-radius:2px;background:var(--paper2)}
+.im img{width:100%;height:100%;object-fit:cover;mix-blend-mode:multiply;-webkit-user-drag:none;pointer-events:none}
+/* ไพ่: ขยายเบาๆ (ณัทกรว่าโอเคแล้ว) */
+.tarot img{transition:transform .6s}
+.item:hover .tarot img,.item.press .tarot img{transform:scale(1.05)}
+/* วอลเปเปอร์: ภาพพระแม่ถูกวาดขึ้นมาใหม่ ไม่ขยาย */
+.im.phone{display:flex;justify-content:center;align-items:center}
+.im.phone .f{position:relative;width:64%;height:94%;border-radius:15px;padding:4px;background:#1a1612;box-shadow:0 12px 24px -10px rgba(0,0,0,.5)}
+.im.phone .pz{position:absolute;inset:4px;width:calc(100% - 8px);height:calc(100% - 8px);clip-path:inset(0 round 11px);display:block}
+/* พู่กันวาด (ณัทกร 19 พ.ย.): ลากเส้นหมึกร่างภาพก่อน แล้วพู่กันลงสีทีละแนวจนเต็มภาพ · เล่นด้วย JS */
+/* ดูดวง: ขึ้นข้อความชวน ไม่ขยาย */
+.astro .msg{position:absolute;left:0;right:0;bottom:0;padding:34px 10px 12px;text-align:center;font:500 15px/1.45 Trirong,serif;color:var(--ink);background:linear-gradient(transparent,rgba(242,234,219,.95) 38%);opacity:0;transform:translateY(10px);transition:opacity .4s,transform .4s}
+.item:hover .astro .msg,.item.press .astro .msg{opacity:1;transform:none}
+
+/* ท้ายหน้า: กระดาษสาอุ่น + โลโก้หมึกดำเรียบ (ณัทกรเลือก 19 พ.ย. 2569) */
+.foot{margin-top:34px;background:#ddcdb0 url(assets/home/washi-warm.jpg) center/706px;text-align:center;padding:52px 22px 44px;color:var(--soft)}
+.foot .logo{width:240px;height:auto;margin:0 auto}
+.foot .line{display:inline-flex;align-items:center;justify-content:center;min-height:52px;margin-top:20px;padding:0 24px;border:1px solid var(--ink);color:var(--ink);border-radius:2px;font-weight:500;line-height:1;transition:background .25s}
+.foot .line:hover{background:rgba(242,234,219,.5)}
+.copy{text-align:center;font-size:14px;line-height:1.8;color:var(--soft);padding:18px 22px max(22px,env(safe-area-inset-bottom))}
+.copy a{border-bottom:1px solid var(--line)}
+@media (max-width:899px){.copy{font-size:12px;letter-spacing:0;white-space:nowrap}.copy .th{display:none}.kick{padding-right:62px}}
+@media (max-width:370px){.kick{font-size:13px;letter-spacing:.16em}.top{padding-left:16px;padding-right:16px}.top nav{gap:10px}.lang{padding:4px 9px}.brand{letter-spacing:.14em}}
+/* มือถือ: แถบสีหน้าเว็บตัดด้านล่างสุด · คอม: ตัวหนังสืออยู่บนกระดาษสา (ณัทกร 19 พ.ย.) */
+@media (min-width:900px){.copy{background:#ddcdb0 url(assets/home/washi-warm.jpg) center bottom/706px;padding-top:0}}
+
+/* ค่อยๆ ปรากฏตอนเลื่อนถึง · โลโก้ซึมขึ้นเหมือนหมึก */
+.js .rv{opacity:0;transform:translateY(14px);transition:opacity .9s ease,transform .9s ease}
+.js .rv.in{opacity:1;transform:none}
+.js .foot .logo{opacity:0;filter:blur(6px);transform:scale(.96);transition:opacity 1.6s ease,filter 1.6s ease,transform 1.6s ease}
+.js .foot.in .logo{opacity:1;filter:none;transform:none}
+.js .hero .art{opacity:0;transition:opacity 1.4s ease .1s}
+.js.ready .hero .art{opacity:1}
+
 @media (min-width:900px){
- body::before{background-image:linear-gradient(90deg,rgba(11,9,8,.55),rgba(11,9,8,0) 55%),var(--bgd,url(assets/home/bg3-d.jpg))}
- .wrap{padding:56px 64px 34px}
- .head{text-align:left;padding-top:8vh;max-width:520px}
- .logo{width:210px;margin:0}
- h1{font-size:44px;margin-top:30px}
- .sub{font-size:17px}
- .rule{margin:26px 0 0}
- .cards{margin-top:44px;padding-top:0;max-width:520px}
- footer{text-align:left;margin-top:auto}
+ .top{padding:28px 40px}
+ .hero{height:740px}
+ .hero{margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw)}
+ .hero .art{object-position:100% 22%}
+ .hero .t{left:max(40px,calc(50vw - 550px));top:200px;max-width:480px}
+ .kick{font-size:15px}
+ h1{font-size:62px}
+ .hero p{max-width:400px;font-size:19px}
+ .seal{right:auto;left:calc(max(40px,calc(50vw - 550px)) + 400px);top:160px}
+ .cta{left:max(40px,calc(50vw - 550px));bottom:140px;gap:10px}
+ .btn,.ghost,.cta .btn,.cta .ghost{min-height:58px;font-size:18px;padding:0 30px}
+ .sec{padding:10px 40px 30px}
+ .list{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+ .item{grid-template-columns:1fr;border-bottom:0;padding:26px 0 0;align-items:start}
+ .item b{font-size:26px}
+ .item p,.item .go{font-size:17px}
+ .astro .msg{font-size:20px;padding:60px 16px 20px}
 }
-@media (prefers-reduced-motion:reduce){.card{transition:none}}
+@media (prefers-reduced-motion:reduce){.js .rv,.js .foot .logo,.js .hero .art{opacity:1;transform:none;filter:none;transition:none}}
 </style>
-<script>try{const b=new URLSearchParams(location.search).get('bg');if(/^[123]$/.test(b)){const s=document.documentElement.style;s.setProperty('--bgm','url(assets/home/bg'+b+'-m.jpg)');s.setProperty('--bgd','url(assets/home/bg'+b+'-d.jpg)')}}catch{}</script>
+<script>document.documentElement.classList.add('js')</script>
 </head>
 <body>
-<div class="wrap">
-  <header class="head">
-    <img class="logo" src="assets/home/logo.png?v=2b" alt="AMATATHEWA อมตเทวา" width="480" height="331" draggable="false">
-    <h1>ความดีงามอันเป็นนิรันดร์</h1>
-    <p class="sub">ไพ่ทาโรต์ · โหราศาสตร์ไทย · ศิลปะองค์เทพ</p>
-    <div class="rule"></div>
+<div class="grain"></div>
+<div class="page">
+  <header class="top">
+    <div class="brand">AMATATHEWA<small>อมตเทวา</small></div>
+    <nav>
+      <button class="lang" type="button" aria-label="Switch to English" data-th-label="Switch to English" data-en-label="เปลี่ยนเป็นภาษาไทย">EN</button>
+      <a class="ln" href="https://line.me/R/ti/p/@671omwgd" target="_blank" rel="noopener" data-en="Contact us">ติดต่อเรา</a>
+    </nav>
   </header>
 
-  <nav class="cards" aria-label="บริการของอมตเทวา">
-    <a class="card main" href="tarot/web/"><div><b>เปิดไพ่ทาโรต์<em class="tag">ฟรี</em></b><span>ตั้งจิตให้นิ่ง เชื่อความรู้สึกจากภายใน</span></div><i>›</i></a>
-    <a class="card" href="wallpaper/"><div><b>วอลเปเปอร์มงคล</b><span>องค์เทพหมึกจีน พร้อมเลขมงคลจากวันเกิดของคุณ</span></div><i>›</i></a>
-    <a class="card" href="https://line.me/R/ti/p/@671omwgd" target="_blank" rel="noopener"><div><b>ดูดวงกับหมอเก่ง</b><span>ไพ่ทาโรต์และโหราศาสตร์ไทย คุยกันตัวต่อตัวทาง LINE</span></div><i>›</i></a>
-  </nav>
+  <section class="hero">
+    <picture><source media="(min-width:900px)" srcset="assets/home/hero-wide.jpg" width="3000" height="1200"><img class="art" src="assets/home/hero-tall.jpg" alt="พระศิวะอุ้มพระพิฆเนศ ภาพวาดหมึกจีนแต่งทองคำเปลว" width="941" height="1980" fetchpriority="high"></picture>
+    <div class="t">
+      <div class="kick" data-en="Sacred art · Thai astrology">ศิลปะองค์เทพ · โหราศาสตร์ไทย</div>
+      <h1 data-en="The Goodness<br>That Is <em>Eternal</em>">ความดีงาม<br>อันเป็น<em>นิรันดร์</em></h1>
+      <div class="brush"></div>
+      <p data-en="Hindu deities in Chinese ink, painted with lucky numbers from your own birth date.">องค์เทพหมึกจีน วาดคู่กับเลขมงคลจากวันเกิดของคุณเอง</p>
+    </div>
+    <div class="seal" aria-hidden="true">อมต<br>เทวา</div>
+    <div class="cta"><a class="btn" href="wallpaper/" data-en="Create your wallpaper →">แต่งภาพของคุณ →</a><a class="ghost" href="tarot/web/" data-en="Free tarot reading">เปิดไพ่ฟรี</a></div>
+  </section>
 
-  <footer>© 2569 AMATATHEWA อมตเทวา · ติดต่อ <a href="https://line.me/R/ti/p/@671omwgd" target="_blank" rel="noopener">LINE @671omwgd</a> · <a href="privacy/">นโยบายความเป็นส่วนตัว</a></footer>
+  <section class="sec" aria-label="บริการของอมตเทวา">
+    <div class="h"><b data-en="SERVICES">บริการ</b><span data-en="3 ways">๓ ทาง</span></div>
+    <div class="list">
+      <a class="item rv" href="wallpaper/"><div class="im phone"><div class="f" role="img" aria-label="วอลเปเปอร์พระแม่สรัสวดี"><svg class="pz" viewBox="0 0 260 564" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs><filter id="pzRough" filterUnits="userSpaceOnUse" x="-80" y="-80" width="420" height="724"><feTurbulence type="fractalNoise" baseFrequency=".03 .11" numOctaves="3" seed="7"/><feDisplacementMap in="SourceGraphic" scale="22" xChannelSelector="R" yChannelSelector="G"/></filter><mask id="pzM1" maskUnits="userSpaceOnUse" x="0" y="0" width="260" height="564"><g filter="url(#pzRough)"><path class="s1" d="M0 70 L260 98 L0 126 L260 154 L0 182 L260 210 L0 238 L260 266 L0 294 L260 322 L0 350 L260 378 L0 406 L260 434 L0 462 L260 490" fill="none" stroke="#fff" stroke-width="46" stroke-linecap="round" stroke-linejoin="round"/></g></mask><mask id="pzM2" maskUnits="userSpaceOnUse" x="0" y="0" width="260" height="564"><g filter="url(#pzRough)"><path class="s2" d="M-20 100 C70 90 190 112 262 100 C300 100 300 174 262 174 C190 184 70 162 -2 174 C-40 174 -40 248 -2 248 C70 238 190 260 262 248 C300 248 300 322 262 322 C190 332 70 310 -2 322 C-40 322 -40 396 -2 396 C70 386 190 408 262 396 C300 396 300 470 262 470 C190 480 70 458 -2 470" fill="none" stroke="#fff" stroke-width="96" stroke-linecap="round" stroke-linejoin="round"/></g></mask></defs><rect width="260" height="564" fill="#efe6d4"/><image href="assets/home/svc-saraswati-sketch.jpg" width="260" height="564" preserveAspectRatio="xMidYMid slice" mask="url(#pzM1)"/><image href="assets/home/svc-saraswati.jpg" width="260" height="564" preserveAspectRatio="xMidYMid slice" mask="url(#pzM2)"/><g class="brush" opacity="0"><g class="bt"><ellipse cx="3" cy="-60" rx="8" ry="70" fill="#000" opacity=".12" transform="translate(10 6)"/><rect x="-5.5" y="-150" width="11" height="100" rx="5" fill="#7a2e22"/><rect x="-3.5" y="-146" width="2.5" height="92" rx="1.2" fill="#fff" opacity=".22"/><rect x="-7.5" y="-54" width="15" height="14" rx="2" fill="#b8913f"/><rect x="-7.5" y="-49" width="15" height="2" fill="#7d5f22"/><path d="M-7 -40 C-9 -26 -6 -11 0 0 C6 -11 9 -26 7 -40 Z" fill="#1d1712"/><path d="M-3 -38 C-4 -26 -2 -14 0 -7" stroke="#5a4a3c" stroke-width="1" fill="none"/></g></g></svg></div></div><div><div class="n" data-en="01">๐๑</div><b data-en="Auspicious Wallpapers">วอลเปเปอร์มงคล</b><p data-en="25 deities · free preview before you pay">25 องค์เทพ ดูตัวอย่างฟรีก่อนจ่าย</p><div class="go" data-en="From 159 THB →">เริ่มต้น 159 บาท →</div></div></a>
+      <a class="item rv" href="tarot/web/"><div class="im tarot"><img src="assets/home/svc-tarot.jpg?v=2" alt="ไพ่ทาโรต์บนกระดาษสา" width="560" height="560" loading="lazy"></div><div><div class="n" data-en="02">๐๒</div><b data-en="Tarot Reading">เปิดไพ่ทาโรต์</b><p data-en="Calm your mind, then choose your cards">ตั้งจิตให้นิ่ง แล้วเลือกไพ่ของคุณ</p><div class="go" data-en="Free →">ฟรี →</div></div></a>
+      <a class="item rv" href="https://line.me/R/ti/p/@671omwgd" target="_blank" rel="noopener"><div class="im astro"><img src="assets/home/svc-astro.jpg?v=2" alt="ผังดวงโหราศาสตร์ไทย" width="560" height="560" loading="lazy"><div class="msg" data-en="Something on your mind?<br>Let Mor Keng read your chart">มีเรื่องค้างคาใจ<br>ให้หมอเก่งช่วยดูดวงให้</div></div><div><div class="n" data-en="03">๐๓</div><b data-en="Reading with Mor Keng">ดูดวงกับหมอเก่ง</b><p data-en="Tarot and Thai astrology, one-on-one via LINE">ไพ่ทาโรต์และโหราศาสตร์ไทย คุยตัวต่อตัวทาง LINE</p><div class="go" data-en="Book a session →">จองคิว →</div></div></a>
+    </div>
+  </section>
 </div>
+
+<footer>
+  <div class="foot">
+    <img class="logo" src="assets/home/logo-ink.png?v=2b" alt="AMATATHEWA อมตเทวา" width="640" height="441" loading="lazy" draggable="false">
+    <a class="line" href="https://line.me/R/ti/p/@671omwgd" target="_blank" rel="noopener" data-en="Message Mor Keng on LINE">ทักหมอเก่งทาง LINE</a>
+  </div>
+  <div class="copy">© 2569 AMATATHEWA<span class="th"> อมตเทวา</span> · <a href="privacy/" data-en="Privacy policy">นโยบายความเป็นส่วนตัว</a></div>
+</footer>
+
+<script>
+(function () {
+  var d = document.documentElement
+  // ภาพหลักค่อยๆ ปรากฏ
+  var art = document.querySelector('.hero .art')
+  var show = function () { d.classList.add('ready') }
+  if (art.complete) show(); else { art.addEventListener('load', show); art.addEventListener('error', show) }
+  setTimeout(show, 2500)
+
+  // ภาษาไทย / English · จำไว้ในเครื่อง (ลูกค้าขอภาษาอังกฤษ 19 พ.ย. 2569)
+  var nodes = [].slice.call(document.querySelectorAll('[data-en]'))
+  nodes.forEach(function (n) { n.setAttribute('data-th', n.innerHTML) })
+  var btn = document.querySelector('.lang')
+  var setLang = function (l) {
+    nodes.forEach(function (n) { n.innerHTML = n.getAttribute(l === 'en' ? 'data-en' : 'data-th') })
+    d.lang = l; btn.textContent = l === 'en' ? 'ไทย' : 'EN'
+    btn.setAttribute('aria-label', btn.getAttribute(l === 'en' ? 'data-en-label' : 'data-th-label'))
+    try { localStorage.setItem('amt-lang', l) } catch (e) {}
+  }
+  var saved = null
+  try { saved = localStorage.getItem('amt-lang') } catch (e) {}
+  if (saved === 'en') setLang('en')
+  btn.addEventListener('click', function () { setLang(d.lang === 'en' ? 'th' : 'en') })
+
+  // กดนิ้วแช่บนการ์ด = เล่นเอฟเฟกต์เหมือนชี้เมาส์บนคอม
+  document.querySelectorAll('.item').forEach(function (it) {
+    var off = function () { it.classList.remove('press') }
+    it.addEventListener('touchstart', function () {
+      it.classList.remove('press'); void it.offsetWidth; it.classList.add('press')
+    }, { passive: true })
+    it.addEventListener('touchend', function () { setTimeout(off, 1900) })
+    it.addEventListener('touchcancel', off)
+    it.addEventListener('contextmenu', function (e) { e.preventDefault() })
+  })
+
+
+  // วอลเปเปอร์: พู่กันตัวจริงวาดภาพพระแม่ใหม่ (ณัทกร 19 พ.ย.) · ร่างเส้นดินสอแบบแรเงาก่อน แล้วพู่กันใหญ่ลงสีทีละแถว
+  var pz = document.querySelector('.pz'), still = matchMedia('(prefers-reduced-motion: reduce)').matches
+  if (pz && window.requestAnimationFrame && !still) {
+    var s1 = pz.querySelector('.s1'), s2 = pz.querySelector('.s2'), br = pz.querySelector('.brush'), bt = pz.querySelector('.bt')
+    var L1 = s1.getTotalLength(), L2 = s2.getTotalLength()
+    s1.style.strokeDasharray = L1 + ' ' + L1; s2.style.strokeDasharray = L2 + ' ' + L2
+    var T1 = 1700, GAP = 320, T2 = 2000, END = T1 + GAP + T2, run = false, t0 = 0
+    var ease = function (p) { return p < 0 ? 0 : p > 1 ? 1 : .5 - Math.cos(Math.PI * p) / 2 }
+    var lin = function (p) { return p < 0 ? 0 : p > 1 ? 1 : p * .9 + ease(p) * .1 }
+    var put = function (x, y, a, sc) { br.setAttribute('transform', 'translate(' + x.toFixed(1) + ' ' + y.toFixed(1) + ')'); bt.setAttribute('transform', 'rotate(' + a.toFixed(1) + ') scale(' + sc + ')') }
+    var frame = function (now) {
+      var t = now - t0, p1 = lin(t / T1), p2 = lin((t - T1 - GAP) / T2), pt, a, sc
+      s1.style.strokeDashoffset = L1 * (1 - p1); s2.style.strokeDashoffset = L2 * (1 - p2)
+      if (t < T1) { pt = s1.getPointAtLength(L1 * p1); a = 28 + Math.sin(t / 60) * 7; sc = .8 }
+      else if (t < T1 + GAP) { var e = s1.getPointAtLength(L1), b = s2.getPointAtLength(0), q = ease((t - T1) / GAP); pt = { x: e.x + (b.x - e.x) * q, y: e.y + (b.y - e.y) * q - Math.sin(Math.PI * q) * 40 }; a = 28 + q * 6; sc = .8 + q * .3 }
+      else { pt = s2.getPointAtLength(L2 * p2); a = 34 + Math.sin(t / 140) * 9; sc = 1.1 }
+      br.setAttribute('opacity', Math.min(1, t / 180, (END + 260 - t) / 260).toFixed(2))
+      put(pt.x, pt.y, a, sc)
+      if (t < END + 260) requestAnimationFrame(frame); else { br.setAttribute('opacity', 0); run = false }
+    }
+    var paint = function () {
+      if (run) return
+      run = true; t0 = performance.now()
+      s1.style.strokeDashoffset = L1; s2.style.strokeDashoffset = L2
+      requestAnimationFrame(frame)
+    }
+    var card = pz.closest('.item')
+    card.addEventListener('mouseenter', paint)
+    card.addEventListener('touchstart', paint, { passive: true })
+  }
+
+  // ค่อยๆ ปรากฏตอนเลื่อนถึง
+  var els = document.querySelectorAll('.rv, .foot')
+  if (!('IntersectionObserver' in window)) { els.forEach(function (e) { e.classList.add('in') }); return }
+  var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target) } }) }, { threshold: .2 })
+  els.forEach(function (e) { io.observe(e) })
+})()
+</script>
 </body>
 </html>
