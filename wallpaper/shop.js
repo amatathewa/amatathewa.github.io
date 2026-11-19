@@ -103,9 +103,12 @@
   }
   const setLeft = p => SET_IMAGES - Math.max((p.images || []).length, p.used || 0)
   // ภาพนี้ใช้สิทธิ์จากการซื้อครั้งไหน: ครั้งที่เคยใช้กับภาพนี้แล้วก่อน แล้วค่อยชุดที่ยังมีสิทธิ์เหลือ
+  // ข้ามการซื้อที่ภาพนี้โหลดครบแล้ว ไปใช้การซื้อใหม่ (19 พ.ย. 2569: ซื้อภาพเดิมซ้ำแล้วยังหยิบสิทธิ์เก่าที่หมดแล้ว)
+  const mine = (p, img) => (p.images || []).includes(img) || (p.scope === 'one' && p.image === img)
+  const hasLeft = (p, img) => !(p.left && p.left[img] === 0)
   const passFor = img => {
     const l = passList()
-    return l.find(p => (p.images || []).includes(img) || (p.scope === 'one' && p.image === img)) || l.find(p => p.scope === 'set' && setLeft(p) > 0) || null
+    return l.find(p => mine(p, img) && hasLeft(p, img)) || l.find(p => p.scope === 'set' && setLeft(p) > 0 && hasLeft(p, img)) || l.find(p => mine(p, img)) || null
   }
   const passNow = () => passFor(S.image)
   const covers = () => !!passNow()
@@ -414,7 +417,8 @@
     const file = new File([blob], name, { type: 'image/jpeg' })
     if (inApp) {
       if (navigator.canShare && navigator.canShare({ files: [file] })) { try { await navigator.share({ files: [file] }); return } catch {} }
-      $('saveImg').src = URL.createObjectURL(blob); $('saveov').hidden = false; return
+      // แอป Messenger/LINE กดค้างบันทึกภาพจากลิงก์ blob: ไม่ได้ ("โหลดไม่สำเร็จ") → ใช้ data: แทน
+      $('saveImg').src = await new Promise(ok => { const fr = new FileReader(); fr.onload = () => ok(fr.result); fr.readAsDataURL(blob) }); $('saveov').hidden = false; return
     }
     const a = el('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.append(a); a.click(); a.remove()
     setTimeout(() => URL.revokeObjectURL(a.href), 60000)
@@ -449,10 +453,19 @@
   $('saveFull').onclick = async () => {
     const b = $('saveFull'), err = $('fullErr'); err.hidden = true; b.disabled = true; b.textContent = 'กำลังสร้างไฟล์เต็ม'
     try {
-      const pass = passNow()
-      const r = await fetch(`${SHOP.api}/asset/${S.image}`, { headers: { Authorization: `Bearer ${pass.token}`, 'X-Owner': owner } })
+      let pass, r
+      // สิทธิ์ครั้งนี้โหลดครบแล้ว → จำไว้ แล้วลองการซื้อครั้งถัดไปของภาพเดียวกัน
+      for (const tried = new Set(); ;) {
+        pass = passNow()
+        if (!pass || tried.has(pass)) throw new Error(`ภาพนี้โหลดครบ 3 ครั้งแล้ว`)
+        tried.add(pass)
+        r = await fetch(`${SHOP.api}/asset/${S.image}`, { headers: { Authorization: `Bearer ${pass.token}`, 'X-Owner': owner } })
+        if (r.status !== 429) break
+        pass.left = pass.left || {}; pass.left[S.image] = 0; keep.set('amt-passes', passes)
+      }
       if (!r.ok) throw new Error((await r.json()).message || 'โหลดไฟล์ไม่ได้')
       const left = r.headers.get('X-Downloads-Left')
+      if (left !== null) { pass.left = pass.left || {}; pass.left[S.image] = +left }
       const url = URL.createObjectURL(await r.blob()), c = document.createElement('canvas'); c.width = meta.full[0]; c.height = meta.full[1]
       await window.Compose.render(c, S, meta, url)
       await saveBlob(await blobOf(c), `amatathewa-${S.image}.jpg`); URL.revokeObjectURL(url)
@@ -460,7 +473,7 @@
       if (pass.scope === 'set') { pass.images = pass.images || []; if (!pass.images.includes(S.image)) pass.images.push(S.image) }
       const usedNow = +r.headers.get('X-Images-Used'); if (usedNow) pass.used = usedNow
       keep.set('amt-passes', passes)
-      $('fullLeft').textContent = left !== null ? `ภาพนี้โหลดได้อีก ${left} ครั้ง` : ''
+      $('fullLeft').textContent = left !== null ? `ภาพนี้โหลดได้อีก ${left} ครั้ง · ถ้าบันทึกไม่สำเร็จ กดใหม่ได้ภายใน 2 ชั่วโมง ไม่เสียสิทธิ์` : ''
       renderControls()
       afterSave()
     } catch (e) { err.textContent = e.message + (/ครบ/.test(e.message) ? ' ถ้าไฟล์มีปัญหา ทักมาที่ LINE ของอมตเทวา' : ' ลองกดอีกครั้ง'); err.hidden = false }
