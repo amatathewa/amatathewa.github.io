@@ -4,12 +4,12 @@ html.paper{--gold:#9e2b20;--gold-light:#9e2b20;--ivory:#14110e;--dim:rgba(20,17,
 html.paper,html.paper body{background:var(--paper)!important;color:#14110e}
 html.paper iframe{background:var(--paper)!important}
 
-/* ฉากหลังทุกหน้า = กระดาษสาเรียบ + ลายเส้นหมึกบาง 3 แบบให้เลือก (เมฆหมึกเดิมณัทกรว่าดูเปื้อน) */
+/* ฉากหลังทุกหน้า = ภาพวาดหมึกจีน หน้าผาน้ำตก สน กระเรียนคู่เหนือเมฆ (ณัทกรเลือก 20 พ.ย. · Codex รอบ 4) */
 html.paper .bg,html.paper .bgin,html.paper .bgfrom,html.paper .fromPick .bgfrom[hidden]{
   inset:0!important;top:0!important;bottom:0!important;left:0!important;right:0!important;height:auto!important;
-  background:#f2eadb url("../ภาพพื้นหลัง/paper-plain-d.jpg") center/cover no-repeat!important;
+  background:#f2eadb url("../ภาพพื้นหลัง/ink-desktop.jpg") center/cover no-repeat!important;
   transform:none!important;animation:none!important;-webkit-mask-image:none!important;mask-image:none!important;filter:none!important}
-@media(max-width:700px){html.paper .bg,html.paper .bgin,html.paper .bgfrom,html.paper .fromPick .bgfrom[hidden]{background-image:url("../ภาพพื้นหลัง/paper-plain-m.jpg")!important}}
+@media(max-width:700px){html.paper .bg,html.paper .bgin,html.paper .bgfrom,html.paper .fromPick .bgfrom[hidden]{background-image:url("../ภาพพื้นหลัง/ink-mobile.jpg")!important;background-position:center bottom!important}}
 html.paper .veil,html.paper .shade,html.paper .bgfrom::after{display:none!important}
 html.paper .bg::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.3;background-image:radial-gradient(rgba(0,0,0,.08) 1px,transparent 1px);background-size:3px 3px;mix-blend-mode:multiply}
 
@@ -92,23 +92,14 @@ html.paper .saveov img{box-shadow:0 16px 40px -8px rgba(60,40,20,.5)}
 html.paper .saveov button{color:#14110e;border-color:#14110e}
 html.paper .saveov button.main{background:#14110e;color:#f4ecdd;border-color:#14110e}
 
-/* ===== ลายประดับ 3 แบบ (ณัทกร 20 พ.ย. ขอแบบมีรสนิยม) · เลือกด้วย ?pt=a|b|c ===== */
-html.paper .bg::before{content:"";position:absolute;inset:0;pointer-events:none}
-/* ก วงโหราศาสตร์เส้นหมึกบาง (แอสโตรเลบ) อยู่หลังเนื้อหา */
-html.pt-a .bg::before{background:url("../ภาพพื้นหลัง/orn-astro.svg") center 54%/min(122vh,150vw) no-repeat;opacity:.32}
-@media(max-width:700px){html.pt-a .bg::before{background-size:190vw;background-position:center 42%;opacity:.3}}
-/* ข กรอบเส้นคู่ มุมลายบัว แบบหน้าหนังสือ/การ์ดเชิญ */
-html.pt-b .bg::before{inset:20px;border:1px solid #3b2f25;outline:.5px solid #3b2f25;outline-offset:-9px;opacity:.5}
-html.pt-b .bg>i{display:none}
-html.pt-b .bg{--c:150px}
-html.pt-b body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:1;opacity:.6;
-  background:url("../ภาพพื้นหลัง/orn-corner-tl.svg") left 12px top 12px/var(--c) no-repeat,url("../ภาพพื้นหลัง/orn-corner-tr.svg") right 12px top 12px/var(--c) no-repeat,
-  url("../ภาพพื้นหลัง/orn-corner-bl.svg") left 12px bottom 12px/var(--c) no-repeat,url("../ภาพพื้นหลัง/orn-corner-br.svg") right 12px bottom 12px/var(--c) no-repeat}
-html.pt-b{--c:150px}
-html.pt-b header{padding-top:44px!important}
-@media(max-width:700px){html.pt-b{--c:104px}html.pt-b .bg::before{inset:14px;outline-offset:-6px}
-  html.pt-b body::after{background-position:left 6.7px top 6.7px,right 6.7px top 6.7px,left 6.7px bottom 6.7px,right 6.7px bottom 6.7px}
-  html.pt-b header{padding:30px 30px 14px!important}html.pt-b main{padding-left:30px!important;padding-right:30px!important}}
-/* ค ลายตาข่ายบัวสี่กลีบ โทนเดียวกับกระดาษ จางหายตรงกลางให้อ่านง่าย */
-html.pt-c .bg::before{background:url("../ภาพพื้นหลัง/orn-lattice.svg") center/64px repeat;opacity:.38;
-  -webkit-mask-image:radial-gradient(ellipse 62% 58% at 50% 46%,transparent 30%,#000 100%);mask-image:radial-gradient(ellipse 62% 58% at 50% 46%,transparent 30%,#000 100%)}
+
+/* ตัวหนังสือบนภาพหมึก: หมอกกระดาษจางๆ หลังเนื้อหากลางจอ + ขอบตัวอักษรสีกระดาษ ให้อ่านชัดแต่ภาพยังเห็นเต็ม */
+html.paper .bg::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 36% 46% at 50% 44%,rgba(242,234,219,.9) 0%,rgba(242,234,219,.72) 55%,rgba(242,234,219,0) 100%)}
+@media(max-width:700px){html.paper .bg::before{background:linear-gradient(180deg,rgba(242,234,219,0) 0%,rgba(242,234,219,.55) 14%,rgba(242,234,219,.62) 50%,rgba(242,234,219,.5) 80%,rgba(242,234,219,0) 100%)}}
+html.paper .brand,html.paper .back,html.paper .nav,html.paper .kicker,html.paper h1,html.paper .lead,html.paper .hint,html.paper .desc,html.paper .opts,
+html.paper .count,html.paper .cnt,html.paper .pos,html.paper .nm,html.paper .q,html.paper .scrollhint,html.paper .pile .lb,html.paper .pile .no,html.paper .ask-note,html.paper .switch{
+  text-shadow:0 0 14px #f2eadb,0 0 6px #f2eadb,0 0 2px #f2eadb}
+html.paper header{position:relative}
+html.paper header::before{content:"";position:absolute;inset:0;pointer-events:none;z-index:-1;background:linear-gradient(180deg,rgba(242,234,219,.7),rgba(242,234,219,0))}
+html.paper .grid,html.paper .deck{background:rgba(242,234,219,.72)}
