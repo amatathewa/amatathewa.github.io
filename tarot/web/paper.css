@@ -1,15 +1,15 @@
 /* ธีมกระดาษสาหมึกจีน ให้เข้าชุดกับหน้าแรก (ณัทกร 20 พ.ย. 2569)
    ทำงานเฉพาะตอน <html class="paper"> · เปิดทดลองด้วย ?paper=1 (จำไว้ในแท็บนี้) · ?paper=0 กลับแบบเดิม */
-html.paper{--gold:#9e2b20;--gold-light:#9e2b20;--ivory:#14110e;--dim:rgba(20,17,14,.62);--line:rgba(20,17,14,.16);--paper:#f2eadb;--inkbtn:#14110e;color-scheme:light}
+html.paper{--top:12vh;--gold:#9e2b20;--gold-light:#9e2b20;--ivory:#14110e;--dim:rgba(20,17,14,.62);--line:rgba(20,17,14,.16);--paper:#f2eadb;--inkbtn:#14110e;color-scheme:light}
 html.paper,html.paper body{background:var(--paper)!important;color:#14110e}
 html.paper iframe{background:var(--paper)!important}
 
 /* ฉากหลังทุกหน้า = ภาพวาดหมึกจีน หน้าผาน้ำตก สน กระเรียนคู่เหนือเมฆ (ณัทกรเลือก 20 พ.ย. · Codex รอบ 4) */
 html.paper .bg,html.paper .bgin,html.paper .bgfrom,html.paper .fromPick .bgfrom[hidden]{
   inset:0!important;top:0!important;bottom:0!important;left:0!important;right:0!important;height:auto!important;
-  background:#f2eadb url("../ภาพพื้นหลัง/ink-desktop.jpg") center/cover no-repeat!important;
+  background:linear-gradient(180deg,#f2eadb 0,#f2eadb var(--top),rgba(242,234,219,0) calc(var(--top) + 8vh)),url("../ภาพพื้นหลัง/ink-desktop.jpg") center var(--top)/max(100vw,177.7vh) auto no-repeat,#f2eadb!important;
   transform:none!important;animation:none!important;-webkit-mask-image:none!important;mask-image:none!important;filter:none!important}
-@media(max-width:700px){html.paper .bg,html.paper .bgin,html.paper .bgfrom,html.paper .fromPick .bgfrom[hidden]{background-image:url("../ภาพพื้นหลัง/ink-mobile.jpg")!important;background-position:center bottom!important}}
+@media(max-width:700px){html.paper .bg,html.paper .bgin,html.paper .bgfrom,html.paper .fromPick .bgfrom[hidden]{background:linear-gradient(180deg,#f2eadb 0,#f2eadb var(--top),rgba(242,234,219,0) calc(var(--top) + 7vh)),url("../ภาพพื้นหลัง/ink-mobile.jpg") center var(--top)/max(100vw,56.3vh) auto no-repeat,#f2eadb!important}}
 html.paper .veil,html.paper .shade,html.paper .bgfrom::after{display:none!important}
 html.paper .bg::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.3;background-image:radial-gradient(rgba(0,0,0,.08) 1px,transparent 1px);background-size:3px 3px;mix-blend-mode:multiply}
 
@@ -103,3 +103,5 @@ html.paper .count,html.paper .cnt,html.paper .pos,html.paper .nm,html.paper .q,h
 html.paper header{position:relative}
 html.paper header::before{content:"";position:absolute;inset:0;pointer-events:none;z-index:-1;background:linear-gradient(180deg,rgba(242,234,219,.7),rgba(242,234,219,0))}
 html.paper .grid,html.paper .deck{background:rgba(242,234,219,.72)}
+
+@media(max-width:700px){html.paper{--top:10vh}}
