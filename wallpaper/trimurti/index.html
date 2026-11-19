@@ -2,6 +2,22 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
+<script>
+// เปิดจาก LINE / Messenger / Facebook → เด้งไปเบราว์เซอร์จริงเอง เพราะในแอปบันทึกรูปไม่ลงเครื่อง (ณัทกร 19 พ.ย. 2569)
+// LINE: ใส่ openExternalBrowser=1 (ใช้ได้ทั้ง iPhone และ Android) · Android ในแอป Facebook/Messenger/IG: เปิด Chrome ด้วย intent
+// iPhone ในแอป Facebook/Messenger ไม่มีทางเด้งเอง → ใช้หน้าต่างกดค้างบันทึกแทน · ext=1 กันเด้งวน
+(function () {
+  try {
+    var ua = navigator.userAgent, u = new URL(location.href)
+    if (u.searchParams.has('ext') || window.top !== window.self) return
+    if (/\bLine\//i.test(ua)) { if (!u.searchParams.has('openExternalBrowser')) { u.searchParams.set('openExternalBrowser', '1'); location.replace(u.href) } return }
+    if (/Android/i.test(ua) && /FBAN|FBAV|FB_IAB|Messenger|Instagram/i.test(ua)) {
+      u.searchParams.set('ext', '1'); u.hash = ''
+      location.href = 'intent://' + u.host + u.pathname + u.search + '#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=' + encodeURIComponent(u.href) + ';end'
+    }
+  } catch (e) {}
+})()
+</script>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>วอลเปเปอร์พระตรีมูรติ หมึกจีน พร้อมเลขมงคลวันเกิด | AMATATHEWA อมตเทวา</title>
 <meta name="description" content="วอลเปเปอร์พระตรีมูรติ แนวหมึกจีน 1 ภาพ พระตรีมูรติ ใบหน้าใกล้ ใส่เลขมงคลจากวันเกิดและชื่อของคุณได้ ดูตัวอย่างฟรี เริ่มต้น 159 บาท">

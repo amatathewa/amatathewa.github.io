@@ -9,7 +9,7 @@
 (function () {
   try {
     var ua = navigator.userAgent, u = new URL(location.href)
-    if (u.searchParams.has('ext')) return
+    if (u.searchParams.has('ext') || window.top !== window.self) return
     if (/\bLine\//i.test(ua)) { if (!u.searchParams.has('openExternalBrowser')) { u.searchParams.set('openExternalBrowser', '1'); location.replace(u.href) } return }
     if (/Android/i.test(ua) && /FBAN|FBAV|FB_IAB|Messenger|Instagram/i.test(ua)) {
       u.searchParams.set('ext', '1'); u.hash = ''
