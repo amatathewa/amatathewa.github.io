@@ -108,10 +108,14 @@
   // ข้ามการซื้อที่ภาพนี้โหลดครบแล้ว ไปใช้การซื้อใหม่ (19 พ.ย. 2569: ซื้อภาพเดิมซ้ำแล้วยังหยิบสิทธิ์เก่าที่หมดแล้ว)
   const mine = (p, img) => (p.images || []).includes(img) || (p.scope === 'one' && p.image === img)
   const hasLeft = (p, img) => !(p.left && p.left[img] === 0)
-  const passFor = img => {
+  // แบบที่เคยโหลดแล้ว โหลดซ้ำได้ไม่จำกัดด้วยการซื้อครั้งเดิม (ณัทกร 19 พ.ย. 2569: ทำหายแล้วกลับมาโหลดใหม่)
+  const knows = (p, img, design) => !!design && ((p.designs || {})[img] || []).includes(design)
+  const passFor = (img, design) => {
     const l = passList()
-    return l.find(p => mine(p, img) && hasLeft(p, img)) || l.find(p => p.scope === 'set' && setLeft(p) > 0 && hasLeft(p, img)) || l.find(p => mine(p, img)) || null
+    return l.find(p => mine(p, img) && knows(p, img, design)) || l.find(p => mine(p, img) && hasLeft(p, img)) || l.find(p => p.scope === 'set' && setLeft(p) > 0 && hasLeft(p, img)) || l.find(p => mine(p, img)) || null
   }
+  // ลายนิ้วมือของการแต่งภาพ: ค่าที่มีผลกับหน้าตาภาพเท่านั้น
+  const designOf = () => sha(JSON.stringify([S.image, ...[...DESIGN_KEYS, ...SHARED_KEYS].filter(k => k !== 'frameChosen' && k !== 'tried').map(k => S[k])])).then(h => h.slice(0, 32))
   const passNow = () => passFor(S.image)
   const covers = () => !!passNow()
   let buyMore = false
@@ -456,18 +460,22 @@
     const b = $('saveFull'), err = $('fullErr'); err.hidden = true; b.disabled = true; b.textContent = 'กำลังสร้างไฟล์เต็ม'
     try {
       let pass, r
-      // สิทธิ์ครั้งนี้โหลดครบแล้ว → จำไว้ แล้วลองการซื้อครั้งถัดไปของภาพเดียวกัน
+      const design = await designOf()
+      // สิทธิ์ครั้งนี้ใช้ครบแล้ว → จำไว้ แล้วลองการซื้อครั้งถัดไปของภาพเดียวกัน
       for (const tried = new Set(); ;) {
-        pass = passNow()
-        if (!pass || tried.has(pass)) throw new Error(`ภาพนี้โหลดครบ 3 ครั้งแล้ว`)
+        pass = passFor(S.image, design)
+        if (!pass || tried.has(pass)) throw new Error(`ภาพนี้ใช้สิทธิ์ครบ 3 แบบแล้ว (แบบที่เคยโหลด กลับไปแต่งให้เหมือนเดิมแล้วโหลดซ้ำได้)`)
         tried.add(pass)
-        r = await fetch(`${SHOP.api}/asset/${S.image}`, { headers: { Authorization: `Bearer ${pass.token}`, 'X-Owner': owner } })
+        const h = { Authorization: `Bearer ${pass.token}`, 'X-Owner': owner, 'X-Design': design }
+        // หลังบ้านรุ่นเก่ายังไม่รับ X-Design (เบราว์เซอร์ตัดทิ้งทั้งคำขอ) → ลองใหม่แบบไม่ส่ง
+        r = await fetch(`${SHOP.api}/asset/${S.image}`, { headers: h }).catch(() => { delete h['X-Design']; return fetch(`${SHOP.api}/asset/${S.image}`, { headers: h }) })
         if (r.status !== 429) break
         pass.left = pass.left || {}; pass.left[S.image] = 0; keep.set('amt-passes', passes)
       }
       if (!r.ok) throw new Error((await r.json()).message || 'โหลดไฟล์ไม่ได้')
       const left = r.headers.get('X-Downloads-Left')
       if (left !== null) { pass.left = pass.left || {}; pass.left[S.image] = +left }
+      pass.designs = pass.designs || {}; const known = pass.designs[S.image] = pass.designs[S.image] || []; if (!known.includes(design)) known.push(design)
       const url = URL.createObjectURL(await r.blob()), c = document.createElement('canvas'); c.width = meta.full[0]; c.height = meta.full[1]
       await window.Compose.render(c, S, meta, url)
       await saveBlob(await blobOf(c), `amatathewa-${S.image}.jpg`); URL.revokeObjectURL(url)
@@ -475,7 +483,7 @@
       if (pass.scope === 'set') { pass.images = pass.images || []; if (!pass.images.includes(S.image)) pass.images.push(S.image) }
       const usedNow = +r.headers.get('X-Images-Used'); if (usedNow) pass.used = usedNow
       keep.set('amt-passes', passes)
-      $('fullLeft').textContent = left !== null ? `ภาพนี้โหลดได้อีก ${left} ครั้ง · ถ้าบันทึกไม่สำเร็จ กดใหม่ได้ภายใน 2 ชั่วโมง ไม่เสียสิทธิ์` : ''
+      $('fullLeft').textContent = left !== null ? `แบบนี้โหลดซ้ำได้เรื่อยๆ ไม่เสียสิทธิ์ · ภาพนี้แต่งแบบใหม่ได้อีก ${left} แบบ` : ''
       renderControls()
       afterSave()
     } catch (e) { err.textContent = e.message + (/ครบ/.test(e.message) ? ' ถ้าไฟล์มีปัญหา ทักมาที่ LINE ของอมตเทวา' : ' ลองกดอีกครั้ง'); err.hidden = false }
