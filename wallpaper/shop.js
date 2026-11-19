@@ -80,10 +80,24 @@
     get: (k, d) => { try { return JSON.parse(localStorage.getItem(k)) || d } catch { return d } },
     set: (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)) } catch {} },
   }
-  // จำวันเกิด ภาพ และแบบที่เลือกไว้ในเครื่องลูกค้า 3 วัน (ไม่ส่งออกจากเครื่อง)
+  // ไม่ได้ใช้งานเกิน 2 ชม. แล้วกลับมาเปิดหน้านี้ = เริ่มหน้าใหม่สดๆ แม้แท็บจะเปิดค้างไว้ (ณัทกร 19 พ.ย. 2569)
+  // บัตรผ่านที่ซื้อแล้ว และแบบที่แต่งไว้ต่อวันเกิด ยังอยู่ครบ กรอกวันเกิดเดิมแล้วโหลดซ้ำได้เหมือนเดิม
+  const IDLE = 2 * 36e5
+  const lastActive = +keep.get('amt-active', 0) || 0
+  let seen = Date.now(); keep.set('amt-active', seen)
+  const touch = () => { const n = Date.now(); if (n - seen > 6e4) { seen = n; keep.set('amt-active', n) } }
+  ;['pointerdown', 'keydown', 'scroll'].forEach(ev => addEventListener(ev, touch, { capture: true, passive: true }))
+  const freshIfIdle = () => {
+    if (document.visibilityState !== 'visible' || Date.now() - Math.max(seen, +keep.get('amt-active', 0) || 0) < IDLE) return
+    keep.set('amt-active', Date.now()); keep.set('amt-last', null)
+    location.replace(location.pathname + location.search)
+  }
+  document.addEventListener('visibilitychange', freshIfIdle)
+  addEventListener('pageshow', e => { if (e.persisted) freshIfIdle() })
+  // จำวันเกิด ภาพ และแบบที่เลือกไว้ในเครื่องลูกค้า (ไม่ส่งออกจากเครื่อง) ใช้ดึงกลับเฉพาะคนที่ไม่ได้ห่างไปเกิน 2 ชม.
   // ลูกค้าออกไปโอนในแอปธนาคาร แล้วเบราว์เซอร์ใน Facebook/LINE มักโหลดหน้าใหม่ กลับมาจะได้ไม่ต้องกรอกใหม่ (ณัทกร 14 พ.ย. 2569)
   const remember = o => keep.set('amt-last', Object.assign(keep.get('amt-last', {}), o, { t: Date.now() }))
-  const lastVisit = (() => { const l = keep.get('amt-last', null); return l && l.birth && Date.now() - l.t < 3 * 864e5 ? l : null })()
+  const lastVisit = (() => { const l = keep.get('amt-last', null); return l && l.birth && Date.now() - Math.max(l.t, lastActive) < IDLE ? l : null })()
   let restoring = false
   const passes = keep.get('amt-passes', {})
   const allDesigns = keep.get('amt-designs', {}), allSaved = keep.get('amt-saved', {}), allShared = keep.get('amt-shared', {})
