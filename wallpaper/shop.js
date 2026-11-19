@@ -5,11 +5,15 @@
   const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text !== undefined) e.textContent = text; return e }
   const fill = (s, list) => list.forEach(([v, t]) => s.add(new Option(t, v)))
   const SET_IMAGES = 6
+  // ภาษาอังกฤษ (19 พ.ย. 2569): T(ไทย, อังกฤษ) และคำแปลชุดใหญ่อยู่ใน lang.js
+  const EN = !!window.AMT_EN, T = window.T || ((th) => th), X = window.EN_TXT || {}
+  const dlabel = d => T(d.label, (X.DEITY || {})[d.id] || d.label)
+  const starOf = d => T((window.Lucky.NAME || {})[d] || (d === 9 ? 'เกตุ' : ''), X.star ? X.star(d) : '')
   // Meta Pixel: ส่งแค่ชื่อเหตุการณ์และยอดเงิน ห้ามส่งวันเกิด ชื่อ หรือคำที่ลูกค้าพิมพ์
   const fb = (ev, data) => { try { if (window.fbq) window.fbq('track', ev, data) } catch {} }
   let fbCheckout = false
   const fbStartPay = () => { if (fbCheckout) return; fbCheckout = true; fb('InitiateCheckout', { value: S.plan === 'set' ? SHOP.price.set : SHOP.price.one, currency: 'THB' }) }
-  const MONTH = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม']
+  const MONTH = T(['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'], X.MONTH)
   const WORDS = ['มั่งคั่ง', 'เมตตา', 'รุ่งเรือง', 'สำเร็จ', 'มั่นคง', 'ร่มเย็น', 'ราบรื่น', 'โชคดี', 'สงบสุข']
   const SRC = { chart: 'คำนวณจากดวงเกิดของคุณ', taksa: 'คำนวณจากทักษาวันเกิดของคุณ', general: 'คู่มาตรฐานที่ไม่ขัดกับเลขกาลกิณีของคุณ' }
   const MOTIVE = {
@@ -32,15 +36,18 @@
     ['แถวกลาง', 'ตัวเราและความรัก', 'แถวกลางเหมือนหัวใจของเรา จึงเป็นตำแหน่งของเลขเรื่องตัวเราและความสัมพันธ์', 'charm'],
     ['แถวล่าง', 'เงินและความมั่นคง', 'แถวล่างเหมือนฐานบ้านที่ต้องแน่น จึงเป็นตำแหน่งของเลขเรื่องเงินและการตั้งตัว', 'wealth'],
   ]
+  if (EN) { Object.assign(MOTIVE, X.MOTIVE); Object.assign(FRAME_NOTE, X.FRAME_NOTE); X.ROWS.forEach((r, i) => { ROWS[i][0] = r[0]; ROWS[i][1] = r[1]; ROWS[i][2] = r[2] }) }
+  const wordText = w => EN && X.WORD[w] ? `${w} · ${X.WORD[w]}` : w
   const DEFAULT_FRAME = { ganesha: 'mountain', lakshmi: 'lotus', parvati: 'heart', saraswati: 'lotus', shiva: 'plain', vishnu: 'plain', brahma: 'lotus', trimurti: 'plain', trishakti: 'heart', skanda: 'mountain' }
-  const THAI = '๐๑๒๓๔๕๖๗๘๙', thai = n => String(n).replace(/\d/g, d => THAI[d])
+  const THAI = '๐๑๒๓๔๕๖๗๘๙', thai = n => EN ? String(n) : String(n).replace(/\d/g, d => THAI[d])
   const pad = n => String(n).padStart(2, '0'), range = (a, b) => Array.from({ length: b - a + 1 }, (_, i) => a + i)
-  fill($('d'), range(1, 31).map(n => [n, n])); fill($('m'), MONTH.map((t, i) => [i + 1, t])); fill($('y'), range(2460, 2569).reverse().map(n => [n, n]))
-  fill($('hh'), range(0, 23).map(n => [n, pad(n) + ' นาฬิกา'])); fill($('mm'), range(0, 59).map(n => [n, pad(n) + ' นาที']))
+  fill($('d'), range(1, 31).map(n => [n, n])); fill($('m'), MONTH.map((t, i) => [i + 1, t])); fill($('y'), range(2460, 2569).reverse().map(n => [n, T(n, n - 543)]))
+  fill($('hh'), range(0, 23).map(n => [n, pad(n) + T(' นาฬิกา', ' h')])); fill($('mm'), range(0, 59).map(n => [n, pad(n) + T(' นาที', ' min')]))
   $('y').value = 2535; $('hh').value = 8
-  const PROV = L.getThaiAstrologyProvinceLocations().slice().sort((a, b) => a.province.localeCompare(b.province, 'th'))
-  fill($('prov'), PROV.map(p => [p.province, p.province]))
-  const fillAmp = () => { $('amp').length = 0; fill($('amp'), [['', 'ตัวจังหวัด / ไม่ทราบ'], ...((window.AMPHOE || {})[$('prov').value] || []).map(([n]) => [n, n])]) }
+  const provName = p => T(p, (X.PROV || {})[p] || p)
+  const PROV = L.getThaiAstrologyProvinceLocations().slice().sort((a, b) => EN ? provName(a.province).localeCompare(provName(b.province), 'en') : a.province.localeCompare(b.province, 'th'))
+  fill($('prov'), PROV.map(p => [p.province, provName(p.province)]))
+  const fillAmp = () => { $('amp').length = 0; fill($('amp'), [['', T('ตัวจังหวัด / ไม่ทราบ', 'Provincial centre / not sure')], ...((window.AMPHOE || {})[$('prov').value] || []).map(([n]) => [n, n])]) }
   $('prov').value = 'กรุงเทพมหานคร'; fillAmp(); $('prov').onchange = fillAmp
   const isWed = () => new Date(Date.UTC(+$('y').value - 543, +$('m').value - 1, +$('d').value)).getUTCDay() === 3
   let wedPick = 'day', dateTouched = false
@@ -137,12 +144,12 @@
   // ---------- วาดภาพ ----------
   const view = $('view')
   let drawing = false, again = false
-  const showPaidPreview = () => { if (covers()) { $('paidPreview').src = view.toDataURL('image/jpeg', .85); $('paidName').textContent = meta.deities.find(d => d.id === S.image).label } }
+  const showPaidPreview = () => { if (covers()) { $('paidPreview').src = view.toDataURL('image/jpeg', .85); $('paidName').textContent = dlabel(meta.deities.find(d => d.id === S.image)) } }
   const draw = async () => {
     if (drawing) { again = true; return }
-    drawing = true; $('busy').textContent = 'กำลังวาดภาพ'
+    drawing = true; $('busy').textContent = T('กำลังวาดภาพ', 'Drawing…')
     try { await window.Compose.render(view, S, meta, `assets/base/${S.image}.jpg?v=202611031`); $('busy').textContent = ''; view.dataset.ready = (+view.dataset.ready || 0) + 1; showPaidPreview(); $('miniView').getContext('2d').drawImage(view, 0, 0, 336, 728) }
-    catch (e) { $('busy').textContent = 'โหลดภาพไม่สำเร็จ ลองแตะอีกครั้ง'; console.error(e) }
+    catch (e) { $('busy').textContent = T('โหลดภาพไม่สำเร็จ ลองแตะอีกครั้ง', 'Couldn’t load the image. Tap to try again.'); console.error(e) }
     drawing = false
     if (again) { again = false; draw() }
   }
@@ -180,13 +187,13 @@
     }
   }
   const renderControls = () => {
-    chips($('frames'), [...Object.entries(meta.frames).map(([k, f]) => [k, f.label]), ['none', 'ไม่ใส่']], v => S.frame === v, v => { S.frame = v; S.frameChosen = true })
+    chips($('frames'), [...Object.entries(meta.frames).map(([k, f]) => [k, T(f.label, (X.FRAME || {})[k] || f.label)]), ['none', T('ไม่ใส่', 'None')]], v => S.frame === v, v => { S.frame = v; S.frameChosen = true })
     $('frameNote').textContent = FRAME_NOTE[S.frame] || ''
-    chips($('numberPick'), [...allPairs.map(p => [p.num, p.num]), ['none', 'ไม่ใส่']], v => v === 'none' ? !S.showNumber : S.showNumber && S.number === v, v => { if (v === 'none') S.showNumber = false; else { S.showNumber = true; S.number = v } })
-    chips($('numberStyle'), [['ar', 'เลขสากล'], ['th', 'เลขไทย']], v => (v === 'th') === S.thaiNumber, v => { S.thaiNumber = v === 'th' })
-    chips($('namePlace'), [['low', 'ใต้องค์เทพ'], ['high', 'ขยับขึ้น']], v => (v === 'high') === !!S.nameHigh, v => { S.nameHigh = v === 'high' })
-    chips($('sidePick'), [['R', 'ขวา'], ['L', 'ซ้าย']], v => (S.side || meta.deities.find(d => d.id === S.image).side) === v, v => { S.side = v })
-    chips($('words'), [...WORDS.map(w => [w, w]), ['none', 'ไม่ใส่']], v => v === 'none' ? !S.showSeal : S.showSeal && S.word === v && !$('ownWord').value.trim(), v => { $('ownWord').value = ''; if (v === 'none') S.showSeal = false; else { S.showSeal = true; S.word = v } })
+    chips($('numberPick'), [...allPairs.map(p => [p.num, p.num]), ['none', T('ไม่ใส่', 'None')]], v => v === 'none' ? !S.showNumber : S.showNumber && S.number === v, v => { if (v === 'none') S.showNumber = false; else { S.showNumber = true; S.number = v } })
+    chips($('numberStyle'), [['ar', T('เลขสากล', 'Arabic numerals')], ['th', T('เลขไทย', 'Thai numerals')]], v => (v === 'th') === S.thaiNumber, v => { S.thaiNumber = v === 'th' })
+    chips($('namePlace'), [['low', T('ใต้องค์เทพ', 'Below the deity')], ['high', T('ขยับขึ้น', 'Move up')]], v => (v === 'high') === !!S.nameHigh, v => { S.nameHigh = v === 'high' })
+    chips($('sidePick'), [['R', T('ขวา', 'Right')], ['L', T('ซ้าย', 'Left')]], v => (S.side || meta.deities.find(d => d.id === S.image).side) === v, v => { S.side = v })
+    chips($('words'), [...WORDS.map(w => [w, wordText(w)]), ['none', T('ไม่ใส่', 'None')]], v => v === 'none' ? !S.showSeal : S.showSeal && S.word === v && !$('ownWord').value.trim(), v => { $('ownWord').value = ''; if (v === 'none') S.showSeal = false; else { S.showSeal = true; S.word = v } })
     const saved = owner ? savedFiles() : {}
     for (const b of $('thumbs').children) { b.setAttribute('aria-pressed', b.dataset.id === S.image); b.classList.toggle('done', !!saved[b.dataset.id]) }
     for (const b of $('plans').children) b.setAttribute('aria-pressed', b.dataset.plan === S.plan)
@@ -212,12 +219,12 @@
   meta.deities.forEach(d => {
     const b = el('button', 'thumb'); b.type = 'button'; b.dataset.id = d.id
     const i = el('img'); i.src = `assets/thumb/${d.id}.jpg?v=202611011`; i.alt = ''; i.loading = 'lazy'; i.width = 180; i.height = 390; i.draggable = false
-    b.append(i, el('span', '', d.label))
+    b.append(i, el('span', '', dlabel(d)))
     b.onclick = () => { saveDesign(); S.image = d.id; remember({ image: d.id }); applyDesign(); renderGridWhy(); renderControls(); draw() }
     $('thumbs').append(b)
   })
-  ;[['one', SHOP.price.one, 'ภาพนี้ 1 ภาพ'], ['set', SHOP.price.set, `เลือกได้ ${SET_IMAGES} ภาพ`]].forEach(([k, p, t]) => {
-    const b = el('button', 'plan'); b.type = 'button'; b.dataset.plan = k; b.append(el('b', '', `${p} บาท`), el('span', '', t))
+  ;[['one', SHOP.price.one, T('ภาพนี้ 1 ภาพ', 'This image only')], ['set', SHOP.price.set, T(`เลือกได้ ${SET_IMAGES} ภาพ`, `Choose ${SET_IMAGES} images`)]].forEach(([k, p, t]) => {
+    const b = el('button', 'plan'); b.type = 'button'; b.dataset.plan = k; b.append(el('b', '', T(`${p} บาท`, `${p} THB`)), el('span', '', t))
     b.onclick = () => { S.plan = k; remember({ plan: k }); renderControls() }; $('plans').append(b)
   })
   $('ownWord').oninput = () => { const v = $('ownWord').value.trim(); if (v) { S.showSeal = true; S.word = v } else S.word = WORDS[0]; saveDesign(); renderControls(); draw() }
@@ -245,42 +252,43 @@
   const renderGridPicker = () => document.querySelectorAll('.gridpick').forEach(box => {
     box.textContent = ''
     const levels = el('div', 'chips')
-    ;[[false, 'มงคล 4 ทิศ'], [true, 'มงคล 8 ทิศ']].forEach(([v, t]) => { const b = el('button', 'chip', t); b.type = 'button'; b.setAttribute('aria-pressed', S.diagonal === v); b.onclick = () => setLevel(v); levels.append(b) })
-    box.append(levels, el('p', 'help', S.diagonal ? 'เข้มที่สุด เลขเฉียงก็เป็นคู่มงคลด้วย แต่บางเลขจะไม่ขึ้นในตาราง และเรื่องรายแถวตรงน้อยลง' : 'เลขที่ติดกันซ้าย ขวา บน ล่าง เป็นคู่มงคล เลขหลากหลายกว่า และเรื่องรายแถวตรงได้มากกว่า'))
-    const nav = el('div', 'gridnav'), prev = el('button', 'chip', '◀ แบบก่อนหน้า'), next = el('button', 'chip', 'แบบถัดไป ▶')
+    ;[[false, T('มงคล 4 ทิศ', '4-direction')], [true, T('มงคล 8 ทิศ', '8-direction')]].forEach(([v, t]) => { const b = el('button', 'chip', t); b.type = 'button'; b.setAttribute('aria-pressed', S.diagonal === v); b.onclick = () => setLevel(v); levels.append(b) })
+    box.append(levels, el('p', 'help', S.diagonal ? T('เข้มที่สุด เลขเฉียงก็เป็นคู่มงคลด้วย แต่บางเลขจะไม่ขึ้นในตาราง และเรื่องรายแถวตรงน้อยลง', 'Strictest: diagonal neighbours are lucky pairs too, but some numbers won’t appear and the row topics match less often.') : T('เลขที่ติดกันซ้าย ขวา บน ล่าง เป็นคู่มงคล เลขหลากหลายกว่า และเรื่องรายแถวตรงได้มากกว่า', 'Numbers next to each other left, right, up and down are lucky pairs. More variety, and the row topics match more often.')))
+    const nav = el('div', 'gridnav'), prev = el('button', 'chip', T('◀ แบบก่อนหน้า', '◀ Previous')), next = el('button', 'chip', T('แบบถัดไป ▶', 'Next ▶'))
     prev.type = next.type = 'button'; prev.onclick = () => goGrid(S.variant - 1); next.onclick = () => goGrid(S.variant + 1)
-    nav.append(prev, el('b', '', `แบบที่ ${S.variant + 1} จาก ${gridOptions.length}`), next); box.append(nav)
+    nav.append(prev, el('b', '', T(`แบบที่ ${S.variant + 1} จาก ${gridOptions.length}`, `Version ${S.variant + 1} of ${gridOptions.length}`)), next); box.append(nav)
     const seen = el('div', 'triedgrids')
     ;(S.tried || []).forEach(i => {
-      const wrap = el('div', 'triedwrap'), b = el('button', 'tried'); b.type = 'button'; b.setAttribute('aria-pressed', i === S.variant); b.setAttribute('aria-label', `กลับไปตารางแบบที่ ${i + 1}`)
+      const wrap = el('div', 'triedwrap'), b = el('button', 'tried'); b.type = 'button'; b.setAttribute('aria-pressed', i === S.variant); b.setAttribute('aria-label', T(`กลับไปตารางแบบที่ ${i + 1}`, `Back to version ${i + 1}`))
       const t = el('span', 'triedmini'); [...gridOptions[i]].forEach(n => t.append(el('i', '', thai(n))))
-      b.append(t, el('small', '', i === 0 ? 'แบบแนะนำ' : `แบบที่ ${i + 1}`)); b.onclick = () => goGrid(i); wrap.append(b)
-      if (i !== 0) { const del = el('button', 'trieddel', '×'); del.type = 'button'; del.setAttribute('aria-label', `ลบตารางแบบที่ ${i + 1} ออกจากแถบนี้`); del.onclick = () => dropTried(i); wrap.append(del) }
+      b.append(t, el('small', '', i === 0 ? T('แบบแนะนำ', 'Top pick') : T(`แบบที่ ${i + 1}`, `Version ${i + 1}`))); b.onclick = () => goGrid(i); wrap.append(b)
+      if (i !== 0) { const del = el('button', 'trieddel', '×'); del.type = 'button'; del.setAttribute('aria-label', T(`ลบตารางแบบที่ ${i + 1} ออกจากแถบนี้`, `Remove version ${i + 1} from this bar`)); del.onclick = () => dropTried(i); wrap.append(del) }
       seen.append(wrap)
     })
-    box.append(el('p', 'help', 'เรียงลำดับตายตัว ไม่ได้สุ่ม กดกลับไปแบบที่ดูแล้วได้ทุกเมื่อ กด × เพื่อลบแบบที่ไม่เอาออกจากแถบ'), seen)
-    if ((S.tried || []).length > 2) { const clear = el('button', 'chip', 'ล้างแบบที่ดูแล้ว'); clear.type = 'button'; clear.onclick = () => dropTried(null); box.append(clear) }
+    box.append(el('p', 'help', T('เรียงลำดับตายตัว ไม่ได้สุ่ม กดกลับไปแบบที่ดูแล้วได้ทุกเมื่อ กด × เพื่อลบแบบที่ไม่เอาออกจากแถบ', 'Fixed order, not random. Tap any version you’ve seen to go back to it. Tap × to remove one from this bar.')), seen)
+    if ((S.tried || []).length > 2) { const clear = el('button', 'chip', T('ล้างแบบที่ดูแล้ว', 'Clear viewed versions')); clear.type = 'button'; clear.onclick = () => dropTried(null); box.append(clear) }
   })
   const renderPairs = () => {
     const box = $('pairs'); box.textContent = ''
+    if (EN) box.append(el('p', 'help', X.PAIR_NOTE))
     allPairs.forEach(p => {
       const row = el('div', 'pair'), num = el('div', 'num', p.num), txt = el('div')
-      num.append(el('small', '', `หรือ ${p.back}`))
-      txt.append(el('b', '', p.name ? `${p.label} · ${p.name}` : p.label))
-      const full = (window.PAIR_TEXT || {})[[...p.num].sort().join('')], meaning = full || clean(p.meaning)
+      num.append(el('small', '', T(`หรือ ${p.back}`, `or ${p.back}`)))
+      txt.append(el('b', '', T(p.name ? `${p.label} · ${p.name}` : p.label, X.LABEL ? X.LABEL[p.key] : p.label)))
+      const full = (window.PAIR_TEXT || {})[[...p.num].sort().join('')], meaning = EN ? '' : full || clean(p.meaning)
       if (meaning) txt.append(el('p', '', meaning))
-      const TOPIC = { wealth: 'ด้านการเงิน', charm: 'ด้านความรัก', fame: 'ด้านการงาน' }, side = full && TOPIC[p.key] && clean(p.meaning)
+      const TOPIC = { wealth: 'ด้านการเงิน', charm: 'ด้านความรัก', fame: 'ด้านการงาน' }, side = !EN && full && TOPIC[p.key] && clean(p.meaning)
       if (side) { const t = el('p', 'topic'); t.append(el('b', '', TOPIC[p.key] + ' '), side); txt.append(t) }
-      txt.append(el('p', 'why', `ที่มาของเลขนี้: ${p.why}`), el('p', 'motive', MOTIVE[p.key]))
+      txt.append(el('p', 'why', T(`ที่มาของเลขนี้: ${p.why}`, `Where it comes from: ${X.why ? X.why(p.why) : p.why}`)), el('p', 'motive', MOTIVE[p.key]))
       const lab = el('label', 'check'), c = el('input'); c.type = 'checkbox'; c.checked = picked.includes(p.num)
       c.onchange = () => { picked = allPairs.map(x => x.num).filter(n => n === p.num ? c.checked : picked.includes(n)); const g = rebuildGrid(); note(g); saveDesign(); renderGridWhy(); renderControls(); draw() }
-      lab.append(c, 'ใส่ในตารางเลข')
+      lab.append(c, T('ใส่ในตารางเลข', 'Include in the number grid'))
       row.append(num, txt, lab); box.append(row)
     })
-    box.append(el('div', 'avoid', `เลขกาลกิณีของคนเกิดวัน${chart.day} คือ ${chart.avoidDigit} ระบบจึงไม่ใส่เลขนี้ในภาพ${chart.hasTime ? '' : ' และเพราะไม่รู้เวลาเกิด เลขชุดนี้จึงคิดจากวันเกิดอย่างเดียว'}`))
+    box.append(el('div', 'avoid', T(`เลขกาลกิณีของคนเกิดวัน${chart.day} คือ ${chart.avoidDigit} ระบบจึงไม่ใส่เลขนี้ในภาพ${chart.hasTime ? '' : ' และเพราะไม่รู้เวลาเกิด เลขชุดนี้จึงคิดจากวันเกิดอย่างเดียว'}`, `The misfortune number (kalakini) for people born on ${X.day ? X.day(chart.day) : chart.day} is ${chart.avoidDigit}, so it is never placed on your image.${chart.hasTime ? '' : ' Because your birth time is unknown, these numbers come from your birth date only.'}`)))
     const n = el('p', 'help'); n.id = 'gridMiss'; box.append(n)
   }
-  const note = g => { const n = $('gridMiss'); if (n) n.textContent = g.missing.length ? `ตารางมีช่องจำกัด คู่ ${g.missing.join(' ')} จึงยังไม่ได้อยู่ติดกัน ลองเอาติ๊กบางคู่ออกได้` : '' }
+  const note = g => { const n = $('gridMiss'); if (n) n.textContent = g.missing.length ? T(`ตารางมีช่องจำกัด คู่ ${g.missing.join(' ')} จึงยังไม่ได้อยู่ติดกัน ลองเอาติ๊กบางคู่ออกได้`, `The grid has limited space, so pairs ${g.missing.join(' ')} couldn’t be placed side by side. Try unticking some pairs.`) : '' }
 
   // ทำไมต้องเลข 9 ตัวนี้ อธิบายจากดวงของเจ้าของจริง
   const renderGridWhy = () => {
@@ -288,11 +296,13 @@
     const GRID_EDGES = S.diagonal ? window.Lucky.GRID_ALL : window.Lucky.GRID_STRAIGHT
     const g = S.grid, mini = $('miniGrid'); mini.textContent = ''
     g.forEach(n => mini.append(el('span', '', thai(n))))
-    const center = [window.Lucky.NAME[g[4]] || 'เกตุ']
+    const center = [starOf(g[4])]
     const reasons = $('gridReasons'); reasons.textContent = ''
-    ;[`ไม่มีเลข ${chart.avoidDigit} เพราะเป็นเลขกาลกิณีของคนเกิดวัน${chart.day}`,
+    ;(EN ? [`No ${chart.avoidDigit}, because it is the misfortune number for people born on ${X.day(chart.day)}`,
+      `The centre is ${g[4]} (${center[0]}) — ${chart.strong.length && chart.strong[0].n === g[4] ? 'the strongest planet in your chart' : 'chosen from planets that are strong and favourable in your chart'}`,
+      `All ${GRID_EDGES.length} pairs of neighbouring numbers — left, right, up, down${S.diagonal ? ' and diagonal' : ''} — are lucky pairs`] : [`ไม่มีเลข ${chart.avoidDigit} เพราะเป็นเลขกาลกิณีของคนเกิดวัน${chart.day}`,
       `ช่องกลางคือเลข ${g[4]} ดาว${center[0]} ${chart.strong.length && chart.strong[0].n === g[4] ? 'ซึ่งเป็นดาวที่แข็งที่สุดในดวงของคุณ' : 'เลือกจากดาวที่มีกำลังและเป็นคุณกับดวงของคุณ'}`,
-      `เลขที่อยู่ติดกันทั้งซ้าย ขวา บน ล่าง${S.diagonal ? ' และแนวเฉียง' : ''} รวม ${GRID_EDGES.length} คู่ เป็นคู่มงคลทุกคู่`].forEach(t => reasons.append(el('li', '', t)))
+      `เลขที่อยู่ติดกันทั้งซ้าย ขวา บน ล่าง${S.diagonal ? ' และแนวเฉียง' : ''} รวม ${GRID_EDGES.length} คู่ เป็นคู่มงคลทุกคู่`]).forEach(t => reasons.append(el('li', '', t)))
     const rowsBox = $('gridRows'); rowsBox.textContent = ''
     ROWS.forEach((r, i) => {
       const cells = g.slice(i * 3, i * 3 + 3), wanted = rowPair(r[3]), inRow = [`${cells[0]}${cells[1]}`, `${cells[1]}${cells[2]}`]
@@ -300,12 +310,11 @@
       const row = el('div', 'grid-row'), head = el('div', 'grid-row-num', cells.map(thai).join(' ')), body = el('div')
       body.append(el('b', '', `${r[0]} · ${r[1]}`), el('p', '', r[2]))
       // อ้างครบทั้ง 3 ตัวในแถว: ชื่อดาวทุกตัว + ทั้ง 2 คู่ที่อยู่ติดกัน (คำอ่านแบบรวม 3 ดาวรอณัทกรเขียน → ROW_STAR)
-      const star = d => (window.Lucky.NAME || {})[d] || (d === 9 ? 'เกตุ' : '')
-      body.append(el('p', 'rowuse', `ดาว${cells.map(star).join(' ')}`))
-      const extra = (window.ROW_STAR || {})[r[3]], lines = cells.map(d => extra && extra[d]).filter(Boolean)
+      body.append(el('p', 'rowuse', T(`ดาว${cells.map(starOf).join(' ')}`, `Planets: ${cells.map(starOf).join(', ')}`)))
+      const extra = (EN ? X.ROW_STAR : window.ROW_STAR || {})[r[3]], lines = cells.map(d => extra && extra[d]).filter(Boolean)
       if (lines.length) body.append(el('p', 'rowuse', lines.join(' · ')))
-      inRow.forEach(x => { const nm = pairName(+x[0], +x[1]); body.append(el('p', 'rowuse', `คู่ ${x}${nm ? ` ${nm}` : ''}${match === x ? ` · คู่เรื่อง${wanted.label}ของคุณ` : ''}`)) })
-      if (wanted && !match) body.append(el('p', 'rowuse', `คู่เรื่อง${wanted.label}ของคุณ ${wanted.num} ยังเลือกใส่เป็นเลขใหญ่บนภาพได้`))
+      inRow.forEach(x => { const nm = pairName(+x[0], +x[1]); body.append(el('p', 'rowuse', T(`คู่ ${x}${nm ? ` ${nm}` : ''}${match === x ? ` · คู่เรื่อง${wanted.label}ของคุณ` : ''}`, `Pair ${x}${match === x ? ` · your “${X.LABEL[wanted.key].toLowerCase()}” pair` : ''}`))) })
+      if (wanted && !match) body.append(el('p', 'rowuse', T(`คู่เรื่อง${wanted.label}ของคุณ ${wanted.num} ยังเลือกใส่เป็นเลขใหญ่บนภาพได้`, `Your “${X.LABEL[wanted.key].toLowerCase()}” pair ${wanted.num} can still be the big number on the image`)))
       row.append(head, body); rowsBox.append(row)
     })
     const pairs = $('gridPairs'); pairs.textContent = ''
@@ -314,7 +323,7 @@
       const k = [g[a], g[b]].sort().join('')
       if (seen.has(k)) return
       seen.add(k)
-      const name = pairName(g[a], g[b])
+      const name = EN ? '' : pairName(g[a], g[b])
       pairs.append(el('li', '', `${g[a]}${g[b]}${name ? ` ${name}` : ''}`))
     })
     renderGridPicker()
@@ -325,7 +334,7 @@
     ev.preventDefault()
     const y = +$('y').value - 543, m = +$('m').value, d = +$('d').value, ok = new Date(Date.UTC(y, m - 1, d)).getUTCMonth() === m - 1
     $('err').hidden = ok
-    if (!ok) { $('err').textContent = 'เดือนนี้ไม่มีวันที่นี้ ลองเลือกวันใหม่'; return }
+    if (!ok) { $('err').textContent = T('เดือนนี้ไม่มีวันที่นี้ ลองเลือกวันใหม่', 'That date doesn’t exist in this month. Please choose again.'); return }
     const noTime = $('noTime').checked, night = $('night').checked && isWed()
     const inp = noTime ? { y, m, d, hh: null, mm: null, night } : { y, m, d, hh: +$('hh').value, mm: +$('mm').value, lon: lonOf(), province: $('prov').value }
     chart = window.Lucky.build(window.Health, window.Reader, inp)
@@ -338,9 +347,9 @@
     let o = null
     try { o = window.Oracle.read(inp, chart, id => meta.deities.some(d => d.id === id)) } catch (e) { console.error(e) }
     if (o) {
-      $('oracleEye').textContent = `${o.deity}อยากบอกคุณว่า`
+      $('oracleEye').textContent = T(`${o.deity}อยากบอกคุณว่า`, `${o.deity} wants to tell you`)
       $('oracleText').textContent = ''; o.lines.forEach(t => $('oracleText').append(el('p', '', t)))
-      $('oracleDeity').textContent = `ทำไมเป็น${o.deity}`; $('oracleWhy').textContent = o.why; $('oracleHint').hidden = o.hasTime
+      $('oracleDeity').textContent = T(`ทำไมเป็น${o.deity}`, `Why ${o.deity}?`); $('oracleWhy').textContent = o.why; $('oracleHint').hidden = o.hasTime
       if (!linkImage) S.image = o.image
       markRecommended(o.image)
     }
@@ -385,7 +394,7 @@
     box.querySelectorAll('.rec').forEach(x => x.remove())
     const b = box.querySelector(`[data-id="${id}"]`)
     if (!b) return
-    b.append(el('span', 'rec', 'แนะนำ')); box.prepend(b); box.scrollLeft = 0
+    b.append(el('span', 'rec', T('แนะนำ', 'For you'))); box.prepend(b); box.scrollLeft = 0
   }
 
   // ---------- รับภาพ ----------
@@ -408,7 +417,7 @@
     $('notice').hidden = open
     $('buyBack').hidden = !(buyMore && p)
     $('passNote').hidden = paid || !had || buyMore
-    $('passNote').textContent = 'สิทธิ์ที่ซื้อไว้ใช้ครบแล้ว หรือไม่รวมภาพนี้ ซื้อเพิ่มเพื่อรับภาพนี้ได้เลย'
+    $('passNote').textContent = T('สิทธิ์ที่ซื้อไว้ใช้ครบแล้ว หรือไม่รวมภาพนี้ ซื้อเพิ่มเพื่อรับภาพนี้ได้เลย', 'Your purchase is fully used or doesn’t include this image. Buy more to get this one.')
     $('payClosed').hidden = open
     $('paid').hidden = !paid; $('payOpen').hidden = !open || paid
     $('plans').hidden = !!paid
@@ -416,7 +425,7 @@
     if (open && !paid) {
       const amount = S.plan === 'set' ? SHOP.price.set : SHOP.price.one
       $('payAmount').textContent = amount
-      $('payBankName').textContent = SHOP.bank.name
+      $('payBankName').textContent = T(SHOP.bank.name, 'Kasikornbank (KBank), Thailand')
       $('payAccount').textContent = SHOP.bank.account
       $('payHolder').textContent = SHOP.bank.holder
       drawQr(amount)
@@ -425,8 +434,9 @@
       const thisOne = (p.images || []).includes(S.image)
       const left = passList().filter(q => q.scope === 'set').reduce((n, q) => n + setLeft(q), 0)
       $('paidNote').textContent = p.scope === 'set'
-        ? `ชุดนี้ใช้สิทธิ์แล้ว ${SET_IMAGES - setLeft(p)} จาก ${SET_IMAGES} ภาพ (สิทธิ์เหลือรวม ${left} ภาพ) · ${thisOne ? 'ภาพนี้ใช้สิทธิ์แล้ว แก้แล้วโหลดซ้ำไม่เสียสิทธิ์เพิ่ม' : 'ภาพนี้ยังไม่ใช้สิทธิ์ กดบันทึกจะนับ 1 สิทธิ์'} · กดเลือกองค์เทพด้านบนเพื่อแต่งภาพถัดไป ระบบจำการแต่งแยกรายภาพให้ในเครื่องนี้`
-        : 'บันทึกภาพนี้เป็นไฟล์เต็มได้'
+        ? T(`ชุดนี้ใช้สิทธิ์แล้ว ${SET_IMAGES - setLeft(p)} จาก ${SET_IMAGES} ภาพ (สิทธิ์เหลือรวม ${left} ภาพ) · ${thisOne ? 'ภาพนี้ใช้สิทธิ์แล้ว แก้แล้วโหลดซ้ำไม่เสียสิทธิ์เพิ่ม' : 'ภาพนี้ยังไม่ใช้สิทธิ์ กดบันทึกจะนับ 1 สิทธิ์'} · กดเลือกองค์เทพด้านบนเพื่อแต่งภาพถัดไป ระบบจำการแต่งแยกรายภาพให้ในเครื่องนี้`,
+          `This set has used ${SET_IMAGES - setLeft(p)} of ${SET_IMAGES} images (${left} left in total) · ${thisOne ? 'This image is already counted — editing and re-downloading uses nothing more.' : 'This image isn’t counted yet — saving it uses 1.'} · Tap a deity above to design your next image. Your designs are remembered on this device.`)
+        : T('บันทึกภาพนี้เป็นไฟล์เต็มได้', 'You can save this image as a full-size file.')
       showPaidPreview()
     }
     const savedThis = paid && !!savedFiles()[S.image]
@@ -445,40 +455,40 @@
   }
   const blobOf = c => new Promise(ok => c.toBlob(ok, 'image/jpeg', .93))
   $('saveClose').onclick = () => { $('saveov').hidden = true }
-  $('savePreview').onclick = async () => { while (drawing) await new Promise(r => setTimeout(r, 60)); saveBlob(await blobOf(view), `amatathewa-ตัวอย่าง-${S.image}.jpg`) }
+  $('savePreview').onclick = async () => { while (drawing) await new Promise(r => setTimeout(r, 60)); saveBlob(await blobOf(view), T(`amatathewa-ตัวอย่าง-${S.image}.jpg`, `amatathewa-preview-${S.image}.jpg`)) }
   $('slip').addEventListener('change', fbStartPay)
   $('saveQr').onclick = async () => fbStartPay() || saveBlob(await blobOf($('payQr')), `amatathewa-qr-${S.plan === 'set' ? SHOP.price.set : SHOP.price.one}.jpg`)
   $('copyAccount').onclick = async () => {
     fbStartPay()
     const b = $('copyAccount'), number = SHOP.bank.account.replace(/-/g, '')
-    try { await navigator.clipboard.writeText(number); b.textContent = 'คัดลอกแล้ว' } catch { b.textContent = number }
-    setTimeout(() => { b.textContent = 'คัดลอกเลขบัญชี' }, 2500)
+    try { await navigator.clipboard.writeText(number); b.textContent = T('คัดลอกแล้ว', 'Copied') } catch { b.textContent = number }
+    setTimeout(() => { b.textContent = T('คัดลอกเลขบัญชี', 'Copy account number') }, 2500)
   }
   $('sendSlip').onclick = async () => {
     const file = $('slip').files[0], err = $('payErr'); err.hidden = true
-    if (!file) { err.textContent = 'แนบรูปสลิปก่อนนะครับ'; err.hidden = false; return }
-    const b = $('sendSlip'); b.disabled = true; b.textContent = 'กำลังตรวจสลิป'
+    if (!file) { err.textContent = T('แนบรูปสลิปก่อนนะครับ', 'Please attach your slip first.'); err.hidden = false; return }
+    const b = $('sendSlip'); b.disabled = true; b.textContent = T('กำลังตรวจสลิป', 'Checking slip…')
     try {
       const fd = new FormData(); fd.append('plan', S.plan); fd.append('image', S.image); fd.append('owner', owner); fd.append('slip', file)
       const r = await fetch(`${SHOP.api}/order`, { method: 'POST', body: fd }), j = await r.json()
-      if (!r.ok) throw new Error(j.message || 'ตรวจสลิปไม่ผ่าน')
+      if (!r.ok) throw new Error(T(j.message || 'ตรวจสลิปไม่ผ่าน', 'The slip could not be verified.'))
       const l = passList(); passes[owner] = l
       if (!l.some(q => q.id && q.id === j.id)) l.push({ token: j.token, scope: j.scope, image: j.image, exp: j.exp, id: j.id, images: [] })
       fb('Purchase', { value: S.plan === 'set' ? SHOP.price.set : SHOP.price.one, currency: 'THB' })
       keep.set('amt-passes', passes); buyMore = false; renderControls()
       $('buy').scrollIntoView()
-    } catch (e) { err.textContent = e.message + ' ถ้าโอนแล้วแต่ไม่ผ่าน ทักมาที่ LINE ของอมตเทวาพร้อมสลิป'; err.hidden = false }
-    b.disabled = false; b.textContent = 'ส่งสลิปและรับภาพ'
+    } catch (e) { err.textContent = e.message + T(' ถ้าโอนแล้วแต่ไม่ผ่าน ทักมาที่ LINE ของอมตเทวาพร้อมสลิป', ' If you have transferred and it still fails, message AMATATHEWA on LINE with your slip.'); err.hidden = false }
+    b.disabled = false; b.textContent = T('ส่งสลิปและรับภาพ', 'Send slip and get my image')
   }
   $('saveFull').onclick = async () => {
-    const b = $('saveFull'), err = $('fullErr'); err.hidden = true; b.disabled = true; b.textContent = 'กำลังสร้างไฟล์เต็ม'
+    const b = $('saveFull'), err = $('fullErr'); err.hidden = true; b.disabled = true; b.textContent = T('กำลังสร้างไฟล์เต็ม', 'Creating full file…')
     try {
       let pass, r
       const design = await designOf()
       // สิทธิ์ครั้งนี้ใช้ครบแล้ว → จำไว้ แล้วลองการซื้อครั้งถัดไปของภาพเดียวกัน
       for (const tried = new Set(); ;) {
         pass = passFor(S.image, design)
-        if (!pass || tried.has(pass)) throw new Error(`ภาพนี้ใช้สิทธิ์ครบ 3 แบบแล้ว (แบบที่เคยโหลด กลับไปแต่งให้เหมือนเดิมแล้วโหลดซ้ำได้)`)
+        if (!pass || tried.has(pass)) throw Object.assign(new Error(T(`ภาพนี้ใช้สิทธิ์ครบ 3 แบบแล้ว (แบบที่เคยโหลด กลับไปแต่งให้เหมือนเดิมแล้วโหลดซ้ำได้)`, 'This image has used all 3 design versions. (Any design you downloaded before can be downloaded again — set it up the same way.)')), { quota: true })
         tried.add(pass)
         const h = { Authorization: `Bearer ${pass.token}`, 'X-Owner': owner, 'X-Design': design }
         // หลังบ้านรุ่นเก่ายังไม่รับ X-Design (เบราว์เซอร์ตัดทิ้งทั้งคำขอ) → ลองใหม่แบบไม่ส่ง
@@ -486,7 +496,7 @@
         if (r.status !== 429) break
         pass.left = pass.left || {}; pass.left[S.image] = 0; keep.set('amt-passes', passes)
       }
-      if (!r.ok) throw new Error((await r.json()).message || 'โหลดไฟล์ไม่ได้')
+      if (!r.ok) throw new Error(T((await r.json()).message || 'โหลดไฟล์ไม่ได้', 'Could not load the file.'))
       const left = r.headers.get('X-Downloads-Left')
       if (left !== null) { pass.left = pass.left || {}; pass.left[S.image] = +left }
       pass.designs = pass.designs || {}; const known = pass.designs[S.image] = pass.designs[S.image] || []; if (!known.includes(design)) known.push(design)
@@ -497,23 +507,23 @@
       if (pass.scope === 'set') { pass.images = pass.images || []; if (!pass.images.includes(S.image)) pass.images.push(S.image) }
       const usedNow = +r.headers.get('X-Images-Used'); if (usedNow) pass.used = usedNow
       keep.set('amt-passes', passes)
-      $('fullLeft').textContent = left !== null ? `แบบนี้โหลดซ้ำได้เรื่อยๆ ไม่เสียสิทธิ์ · ภาพนี้แต่งแบบใหม่ได้อีก ${left} แบบ` : ''
+      $('fullLeft').textContent = left !== null ? T(`แบบนี้โหลดซ้ำได้เรื่อยๆ ไม่เสียสิทธิ์ · ภาพนี้แต่งแบบใหม่ได้อีก ${left} แบบ`, `This design can be downloaded again any time at no cost · ${left} new design(s) left for this image`) : ''
       renderControls()
       afterSave()
-    } catch (e) { err.textContent = e.message + (/ครบ/.test(e.message) ? ' ถ้าไฟล์มีปัญหา ทักมาที่ LINE ของอมตเทวา' : ' ลองกดอีกครั้ง'); err.hidden = false }
-    b.disabled = false; b.textContent = 'บันทึกภาพเต็ม'
+    } catch (e) { err.textContent = e.message + (e.quota || /ครบ/.test(e.message) ? T(' ถ้าไฟล์มีปัญหา ทักมาที่ LINE ของอมตเทวา', ' If the file has a problem, message AMATATHEWA on LINE.') : T(' ลองกดอีกครั้ง', ' Please try again.')); err.hidden = false }
+    b.disabled = false; b.textContent = T('บันทึกภาพเต็ม', 'Save full image')
   }
   // ── รีวิว (5 พ.ย. 2569) ─ หลังบันทึกภาพเต็ม: คำอวยพร → 3 วินาที → แผ่นดาวเลื่อนขึ้นครึ่งจอ (ไม่บังภาพ) ─
-  const WORD = ['', 'ยังไม่ถูกใจ', 'พอใช้', 'ดี', 'ชอบมาก', 'ประทับใจที่สุด']
+  const WORD = T(['', 'ยังไม่ถูกใจ', 'พอใช้', 'ดี', 'ชอบมาก', 'ประทับใจที่สุด'], ['', 'Not for me', 'Okay', 'Good', 'Love it', 'Absolutely love it'])
   const rated = keep.get('amt-rated', {})   // ภาพที่ให้ดาวแล้วหรือปิดแผ่นแล้ว จะไม่เด้งซ้ำ
   let rStars = 0, rShowName = true, rImage = null, rTimer = 0
-  const starBtns = [1, 2, 3, 4, 5].map(n => { const b = el('button', '', '★'); b.type = 'button'; b.setAttribute('aria-label', `${n} ดาว`); b.onclick = () => rate(n); $('rStars').append(b); return b })
-  const paintStars = () => { starBtns.forEach((b, i) => b.classList.toggle('on', i < rStars)); $('rWord').textContent = rStars ? WORD[rStars] : 'แตะดาวเพื่อให้คะแนน' }
+  const starBtns = [1, 2, 3, 4, 5].map(n => { const b = el('button', '', '★'); b.type = 'button'; b.setAttribute('aria-label', T(`${n} ดาว`, `${n} star${n > 1 ? 's' : ''}`)); b.onclick = () => rate(n); $('rStars').append(b); return b })
+  const paintStars = () => { starBtns.forEach((b, i) => b.classList.toggle('on', i < rStars)); $('rWord').textContent = rStars ? WORD[rStars] : T('แตะดาวเพื่อให้คะแนน', 'Tap a star to rate') }
   const mineOf = img => (rated[owner] || {})[img] || {}
   const postReview = async extra => {
-    const pass = passFor(rImage); if (!pass) throw new Error('สิทธิ์หมดอายุแล้ว')
+    const pass = passFor(rImage); if (!pass) throw new Error(T('สิทธิ์หมดอายุแล้ว', 'Your purchase has expired.'))
     const r = await fetch(`${SHOP.api}/review`, { method: 'POST', headers: { Authorization: `Bearer ${pass.token}`, 'X-Owner': owner, 'Content-Type': 'application/json' }, body: JSON.stringify({ image: rImage, stars: rStars, ...extra }) })
-    if (!r.ok) throw new Error((await r.json().catch(() => ({}))).message || 'ส่งไม่สำเร็จ ลองอีกครั้ง')
+    if (!r.ok) throw new Error(T((await r.json().catch(() => ({}))).message || 'ส่งไม่สำเร็จ ลองอีกครั้ง', 'Could not send. Please try again.'))
   }
   const openSheet = () => {
     rImage = S.image; rStars = mineOf(rImage).stars || 0; paintStars()
@@ -550,7 +560,7 @@
     try {
       const r = await fetch(`${SHOP.api}/reviews`); if (!r.ok) return
       const d = await r.json(), list = $('rvList')
-      if (d.avg) { $('rvAvg').textContent = d.avg.toFixed(1); $('rvLine').textContent = '★★★★★'; $('rvFrom').textContent = `จาก ${d.count} รีวิว`; $('rvScore').hidden = false }
+      if (d.avg) { $('rvAvg').textContent = d.avg.toFixed(1); $('rvLine').textContent = '★★★★★'; $('rvFrom').textContent = T(`จาก ${d.count} รีวิว`, `from ${d.count} reviews`); $('rvScore').hidden = false }
       d.items.forEach((x, i) => {
         const box = el('div', 'rv'); if (i >= 3) box.hidden = true
         box.append(el('div', 's', '★'.repeat(x.stars) + '☆'.repeat(5 - x.stars)), el('p', '', `“${x.text}”`), el('div', 'who', `${x.who} · ${x.deity}`))

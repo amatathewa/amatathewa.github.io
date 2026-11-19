@@ -46,6 +46,55 @@
   }
   const CARE = { 7: 'งานที่หนักขึ้นช่วงนี้ ค่อยๆ ทำไป อย่าเร่งตัวเองเกินแรง', 8: 'เรื่องใหญ่เรื่องไหนที่ต้องตัดสินใจ ค่อยๆ คิดให้รอบก่อน' }
 
+
+  // ภาษาอังกฤษ (19 พ.ย. 2569) · โครงเดียวกับภาษาไทย แต่ภาษาอังกฤษไม่มีคำเรียก "ลูก/เจ้า" แทรกกลางประโยค
+  const EN = !!window.AMT_EN
+  const MONTH_EN = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+  const GOD_EN = {
+    shiva: { name: 'Shiva', open: 'My child,', close: 'A still heart is your true strength.' },
+    parvati: { name: 'Parvati', open: 'My beloved child,', close: 'I am always here. Whenever you are tired, come back and rest in my heart.' },
+    durga: { name: 'Parvati', open: 'My beloved child,', close: 'I stand here protecting you. Your heart will not lose its way.' },
+    durgaCare: { name: 'Parvati', open: 'My beloved child, do not be afraid.', close: 'I stand here protecting you. Your heart will not lose its way.' },
+    skanda: { name: 'Skanda', open: 'You are stronger than you think.', close: 'My spear is always at your side. Go forward.' },
+    vishnu: { name: 'Vishnu', open: 'My child, I can already see the road ahead of you.', close: 'I watch over every step you take. Walk on with an easy heart.' },
+    saraswati: { name: 'Saraswati', open: 'My dear child, listen to me.', close: 'Your wisdom is a light no one can take from you.' },
+    lakshmi: { name: 'Lakshmi', open: 'My dear child, I bring you good news.', close: 'I have lit a lamp for you. May your home be warm and full every day.' },
+    ganesha: { name: 'Ganesha', open: 'I come with good news, my child.', close: 'Whatever stone blocks your way, leave it to me.' },
+    ganeshaCare: { name: 'Ganesha', open: 'My child, do not lose heart yet.', close: 'Whatever stone blocks your way, leave it to me.' },
+    standin: { name: 'Shiva and Ganesha' },
+  }
+  const OWN_EN = { 1: 'the deity of Sunday', 2: 'the deity of Monday', 3: 'the deity of Tuesday', 4: 'the deity of Wednesday', 5: 'the deity of Thursday', 6: 'the deity of Friday', 7: 'the deity of Saturday', 8: 'the guardian of Rahu, the planet of people born on Wednesday night, in her form as Durga' }
+  const GUARD_EN = {
+    7: 'Ganesha removes obstacles and, in Thai belief, is the deity of Saturn. In a time that calls for patience, he supports you most directly.',
+    8: 'Parvati, in her form as Durga, watches over Rahu. In a time of decisions, she keeps your heart steady so you choose well.',
+  }
+  const CORE_EN = {
+    rise: 'People above you will look on you kindly now, and new knowledge and opportunities will come to you on their own. If there is something important you want to begin, begin it now — the timing is right.',
+    money: 'Money will come into your hands more easily than before. The work you have put in is starting to bear fruit, and new sources of income are opening. Keep your eyes open.',
+    people: 'Good people are coming into your life — some who will help with your work, and some who will stay by your side. Open your heart to them.',
+    hard7: 'Work will grow heavier, and some days may tire you more than they should. But everything you build now will stand firm for a long time. Lay it one stone at a time.',
+    hard8: 'New things will arrive that ask for quick decisions — opportunities you have never met, and things that pull your mind away. Once your heart is still, you will choose rightly.',
+    win: 'The effort you have gathered is starting to show. The obstacles in your way are slowly easing. Walk a little further — the road ahead is clearer than you think.',
+    calm: 'The sky is calm for now; no major planet is troubling you. How far your life goes depends on the effort you put in. This is a good time to lay firm foundations for what you have set your heart on.',
+  }
+  const CARE_EN = { 7: 'With the heavier work now, take it step by step and don’t push yourself beyond your strength.', 8: 'For any big decision, take your time and think it through first.' }
+  const whenEN = d => {
+    if (!d) return ''
+    const y = d.getUTCFullYear(), now = new Date().getFullYear(), m = MONTH_EN[d.getUTCMonth()]
+    return y === now ? `this ${m}` : y === now + 1 ? `${m} next year` : `${m} ${y}`
+  }
+  const readEN = (key, core, care, planet, until, guard, standin, day) => {
+    const g = GOD_EN[key], c = CORE_EN[core]
+    const lines = [g.open.endsWith(',') ? `${g.open} ${c[0].toLowerCase()}${c.slice(1)}` : `${g.open} ${c}`]
+    if (care) lines.push(CARE_EN[care])
+    lines.push(g.close + (!until ? '' : core.startsWith('hard') ? ` Around ${until}, everything will gradually ease.` : ` This blessing will stay with you until ${until}.`))
+    const name = standin ? GOD_EN.standin.name : g.name
+    const why = guard ? GUARD_EN[guard] : standin
+      ? 'Skanda is the deity of Tuesday. Shiva holding Ganesha shows his father and elder brother.'
+      : `${name} is ${OWN_EN[day]} — the deity who supports you most right now.`
+    return { deity: name, lines, why }
+  }
+
   const chartOn = (L, d, hh = 12, mm = 0) => L.calculateThaiHoroscope({ date: { year: d.getUTCFullYear(), era: 'CE', month: d.getUTCMonth() + 1, day: d.getUTCDate() }, time: { hour: hh, minute: mm }, referenceMode: 'traditional' }).points
   // วันที่ดาวออกจากราศีปัจจุบัน (ก้าวทีละ 7 วัน พอสำหรับบอกเป็นเดือน)
   const leaves = (L, n, from, sign) => {
@@ -73,10 +122,10 @@
     const hj = house(5), hs = house(7), hr = house(8)
     const verb = h => h === 1 ? 'กุม' : h === 7 ? 'เล็ง' : 'หนุน'
     const hit = [7, 8].filter(n => [1, 7].includes(house(n)))
-    let core, planet, guard = null, care = ''
+    let core, planet, guard = null, care = '', careKey = 0
     if ([1, 5, 9, 2, 11, 7].includes(hj)) {
       planet = 5; core = [2, 11].includes(hj) ? 'money' : hj === 7 ? 'people' : 'rise'
-      if (hit.length) care = CARE[hit[0]]
+      if (hit.length) { care = CARE[hit[0]]; careKey = hit[0] }
     } else if (hit.length) { planet = hit[0]; core = 'hard' + planet; guard = GUARD[planet] }
     else if ([3, 6, 11].includes(hs) || [3, 6, 11].includes(hr)) { planet = [3, 6, 11].includes(hs) ? 7 : 8; core = 'win' }
     else { planet = null; core = 'calm' }
@@ -87,12 +136,17 @@
     const fill = s => s.replaceAll('{u}', g.u)
     const lines = [`${g.open} ${fill(CORE[core])}`]
     if (care) lines.push(care)
-    const until = planet ? when(leaves(L, planet, today, now[KEY[planet]].sign)) : ''
+    const leaveAt = planet ? leaves(L, planet, today, now[KEY[planet]].sign) : null, until = when(leaveAt)
     lines.push(g.close + (!until ? '' : core.startsWith('hard') ? ` ราว${until} ทุกอย่างจะค่อยๆ คลี่คลาย` : ` พรนี้จะอยู่กับ${g.u}ไปจนถึง${until}`))
     const from = planet ? `ดูจาก: ดาว${STAR[planet]}${core === 'win' ? 'อยู่ตำแหน่งที่ดีต่อ' : verb(house(planet))}${refName}ของคุณ` : `ดูจาก: ดาวพฤหัส เสาร์ ราหู ช่วงนี้ไม่ได้กระทบ${refName}ของคุณ`
     const why = guard ? guard[1] : g === SKANDA_STANDIN
       ? 'พระขันธกุมารคือเทพประจำวันอังคาร ภาพพระศิวะอุ้มพระพิฆเนศคือพระบิดาและพระเชษฐาขององค์ท่าน'
       : `${g.name}คือ${ownWhy} องค์ท่านจึงเป็นองค์ที่หนุนคุณที่สุดในช่วงนี้`
+    if (EN) {
+      const key = guard ? guard[0] : ownKey, untilEN = whenEN(leaveAt)
+      const e = readEN(key, core, careKey, planet, untilEN, guard ? planet : 0, g === SKANDA_STANDIN, day)
+      return { image: g.image, deity: e.deity, lines: e.lines, from, why: e.why, hasTime }
+    }
     return { image: g.image, deity: g.name, lines, from, why, hasTime }
   }
   window.Oracle = { read, _text: { GOD, CORE, CARE } }   // _text ใช้ทำใบตรวจสำนวน

@@ -45,6 +45,10 @@ body::before{content:"";position:fixed;top:0;left:0;right:0;height:100lvh;z-inde
 .notice{background:var(--deep);color:var(--goldsoft);text-align:center;font-size:15px;padding:7px 16px}
 .brand{display:flex;justify-content:center;padding:22px 0 14px}
 .brand img{width:132px;height:auto;display:block}
+.brand{position:relative}
+.langbtn{position:absolute;right:0;top:18px;min-height:34px;padding:4px 13px;border:1px solid var(--line);border-radius:99px;background:transparent;color:var(--goldsoft);font:500 14px "IBM Plex Sans Thai",sans-serif;letter-spacing:.05em;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.langbtn:hover{border-color:var(--goldsoft)}
+.abroad{border:1px solid var(--line);border-radius:4px;padding:10px 12px;margin-top:12px}
 h1,h2{font-family:Trirong,serif;font-weight:400;line-height:1.35;margin:0 0 12px;letter-spacing:.01em}
 h1{font-size:clamp(30px,7vw,42px);text-shadow:0 1px 14px rgba(0,0,0,.7)}
 h2{font-size:clamp(25px,4.6vw,33px);color:var(--goldsoft);text-shadow:0 1px 12px rgba(0,0,0,.85)}
@@ -252,52 +256,53 @@ fbq('track','PageView');
 <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=29412366955054139&ev=PageView&noscript=1"/></noscript>
 </head>
 <body>
-<div class="notice" id="notice">ช่วงทดลอง ยังไม่เปิดรับเงิน ลองคำนวณเลขและแต่งภาพได้ฟรี ภาพตัวอย่างมีลายน้ำ</div>
+<div class="notice" id="notice" data-en="Trial period: payments are not open yet. You can calculate your numbers and design your wallpaper for free. Previews carry a watermark.">ช่วงทดลอง ยังไม่เปิดรับเงิน ลองคำนวณเลขและแต่งภาพได้ฟรี ภาพตัวอย่างมีลายน้ำ</div>
 <div class="wrap">
-  <div class="brand"><a href="/" aria-label="ไปหน้าแรก อมตเทวา"><img src="assets/logo.png?v=2b" alt="AMATATHEWA อมตเทวา" width="300" height="207" draggable="false"></a></div>
+  <div class="brand"><button type="button" class="langbtn" id="langBtn">EN</button><a href="/" aria-label="ไปหน้าแรก อมตเทวา"><img src="assets/logo.png?v=2b" alt="AMATATHEWA อมตเทวา" width="300" height="207" draggable="false"></a></div>
   <div class="hero">
     <figure><img src="assets/hero.jpg?v=202611037" alt="ภาพหมึกจีนองค์พระศิวะอุ้มพระพิฆเนศน้อย" width="800" height="1005" draggable="false"></figure>
     <div>
-      <p class="eyebrow">วอลเปเปอร์มงคล องค์เทพหมึกจีน</p>
-      <h1>องค์เทพอยากบอก<br>อะไรกับคุณ</h1>
-      <p class="lead">กรอกวันเกิด แล้วฟังว่าดาวที่เดินอยู่ช่วงนี้กำลังพาอะไรมาให้คุณ พร้อมภาพองค์เทพที่หนุนคุณที่สุด ใส่เลขมงคลจากวันเกิดของคุณไว้ให้เรียบร้อย ดูได้ฟรีก่อนตัดสินใจ</p>
-      <p class="price">1 ภาพ 159 บาท · เลือกได้ 6 ภาพ 399 บาท จากทั้งหมด 25 ภาพ</p>
-      <a class="btn shine" href="#birth">เริ่มเลย ดูฟรี</a>
+      <p class="eyebrow" data-en="Auspicious wallpapers · Hindu deities in Chinese ink">วอลเปเปอร์มงคล องค์เทพหมึกจีน</p>
+      <h1 data-en="What do the deities&lt;br&gt;want to tell you?">องค์เทพอยากบอก<br>อะไรกับคุณ</h1>
+      <p class="lead" data-en="Enter your birth date and hear what the planets moving through your chart are bringing you now — with the deity who supports you most, and lucky numbers from your birth date already placed on the image. Free to view before you decide.">กรอกวันเกิด แล้วฟังว่าดาวที่เดินอยู่ช่วงนี้กำลังพาอะไรมาให้คุณ พร้อมภาพองค์เทพที่หนุนคุณที่สุด ใส่เลขมงคลจากวันเกิดของคุณไว้ให้เรียบร้อย ดูได้ฟรีก่อนตัดสินใจ</p>
+      <p class="price" data-en="1 image 159 THB · or choose 6 images for 399 THB, from 25 designs">1 ภาพ 159 บาท · เลือกได้ 6 ภาพ 399 บาท จากทั้งหมด 25 ภาพ</p>
+      <a class="btn shine" href="#birth" data-en="Start now — it’s free">เริ่มเลย ดูฟรี</a>
     </div>
   </div>
 
   <section id="birth">
-    <h2>กรอกวันเกิดของคุณ</h2>
-    <p class="lead"><b class="freetag">ดูคำทำนายฟรี ไม่ต้องจ่ายเงิน</b> จ่ายเฉพาะตอนบันทึกภาพเต็ม<br>เราคำนวณในเครื่องของคุณ ไม่ส่งวันเวลาเกิดไปเก็บที่ไหน</p>
+    <h2 data-en="Enter your birth date">กรอกวันเกิดของคุณ</h2>
+    <p class="lead" data-en="&lt;b class=&quot;freetag&quot;&gt;Your reading is free — no payment needed&lt;/b&gt; You only pay to save the full-size image.&lt;br&gt;Everything is calculated on your own device. Your birth date and time are never sent or stored anywhere."><b class="freetag">ดูคำทำนายฟรี ไม่ต้องจ่ายเงิน</b> จ่ายเฉพาะตอนบันทึกภาพเต็ม<br>เราคำนวณในเครื่องของคุณ ไม่ส่งวันเวลาเกิดไปเก็บที่ไหน</p>
     <form class="card narrow" id="f" autocomplete="off">
-      <label>วันเกิด</label>
+      <label data-en="Date of birth">วันเกิด</label>
       <div class="row3"><select id="d" aria-label="วัน"></select><select id="m" aria-label="เดือน"></select><select id="y" aria-label="ปี พ.ศ."></select></div>
       <div id="wedBox" hidden>
-        <label>เกิดวันพุธช่วงไหน</label>
-        <div class="chips wed"><button type="button" class="chip" id="wedDay" aria-pressed="true">พุธกลางวัน</button><button type="button" class="chip" id="wedNight" aria-pressed="false">พุธกลางคืน</button></div>
-        <p class="help">วันที่คุณเลือกตรงกับวันพุธ · พุธกลางคืน คือเกิดหลัง 18:00 น. ตำราไทยนับเป็นอีกวันหนึ่ง</p>
+        <label data-en="Born on Wednesday — day or night?">เกิดวันพุธช่วงไหน</label>
+        <div class="chips wed"><button type="button" class="chip" id="wedDay" aria-pressed="true" data-en="Wednesday daytime">พุธกลางวัน</button><button type="button" class="chip" id="wedNight" aria-pressed="false" data-en="Wednesday night">พุธกลางคืน</button></div>
+        <p class="help" data-en="The date you chose is a Wednesday. Wednesday night means born after 6 pm — Thai astrology counts it as a separate day.">วันที่คุณเลือกตรงกับวันพุธ · พุธกลางคืน คือเกิดหลัง 18:00 น. ตำราไทยนับเป็นอีกวันหนึ่ง</p>
       </div>
       <input type="checkbox" id="noTime" checked hidden>
       <input type="checkbox" id="night" hidden>
-      <button type="button" class="linkbtn" id="addTime">+ ใส่เวลาและที่เกิด (ไม่บังคับ องค์เทพจะบอกได้ชัดขึ้น)</button>
+      <button type="button" class="linkbtn" id="addTime" data-en="+ Add birth time and place (optional — for a clearer reading)">+ ใส่เวลาและที่เกิด (ไม่บังคับ องค์เทพจะบอกได้ชัดขึ้น)</button>
       <div id="timeBox" hidden>
-        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px"><label>เวลาเกิด</label><button type="button" class="linkbtn" id="dropTime" style="width:auto;margin:0">ไม่ทราบเวลาเกิด</button></div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px"><label data-en="Time of birth">เวลาเกิด</label><button type="button" class="linkbtn" id="dropTime" style="width:auto;margin:0" data-en="I don’t know my birth time">ไม่ทราบเวลาเกิด</button></div>
         <div class="row2"><select id="hh" aria-label="ชั่วโมง"></select><select id="mm" aria-label="นาที"></select></div>
-        <label for="prov">จังหวัดที่เกิด</label><select id="prov"></select>
-        <label for="amp">อำเภอที่เกิด</label><select id="amp"></select>
+        <label for="prov" data-en="Province of birth (Thailand)">จังหวัดที่เกิด</label><select id="prov"></select>
+        <label for="amp" data-en-hide>อำเภอที่เกิด</label><select id="amp" data-en-hide></select>
+        <p class="help" hidden data-en-show>Birth places cover Thailand only. Born elsewhere? Tap “I don’t know my birth time” — your birth date alone is enough.</p>
       </div>
-      <button class="btn solid shine" style="margin-top:16px">ดูฟรี · องค์เทพอยากบอกอะไร</button>
+      <button class="btn solid shine" style="margin-top:16px" data-en="Free · What do the deities want to tell me?">ดูฟรี · องค์เทพอยากบอกอะไร</button>
       <div class="err" id="err" hidden></div>
     </form>
   </section>
 
   <section id="oracle" hidden>
-    <p class="eyebrow center" id="oracleEye">องค์เทพอยากบอกคุณว่า</p>
+    <p class="eyebrow center" id="oracleEye" data-en="The deities want to tell you">องค์เทพอยากบอกคุณว่า</p>
     <div class="card oracle narrow">
       <div id="oracleText"></div>
-      <button type="button" class="btn solid shine" id="getBlessing">รับพร</button>
+      <button type="button" class="btn solid shine" id="getBlessing" data-en="Receive the blessing">รับพร</button>
       <div class="whydeity" hidden><b id="oracleDeity"></b><p id="oracleWhy"></p></div>
-      <p class="help" id="oracleHint" hidden><button type="button" class="linkbtn" id="oracleTime">ใส่เวลาเกิดเพิ่ม องค์เทพจะบอกได้ชัดขึ้น</button></p>
+      <p class="help" id="oracleHint" hidden><button type="button" class="linkbtn" id="oracleTime" data-en="Add your birth time for a clearer message">ใส่เวลาเกิดเพิ่ม องค์เทพจะบอกได้ชัดขึ้น</button></p>
     </div>
   </section>
 
@@ -314,95 +319,96 @@ fbq('track','PageView');
   </section>
 
   <section id="studio" hidden>
-    <h2>ภาพมงคลของคุณ</h2>
-    <p class="lead">จัดให้ครบแล้ว ทั้งองค์เทพ เลขมงคล ตาราง และคำมงคล อยากได้องค์อื่นก็แตะเลือกได้เลย</p>
+    <h2 data-en="Your auspicious wallpaper">ภาพมงคลของคุณ</h2>
+    <p class="lead" data-en="Everything is ready: the deity, your lucky numbers, the number grid and a blessing word. Tap another deity to switch.">จัดให้ครบแล้ว ทั้งองค์เทพ เลขมงคล ตาราง และคำมงคล อยากได้องค์อื่นก็แตะเลือกได้เลย</p>
     <div class="studio">
-      <div class="stage" id="stage"><canvas id="view" width="640" height="1387" role="img" aria-label="ภาพตัวอย่างวอลเปเปอร์"></canvas><div class="busy" id="busy"></div><button type="button" class="decor-tip" id="decorTip" hidden>ตกแต่งเพิ่มเติมเองได้ ▾</button></div>
+      <div class="stage" id="stage"><canvas id="view" width="640" height="1387" role="img" aria-label="ภาพตัวอย่างวอลเปเปอร์"></canvas><div class="busy" id="busy"></div><button type="button" class="decor-tip" id="decorTip" hidden data-en="Customize it yourself ▾">ตกแต่งเพิ่มเติมเองได้ ▾</button></div>
       <div class="card">
-        <div class="ctl"><h3>ภาพองค์เทพ</h3><div class="thumbs" id="thumbs"></div></div>
-        <a class="btn solid shine" href="#buy" id="toBuy">รับภาพนี้</a>
-        <details class="adjust" id="adjust"><summary>แต่งภาพเพิ่มเองได้ · ใส่ชื่อ เลข คำมงคล</summary>
-        <div class="ctl"><h3>ลายตารางเลขด้านหลัง</h3><div class="chips" id="frames"></div><p class="help" id="frameNote"></p><p class="help">เลือกตามที่ชอบได้เลย ไม่มีลายไหนผิด</p><div class="gridpick" style="margin-top:12px"></div></div>
-        <div class="ctl"><h3>เลขมงคลบนภาพ</h3><div class="chips" id="numberPick"></div>
-          <h3 style="margin-top:12px">แบบตัวเลข</h3><div class="chips" id="numberStyle"></div>
-          <h3 style="margin-top:12px">ตำแหน่ง</h3><div class="chips" id="sidePick"></div></div>
-        <div class="ctl"><h3>คำมงคลในตราแดง</h3><div class="chips" id="words"></div>
-          <input type="text" id="ownWord" maxlength="14" placeholder="หรือพิมพ์คำที่คุณชอบเอง" autocomplete="off" style="margin-top:10px" aria-label="พิมพ์คำมงคลเอง">
-          <p class="help">ตราเป็นสีแดง คนไทยจำนวนมากถือเรื่องเขียนชื่อตัวเองด้วยสีแดง จึงไม่แนะนำให้ใส่ชื่อในตรา</p></div>
-        <div class="ctl"><h3>ชื่อหมึกดำบนภาพ</h3><input type="text" id="name" maxlength="30" placeholder="ไม่ใส่ก็ได้" autocomplete="off" aria-label="ชื่อใต้ภาพ">
-          <h3 style="margin-top:12px">ตำแหน่งชื่อ</h3><div class="chips" id="namePlace"></div><p class="help">ถ้าตั้งวอลเปเปอร์แล้วชื่อตกขอบจอ เลือก "ขยับขึ้น" หรือย่อภาพตอนตั้งวอลเปเปอร์</p></div>
+        <div class="ctl"><h3 data-en="Deity">ภาพองค์เทพ</h3><div class="thumbs" id="thumbs"></div></div>
+        <a class="btn solid shine" href="#buy" id="toBuy" data-en="Get this image">รับภาพนี้</a>
+        <details class="adjust" id="adjust"><summary data-en="Customize more · name, numbers, blessing word">แต่งภาพเพิ่มเองได้ · ใส่ชื่อ เลข คำมงคล</summary>
+        <div class="ctl"><h3 data-en="Number grid pattern">ลายตารางเลขด้านหลัง</h3><div class="chips" id="frames"></div><p class="help" id="frameNote"></p><p class="help" data-en="Choose whichever you like — there is no wrong pattern.">เลือกตามที่ชอบได้เลย ไม่มีลายไหนผิด</p><div class="gridpick" style="margin-top:12px"></div></div>
+        <div class="ctl"><h3 data-en="Lucky number on the image">เลขมงคลบนภาพ</h3><div class="chips" id="numberPick"></div>
+          <h3 style="margin-top:12px" data-en="Number style">แบบตัวเลข</h3><div class="chips" id="numberStyle"></div>
+          <h3 style="margin-top:12px" data-en="Position">ตำแหน่ง</h3><div class="chips" id="sidePick"></div></div>
+        <div class="ctl"><h3 data-en="Blessing word in the red seal">คำมงคลในตราแดง</h3><div class="chips" id="words"></div>
+          <input type="text" id="ownWord" maxlength="14" placeholder="หรือพิมพ์คำที่คุณชอบเอง" data-en-ph="Or type your own word" autocomplete="off" style="margin-top:10px" aria-label="พิมพ์คำมงคลเอง">
+          <p class="help" data-en="The seal shows the Thai word. It is red, and many Thais avoid writing their own name in red, so we don’t recommend putting your name in the seal.">ตราเป็นสีแดง คนไทยจำนวนมากถือเรื่องเขียนชื่อตัวเองด้วยสีแดง จึงไม่แนะนำให้ใส่ชื่อในตรา</p></div>
+        <div class="ctl"><h3 data-en="Name in black ink">ชื่อหมึกดำบนภาพ</h3><input type="text" id="name" maxlength="30" placeholder="ไม่ใส่ก็ได้" data-en-ph="Optional" autocomplete="off" aria-label="ชื่อใต้ภาพ">
+          <h3 style="margin-top:12px" data-en="Name position">ตำแหน่งชื่อ</h3><div class="chips" id="namePlace"></div><p class="help" data-en="If your name is cut off at the screen edge, choose “Move up” or zoom out when setting the wallpaper.">ถ้าตั้งวอลเปเปอร์แล้วชื่อตกขอบจอ เลือก "ขยับขึ้น" หรือย่อภาพตอนตั้งวอลเปเปอร์</p></div>
         </details>
       </div>
     </div>
   </section>
 
   <section id="reviews" hidden>
-    <h2>เสียงจากผู้ที่ได้ภาพไปแล้ว</h2>
+    <h2 data-en="From people who already have their wallpaper">เสียงจากผู้ที่ได้ภาพไปแล้ว</h2>
     <div class="card rvbox">
-      <div class="rvscore" id="rvScore" hidden><div class="big" id="rvAvg"></div><div class="line" id="rvLine"></div><div class="from" id="rvFrom"></div><span class="rvbadge">รีวิวจากผู้ศรัทธาจริงทุกข้อความ</span></div>
+      <div class="rvscore" id="rvScore" hidden><div class="big" id="rvAvg"></div><div class="line" id="rvLine"></div><div class="from" id="rvFrom"></div><span class="rvbadge" data-en="Every review is from a real customer">รีวิวจากผู้ศรัทธาจริงทุกข้อความ</span></div>
       <div id="rvList"></div>
-      <button class="rvmore" id="rvMore" type="button" hidden>อ่านรีวิวทั้งหมด</button>
+      <button class="rvmore" id="rvMore" type="button" hidden data-en="Read all reviews">อ่านรีวิวทั้งหมด</button>
     </div>
   </section>
 
   <section id="buy" hidden>
-    <h2>รับภาพ</h2>
+    <h2 data-en="Get your image">รับภาพ</h2>
     <div class="card narrow">
       <p class="help" id="passNote" hidden></p>
       <div class="plans" id="plans"></div>
-      <p class="help" id="planNote">แบบ 399 บาท เลือกภาพที่ชอบได้ 6 ภาพจาก 25 ภาพ แต่ละภาพแต่งเลข ลาย และคำมงคลต่างกันได้ การซื้อผูกกับวันเกิดนี้ 1 ดวง แก้แล้วโหลดซ้ำได้ภาพละ 3 ครั้ง ภายใน 30 วัน</p>
+      <p class="help" id="planNote" data-en="The 399 THB plan lets you choose 6 of the 25 images, each with its own numbers, pattern and blessing word. A purchase is tied to this one birth date. You can edit and re-download each image up to 3 times within 30 days.">แบบ 399 บาท เลือกภาพที่ชอบได้ 6 ภาพจาก 25 ภาพ แต่ละภาพแต่งเลข ลาย และคำมงคลต่างกันได้ การซื้อผูกกับวันเกิดนี้ 1 ดวง แก้แล้วโหลดซ้ำได้ภาพละ 3 ครั้ง ภายใน 30 วัน</p>
       <div class="pay" id="payClosed">
-        <p class="help" style="margin-top:14px">ตอนนี้ยังไม่เปิดรับเงิน คุณบันทึกภาพตัวอย่างขนาดเล็กที่มีลายน้ำไปลองตั้งเป็นหน้าจอได้</p>
-        <button class="btn alt" id="savePreview" type="button">บันทึกภาพตัวอย่าง</button>
+        <p class="help" style="margin-top:14px" data-en="Payments are not open yet. You can save a small watermarked preview and try it as your wallpaper.">ตอนนี้ยังไม่เปิดรับเงิน คุณบันทึกภาพตัวอย่างขนาดเล็กที่มีลายน้ำไปลองตั้งเป็นหน้าจอได้</p>
+        <button class="btn alt" id="savePreview" type="button" data-en="Save preview">บันทึกภาพตัวอย่าง</button>
       </div>
       <div class="pay" id="payOpen" hidden>
-        <p class="help backnote" id="backNote" hidden>ภาพและวันเกิดที่เลือกไว้ยังอยู่ครบ โอนแล้วแนบสลิปด้านล่างได้เลย</p>
-        <p style="margin:14px 0 0">ยอดที่ต้องโอน <b id="payAmount"></b> บาท</p>
-        <div class="bankbox"><span>ธนาคาร</span><b id="payBankName"></b><span>เลขบัญชี</span><b id="payAccount"></b><span>ชื่อบัญชี</span><b id="payHolder"></b></div>
-        <button class="btn alt" id="copyAccount" type="button">คัดลอกเลขบัญชี</button>
-        <p class="help center" style="margin-top:14px">หรือสแกน QR ยอดนี้ด้วยแอปธนาคาร</p>
+        <p class="help abroad" hidden data-en-show>Paying from outside Thailand? Bank transfer and PromptPay need a Thai bank account. <a class="lineLink" href="https://line.me/R/ti/p/@671omwgd" target="_blank" rel="noopener">Message us on LINE</a> and we’ll arrange another way to pay.</p>
+        <p class="help backnote" id="backNote" hidden data-en="Your image and birth date are still here. After transferring, attach the slip below.">ภาพและวันเกิดที่เลือกไว้ยังอยู่ครบ โอนแล้วแนบสลิปด้านล่างได้เลย</p>
+        <p style="margin:14px 0 0" data-en="Amount to transfer: &lt;b id=&quot;payAmount&quot;&gt;&lt;/b&gt; THB">ยอดที่ต้องโอน <b id="payAmount"></b> บาท</p>
+        <div class="bankbox"><span data-en="Bank">ธนาคาร</span><b id="payBankName"></b><span data-en="Account no.">เลขบัญชี</span><b id="payAccount"></b><span data-en="Account name">ชื่อบัญชี</span><b id="payHolder"></b></div>
+        <button class="btn alt" id="copyAccount" type="button" data-en="Copy account number">คัดลอกเลขบัญชี</button>
+        <p class="help center" style="margin-top:14px" data-en="Or scan this QR code with your banking app">หรือสแกน QR ยอดนี้ด้วยแอปธนาคาร</p>
         <canvas id="payQr" width="300" height="300" style="display:block;width:220px;height:220px;margin:12px auto 0;background:#fff" role="img" aria-label="QR พร้อมเพย์"></canvas>
-        <p class="help center" style="margin-top:10px">เปิดเว็บบนมือถือ กดบันทึก QR แล้วเปิดรูปในแอปธนาคาร</p>
-        <button class="btn alt" id="saveQr" type="button">บันทึก QR</button>
-        <label for="slip">แนบสลิป</label>
-        <p class="help" style="margin:0 0 6px">เคยซื้อแล้ว แต่เปลี่ยนมือถือหรือภาพหายจากเครื่อง กรอกวันเกิดเดิมแล้วแนบสลิปเดิมอีกครั้ง ระบบจะคืนสิทธิ์ให้ทันที ภายใน 30 วันนับจากวันซื้อ</p>
+        <p class="help center" style="margin-top:10px" data-en="On mobile: save the QR, then open the image in your banking app.">เปิดเว็บบนมือถือ กดบันทึก QR แล้วเปิดรูปในแอปธนาคาร</p>
+        <button class="btn alt" id="saveQr" type="button" data-en="Save QR">บันทึก QR</button>
+        <label for="slip" data-en="Attach your transfer slip">แนบสลิป</label>
+        <p class="help" style="margin:0 0 6px" data-en="Bought before but changed phones or lost the image? Enter the same birth date and attach the same slip again. Your purchase is restored instantly, within 30 days of buying.">เคยซื้อแล้ว แต่เปลี่ยนมือถือหรือภาพหายจากเครื่อง กรอกวันเกิดเดิมแล้วแนบสลิปเดิมอีกครั้ง ระบบจะคืนสิทธิ์ให้ทันที ภายใน 30 วันนับจากวันซื้อ</p>
         <input id="slip" type="file" accept="image/*">
-        <button class="btn solid" id="sendSlip" type="button">ส่งสลิปและรับภาพ</button>
+        <button class="btn solid" id="sendSlip" type="button" data-en="Send slip and get my image">ส่งสลิปและรับภาพ</button>
         <div class="err" id="payErr" hidden></div>
-        <p class="help center" style="margin-top:12px">โอนแล้วติดปัญหา หรือสลิปไม่ผ่าน <a class="lineLink" href="https://line.me/R/ti/p/@671omwgd" target="_blank" rel="noopener">ทัก LINE อมตเทวา</a> พร้อมแนบสลิป</p>
-        <button class="btn alt" id="buyBack" type="button" hidden>กลับไปใช้สิทธิ์ที่ซื้อไว้</button>
+        <p class="help center" style="margin-top:12px" data-en="Problem with the transfer or the slip? &lt;a class=&quot;lineLink&quot; href=&quot;https://line.me/R/ti/p/@671omwgd&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Message AMATATHEWA on LINE&lt;/a&gt; with your slip.">โอนแล้วติดปัญหา หรือสลิปไม่ผ่าน <a class="lineLink" href="https://line.me/R/ti/p/@671omwgd" target="_blank" rel="noopener">ทัก LINE อมตเทวา</a> พร้อมแนบสลิป</p>
+        <button class="btn alt" id="buyBack" type="button" hidden data-en="Back to my purchased images">กลับไปใช้สิทธิ์ที่ซื้อไว้</button>
       </div>
       <div class="pay" id="paid" hidden>
-        <p style="margin:14px 0 0"><b>ชำระเงินแล้ว</b> <span id="paidNote"></span></p>
-        <p class="center" style="margin:14px 0 0;color:var(--goldsoft)">ภาพที่กำลังจะบันทึก: <span id="paidName"></span></p>
+        <p style="margin:14px 0 0"><b data-en="Paid">ชำระเงินแล้ว</b> <span id="paidNote"></span></p>
+        <p class="center" style="margin:14px 0 0;color:var(--goldsoft)" data-en="Image to save: &lt;span id=&quot;paidName&quot;&gt;&lt;/span&gt;">ภาพที่กำลังจะบันทึก: <span id="paidName"></span></p>
         <img class="paidimg" id="paidPreview" alt="ตัวอย่างภาพที่กำลังจะบันทึก" draggable="false">
-        <p class="help center">ลายน้ำมีเฉพาะภาพตัวอย่างนี้ ไฟล์เต็มไม่มีลายน้ำ</p>
-        <button class="btn solid" id="saveFull" type="button">บันทึกภาพเต็ม</button>
+        <p class="help center" data-en="The watermark appears only on this preview. The full file has none.">ลายน้ำมีเฉพาะภาพตัวอย่างนี้ ไฟล์เต็มไม่มีลายน้ำ</p>
+        <button class="btn solid" id="saveFull" type="button" data-en="Save full image">บันทึกภาพเต็ม</button>
         <p class="help center" id="fullLeft"></p>
-        <p class="bless" id="bless" hidden>ขอให้ภาพนี้เป็นสิริมงคลแก่คุณ</p>
-        <button class="rateLink" id="rateLink" type="button" hidden>ให้คะแนนภาพนี้</button>
+        <p class="bless" id="bless" hidden data-en="May this image bring you blessings.">ขอให้ภาพนี้เป็นสิริมงคลแก่คุณ</p>
+        <button class="rateLink" id="rateLink" type="button" hidden data-en="Rate this image">ให้คะแนนภาพนี้</button>
         <div class="err" id="fullErr" hidden></div>
-        <p class="help center">ไฟล์มีปัญหา <a class="lineLink" href="https://line.me/R/ti/p/@671omwgd" target="_blank" rel="noopener">ทัก LINE อมตเทวา</a></p>
-        <button class="btn alt" id="buyMoreBtn" type="button">ซื้อเพิ่ม</button>
-        <p class="help center">ซื้อให้คนอื่น ให้เปลี่ยนวันเกิดด้านบนเป็นของคนนั้นก่อน</p>
+        <p class="help center" data-en="Problem with the file? &lt;a class=&quot;lineLink&quot; href=&quot;https://line.me/R/ti/p/@671omwgd&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Message AMATATHEWA on LINE&lt;/a&gt;">ไฟล์มีปัญหา <a class="lineLink" href="https://line.me/R/ti/p/@671omwgd" target="_blank" rel="noopener">ทัก LINE อมตเทวา</a></p>
+        <button class="btn alt" id="buyMoreBtn" type="button" data-en="Buy more">ซื้อเพิ่ม</button>
+        <p class="help center" data-en="Buying for someone else? Change the birth date above to theirs first.">ซื้อให้คนอื่น ให้เปลี่ยนวันเกิดด้านบนเป็นของคนนั้นก่อน</p>
       </div>
     </div>
   </section>
 
   <section id="origin" hidden>
-    <button type="button" class="btn alt" id="originBtn">อ่านที่มาเลขมงคลและตาราง 9 ช่องของคุณ</button>
+    <button type="button" class="btn alt" id="originBtn" data-en="Where do my lucky numbers and 9-cell grid come from?">อ่านที่มาเลขมงคลและตาราง 9 ช่องของคุณ</button>
   </section>
 
   <section id="numbers" class="fold" hidden>
-    <h2>2. เลขมงคลของคุณ</h2>
-    <p class="help refine" id="refine" hidden>คำนวณจากวันเกิดอย่างเดียว · <button type="button" class="linkbtn" id="refineBtn">ใส่เวลาและที่เกิดเพิ่ม ให้แม่นขึ้น</button></p>
-    <p class="lead">เลขแต่ละคู่คำนวณจากวันเกิดของคุณ อ่านที่มาและความหมายตามตำรา แล้วเลือกคู่ที่ตรงกับเรื่องที่คุณตั้งใจ</p>
+    <h2 data-en="Your lucky numbers">2. เลขมงคลของคุณ</h2>
+    <p class="help refine" id="refine" hidden data-en="Calculated from your birth date only · &lt;button type=&quot;button&quot; class=&quot;linkbtn&quot; id=&quot;refineBtn&quot;&gt;Add birth time and place for more precision&lt;/button&gt;">คำนวณจากวันเกิดอย่างเดียว · <button type="button" class="linkbtn" id="refineBtn">ใส่เวลาและที่เกิดเพิ่ม ให้แม่นขึ้น</button></p>
+    <p class="lead" data-en="Each pair is calculated from your birth date. See where it comes from, then choose the pairs that match what you hope for.">เลขแต่ละคู่คำนวณจากวันเกิดของคุณ อ่านที่มาและความหมายตามตำรา แล้วเลือกคู่ที่ตรงกับเรื่องที่คุณตั้งใจ</p>
     <div class="card paper narrow" id="pairs"></div>
   </section>
 
   <section id="gridWhy" class="fold" hidden>
-    <h2>ทำไมต้องเลข 9 ช่องนี้</h2>
-    <p class="lead">ตารางนี้ไม่ได้สุ่มขึ้นมา ระบบจัดจากดวงของคุณตามหลักด้านล่าง</p>
+    <h2 data-en="Why these 9 numbers">ทำไมต้องเลข 9 ช่องนี้</h2>
+    <p class="lead" data-en="This grid isn’t random. It is arranged from your own chart using the principles below.">ตารางนี้ไม่ได้สุ่มขึ้นมา ระบบจัดจากดวงของคุณตามหลักด้านล่าง</p>
     <div class="card paper">
       <div class="gridwhy">
         <div>
@@ -412,59 +418,60 @@ fbq('track','PageView');
         <div>
           <ul class="reasons" id="gridReasons"></ul>
           <div id="gridRows" style="margin-top:12px"></div>
-          <details><summary>ดูคู่มงคลในตาราง</summary><ul class="gridpairs" id="gridPairs"></ul></details>
+          <details><summary data-en="See the lucky pairs in the grid">ดูคู่มงคลในตาราง</summary><ul class="gridpairs" id="gridPairs"></ul></details>
         </div>
       </div>
-      <p class="help" style="margin-top:12px">เลือกตารางแบบอื่นได้ แต่ไม่เปิดให้ย้ายเลขเอง เพราะจะทำให้เลขที่อยู่ติดกันไม่เป็นคู่มงคล การแบ่งความหมายรายแถวเป็นแนวทางที่อมตเทวาออกแบบเอง ส่วนความหมายของเลขเป็นความเชื่อตามตำราโหราศาสตร์ไทยแบบประยุกต์ ไม่ใช่การรับประกันผล</p>
+      <p class="help" style="margin-top:12px" data-en="You can choose other grid versions, but not move numbers by hand, because neighbouring numbers would stop being lucky pairs. The row meanings are AMATATHEWA’s own guide; the number meanings follow applied Thai astrology beliefs and are not a guarantee of results.">เลือกตารางแบบอื่นได้ แต่ไม่เปิดให้ย้ายเลขเอง เพราะจะทำให้เลขที่อยู่ติดกันไม่เป็นคู่มงคล การแบ่งความหมายรายแถวเป็นแนวทางที่อมตเทวาออกแบบเอง ส่วนความหมายของเลขเป็นความเชื่อตามตำราโหราศาสตร์ไทยแบบประยุกต์ ไม่ใช่การรับประกันผล</p>
     </div>
-    <a class="btn" href="#studio" style="margin-top:14px">ไปแต่งภาพ</a>
+    <a class="btn" href="#studio" style="margin-top:14px" data-en="Go to design">ไปแต่งภาพ</a>
   </section>
 
   <section id="deities">
-    <h2>ดูภาพแยกตามองค์เทพ</h2>
-    <p class="lead deities"><a href="ganesha/">วอลเปเปอร์พระพิฆเนศ</a> · <a href="shiva/">วอลเปเปอร์พระศิวะ</a> · <a href="lakshmi/">วอลเปเปอร์พระแม่ลักษมี</a> · <a href="parvati/">วอลเปเปอร์พระแม่ปารวตี</a> · <a href="saraswati/">วอลเปเปอร์พระแม่สรัสวตี</a> · <a href="vishnu/">วอลเปเปอร์พระวิษณุ</a> · <a href="brahma/">วอลเปเปอร์พระพรหม</a> · <a href="trimurti/">วอลเปเปอร์พระตรีมูรติ</a> · <a href="trishakti/">วอลเปเปอร์พระตรีศักติ</a></p>
+    <h2 data-en="Browse by deity">ดูภาพแยกตามองค์เทพ</h2>
+    <p class="lead deities" data-en="&lt;a href=&quot;ganesha/&quot;&gt;Ganesha&lt;/a&gt; · &lt;a href=&quot;shiva/&quot;&gt;Shiva&lt;/a&gt; · &lt;a href=&quot;lakshmi/&quot;&gt;Lakshmi&lt;/a&gt; · &lt;a href=&quot;parvati/&quot;&gt;Parvati&lt;/a&gt; · &lt;a href=&quot;saraswati/&quot;&gt;Saraswati&lt;/a&gt; · &lt;a href=&quot;vishnu/&quot;&gt;Vishnu&lt;/a&gt; · &lt;a href=&quot;brahma/&quot;&gt;Brahma&lt;/a&gt; · &lt;a href=&quot;trimurti/&quot;&gt;Trimurti&lt;/a&gt; · &lt;a href=&quot;trishakti/&quot;&gt;Tridevi&lt;/a&gt;"><a href="ganesha/">วอลเปเปอร์พระพิฆเนศ</a> · <a href="shiva/">วอลเปเปอร์พระศิวะ</a> · <a href="lakshmi/">วอลเปเปอร์พระแม่ลักษมี</a> · <a href="parvati/">วอลเปเปอร์พระแม่ปารวตี</a> · <a href="saraswati/">วอลเปเปอร์พระแม่สรัสวตี</a> · <a href="vishnu/">วอลเปเปอร์พระวิษณุ</a> · <a href="brahma/">วอลเปเปอร์พระพรหม</a> · <a href="trimurti/">วอลเปเปอร์พระตรีมูรติ</a> · <a href="trishakti/">วอลเปเปอร์พระตรีศักติ</a></p>
   </section>
 
   <section>
-    <h2>คำถามที่พบบ่อย</h2>
-    <details><summary>เลขคำนวณจากอะไร</summary><p>ประยุกต์จากตำราโหราศาสตร์ไทย ถ้ารู้เวลาเกิด ระบบใช้ทั้งดวงเกิดและทักษา ถ้าไม่รู้เวลาเกิด ระบบใช้ทักษาวันเกิดกับคู่เลขมาตรฐาน</p></details>
-    <details><summary>ตาราง 9 ช่องนี้คืออะไร</summary><p>ตารางเลขมงคลเฉพาะดวงที่อมตเทวาออกแบบขึ้นจากวันเกิดของคุณ เลขที่อยู่ติดกันทั้งซ้าย ขวา บน ล่าง เป็นคู่มงคลทุกคู่ เรียกว่ามงคล 4 ทิศ และเลือกให้แนวเฉียงเป็นคู่มงคลด้วยได้ เรียกว่ามงคล 8 ทิศ ตารางของแต่ละคนจึงไม่ซ้ำกัน แต่ละแถวเป็นสิริมงคลคนละด้าน</p><ul class="rowlist"><li><b>แถวบน · งานและชื่อเสียง</b> — ส่วนบนคือสิ่งที่ผู้คนมองเห็นเรา เลขแถวนี้จึงเป็นสิริมงคลแก่หน้าที่การงาน ชื่อเสียง และการเป็นที่ยอมรับ</li><li><b>แถวกลาง · ตัวเราและความรัก</b> — ใจกลางตารางคือใจของเรา เลขแถวนี้จึงเป็นสิริมงคลแก่เสน่ห์ ความรัก และความสัมพันธ์กับคนรอบตัว</li><li><b>แถวล่าง · เงินและความมั่นคง</b> — ส่วนล่างคือรากฐาน เลขแถวนี้จึงเป็นสิริมงคลแก่ทรัพย์สินเงินทอง และความมั่นคงของชีวิต</li></ul></details>
-    <details><summary>ซื้อแล้วใช้ให้คนอื่นได้ไหม</summary><p>การซื้อหนึ่งครั้งผูกกับวันเกิดหนึ่งดวง ถ้าจะแต่งให้คนอื่นต้องซื้อแยก แก้แล้วโหลดซ้ำได้ภาพละ 3 ครั้งภายใน 30 วัน</p></details>
-    <details><summary>ใช้กับมือถือรุ่นไหนได้บ้าง</summary><p>ไฟล์เต็มมีขนาด 1290×2796 ใช้เป็นภาพพื้นหลังได้ทั้ง iPhone และ Android บางรุ่นอาจตัดขอบภาพเล็กน้อย</p></details>
-    <details><summary>ตั้งภาพนี้เป็นหน้าจอแล้วดีอย่างไร</summary><p>องค์เทพที่คุณศรัทธาและเลขมงคลจากดวงของคุณเอง จะอยู่กับคุณทุกครั้งที่หยิบมือถือ เป็นสิริมงคลแก่ชีวิตในทุกวัน และเป็นเครื่องเตือนใจถึงเรื่องที่ตั้งใจไว้ ส่วนความสำเร็จยังมาจากความตั้งใจและการลงมือทำของคุณเอง</p></details>
-    <details><summary>เปลี่ยนมือถือ หรือภาพหายจากเครื่อง ทำอย่างไร</summary><p>กรอกวันเกิดเดิมตอนซื้อ เลือกภาพเดิม แล้วแนบสลิปเดิมอีกครั้ง ระบบจะคืนสิทธิ์ให้ทันทีโดยไม่ต้องจ่ายใหม่ ใช้ได้ภายใน 30 วันนับจากวันซื้อ และจำนวนครั้งที่โหลดได้จะนับต่อจากเดิม</p></details>
-    <details><summary>คืนเงินได้ไหม</summary><p>เป็นไฟล์ดิจิทัล จึงไม่รับคืนหลังได้รับไฟล์แล้ว ยกเว้นไฟล์มีปัญหาและเราแก้ให้ไม่ได้</p></details>
+    <h2 data-en="Frequently asked questions">คำถามที่พบบ่อย</h2>
+    <details><summary data-en="How are the numbers calculated?">เลขคำนวณจากอะไร</summary><p data-en="Adapted from Thai astrology texts. With a birth time, we use both your birth chart and the Taksa system. Without one, we use the Taksa of your birth weekday together with standard lucky pairs.">ประยุกต์จากตำราโหราศาสตร์ไทย ถ้ารู้เวลาเกิด ระบบใช้ทั้งดวงเกิดและทักษา ถ้าไม่รู้เวลาเกิด ระบบใช้ทักษาวันเกิดกับคู่เลขมาตรฐาน</p></details>
+    <details><summary data-en="What is the 9-cell grid?">ตาราง 9 ช่องนี้คืออะไร</summary><p data-en="A personal lucky-number grid that AMATATHEWA designs from your birth date. Every pair of neighbouring numbers — left, right, up and down — is a lucky pair (4-direction), and you can make the diagonals lucky too (8-direction). No two people’s grids are alike, and each row blesses a different part of life.">ตารางเลขมงคลเฉพาะดวงที่อมตเทวาออกแบบขึ้นจากวันเกิดของคุณ เลขที่อยู่ติดกันทั้งซ้าย ขวา บน ล่าง เป็นคู่มงคลทุกคู่ เรียกว่ามงคล 4 ทิศ และเลือกให้แนวเฉียงเป็นคู่มงคลด้วยได้ เรียกว่ามงคล 8 ทิศ ตารางของแต่ละคนจึงไม่ซ้ำกัน แต่ละแถวเป็นสิริมงคลคนละด้าน</p><ul class="rowlist" data-en="&lt;li&gt;&lt;b&gt;Top row · Work and reputation&lt;/b&gt; — the top is what people see of us, so these numbers bless your career, reputation and recognition.&lt;/li&gt;&lt;li&gt;&lt;b&gt;Middle row · Yourself and love&lt;/b&gt; — the centre is our heart, so these numbers bless your charm, love and relationships.&lt;/li&gt;&lt;li&gt;&lt;b&gt;Bottom row · Money and stability&lt;/b&gt; — the bottom is the foundation, so these numbers bless your wealth and a stable life.&lt;/li&gt;"><li><b>แถวบน · งานและชื่อเสียง</b> — ส่วนบนคือสิ่งที่ผู้คนมองเห็นเรา เลขแถวนี้จึงเป็นสิริมงคลแก่หน้าที่การงาน ชื่อเสียง และการเป็นที่ยอมรับ</li><li><b>แถวกลาง · ตัวเราและความรัก</b> — ใจกลางตารางคือใจของเรา เลขแถวนี้จึงเป็นสิริมงคลแก่เสน่ห์ ความรัก และความสัมพันธ์กับคนรอบตัว</li><li><b>แถวล่าง · เงินและความมั่นคง</b> — ส่วนล่างคือรากฐาน เลขแถวนี้จึงเป็นสิริมงคลแก่ทรัพย์สินเงินทอง และความมั่นคงของชีวิต</li></ul></details>
+    <details><summary data-en="Can I use my purchase for someone else?">ซื้อแล้วใช้ให้คนอื่นได้ไหม</summary><p data-en="Each purchase is tied to one birth date. For someone else, please buy separately. You can edit and re-download each image up to 3 times within 30 days.">การซื้อหนึ่งครั้งผูกกับวันเกิดหนึ่งดวง ถ้าจะแต่งให้คนอื่นต้องซื้อแยก แก้แล้วโหลดซ้ำได้ภาพละ 3 ครั้งภายใน 30 วัน</p></details>
+    <details><summary data-en="Which phones does it work on?">ใช้กับมือถือรุ่นไหนได้บ้าง</summary><p data-en="The full file is 1290×2796 and works as a wallpaper on both iPhone and Android. Some models may crop the edges slightly.">ไฟล์เต็มมีขนาด 1290×2796 ใช้เป็นภาพพื้นหลังได้ทั้ง iPhone และ Android บางรุ่นอาจตัดขอบภาพเล็กน้อย</p></details>
+    <details><summary data-en="Why set it as my wallpaper?">ตั้งภาพนี้เป็นหน้าจอแล้วดีอย่างไร</summary><p data-en="The deity you have faith in and the lucky numbers from your own chart stay with you every time you pick up your phone — a daily blessing and a reminder of what you have set your heart on. Success still comes from your own intention and effort.">องค์เทพที่คุณศรัทธาและเลขมงคลจากดวงของคุณเอง จะอยู่กับคุณทุกครั้งที่หยิบมือถือ เป็นสิริมงคลแก่ชีวิตในทุกวัน และเป็นเครื่องเตือนใจถึงเรื่องที่ตั้งใจไว้ ส่วนความสำเร็จยังมาจากความตั้งใจและการลงมือทำของคุณเอง</p></details>
+    <details><summary data-en="Changed phones or lost the image?">เปลี่ยนมือถือ หรือภาพหายจากเครื่อง ทำอย่างไร</summary><p data-en="Enter the same birth date you used when buying, choose the same image and attach the same slip again. Your purchase is restored instantly at no cost, within 30 days of buying, and your download count continues from before.">กรอกวันเกิดเดิมตอนซื้อ เลือกภาพเดิม แล้วแนบสลิปเดิมอีกครั้ง ระบบจะคืนสิทธิ์ให้ทันทีโดยไม่ต้องจ่ายใหม่ ใช้ได้ภายใน 30 วันนับจากวันซื้อ และจำนวนครั้งที่โหลดได้จะนับต่อจากเดิม</p></details>
+    <details><summary data-en="Can I get a refund?">คืนเงินได้ไหม</summary><p data-en="These are digital files, so we can’t refund once you have received the file — unless the file has a problem we can’t fix.">เป็นไฟล์ดิจิทัล จึงไม่รับคืนหลังได้รับไฟล์แล้ว ยกเว้นไฟล์มีปัญหาและเราแก้ให้ไม่ได้</p></details>
   </section>
-  <footer>อมตเทวา ความดีงามอันเป็นนิรันดร์<br>© 2569 AMATATHEWA · ภาพทั้งหมดเป็นลิขสิทธิ์ของอมตเทวา ห้ามคัดลอกหรือนำไปขายต่อ · <a href="../tarot/web/">เปิดไพ่ทาโรต์</a><br><a class="lineLink" href="https://line.me/R/ti/p/@671omwgd" target="_blank" rel="noopener">ติดต่อเรา LINE @671omwgd</a> · <a href="/privacy/">นโยบายความเป็นส่วนตัว</a></footer>
+  <footer data-en="AMATATHEWA · The Goodness That Is Eternal&lt;br&gt;© 2026 AMATATHEWA · All images are copyrighted by AMATATHEWA. Do not copy or resell. · &lt;a href=&quot;../tarot/web/&quot;&gt;Tarot reading&lt;/a&gt;&lt;br&gt;&lt;a class=&quot;lineLink&quot; href=&quot;https://line.me/R/ti/p/@671omwgd&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Contact us on LINE @671omwgd&lt;/a&gt; · &lt;a href=&quot;/privacy/&quot;&gt;Privacy policy&lt;/a&gt;">อมตเทวา ความดีงามอันเป็นนิรันดร์<br>© 2569 AMATATHEWA · ภาพทั้งหมดเป็นลิขสิทธิ์ของอมตเทวา ห้ามคัดลอกหรือนำไปขายต่อ · <a href="../tarot/web/">เปิดไพ่ทาโรต์</a><br><a class="lineLink" href="https://line.me/R/ti/p/@671omwgd" target="_blank" rel="noopener">ติดต่อเรา LINE @671omwgd</a> · <a href="/privacy/">นโยบายความเป็นส่วนตัว</a></footer>
 </div>
 <canvas class="miniview" id="miniView" width="336" height="728" role="button" aria-label="กลับไปดูภาพใหญ่" hidden></canvas>
 <div class="sheet" id="sheet" role="dialog" aria-labelledby="sheetTitle" hidden>
   <div class="grab"></div><button class="x" id="sheetX" type="button" aria-label="ปิด">×</button>
   <div id="sheetForm">
-    <h3 id="sheetTitle">ภาพนี้เป็นอย่างไรบ้าง</h3>
+    <h3 id="sheetTitle" data-en="How do you like this image?">ภาพนี้เป็นอย่างไรบ้าง</h3>
     <div class="rstars" id="rStars"></div>
-    <p class="rword" id="rWord">แตะดาวเพื่อให้คะแนน</p>
+    <p class="rword" id="rWord" data-en="Tap a star to rate">แตะดาวเพื่อให้คะแนน</p>
     <div id="rMore" hidden>
-      <label for="rText">เล่าให้เราฟังสักนิด <span class="help" style="display:inline">(ไม่เขียนก็ได้)</span></label>
-      <textarea id="rText" maxlength="500" placeholder="ชอบตรงไหน ตั้งเป็นหน้าจอแล้วรู้สึกอย่างไร"></textarea>
-      <label>แสดงชื่อของคุณไหม</label>
-      <div class="namechoice"><button type="button" id="rShow" aria-pressed="true">แสดงชื่อ</button><button type="button" id="rHide" aria-pressed="false">ไม่แสดงชื่อ</button></div>
-      <input type="text" id="rName" maxlength="30" placeholder="ชื่อที่อยากให้แสดง เช่น พลอย" autocomplete="nickname">
-      <button class="btn solid" id="rSend" type="button">ส่งความคิดเห็น</button>
-      <p class="help">ทุกคำของคุณมีความหมายกับเราเสมอ</p>
+      <label for="rText" data-en="Tell us a little &lt;span class=&quot;help&quot; style=&quot;display:inline&quot;&gt;(optional)&lt;/span&gt;">เล่าให้เราฟังสักนิด <span class="help" style="display:inline">(ไม่เขียนก็ได้)</span></label>
+      <textarea id="rText" maxlength="500" placeholder="ชอบตรงไหน ตั้งเป็นหน้าจอแล้วรู้สึกอย่างไร" data-en-ph="What did you like? How does it feel as your wallpaper?"></textarea>
+      <label data-en="Show your name?">แสดงชื่อของคุณไหม</label>
+      <div class="namechoice"><button type="button" id="rShow" aria-pressed="true" data-en="Show name">แสดงชื่อ</button><button type="button" id="rHide" aria-pressed="false" data-en="Don’t show">ไม่แสดงชื่อ</button></div>
+      <input type="text" id="rName" maxlength="30" placeholder="ชื่อที่อยากให้แสดง เช่น พลอย" data-en-ph="Name to show, e.g. Ploy" autocomplete="nickname">
+      <button class="btn solid" id="rSend" type="button" data-en="Send feedback">ส่งความคิดเห็น</button>
+      <p class="help" data-en="Every word you share means a lot to us.">ทุกคำของคุณมีความหมายกับเราเสมอ</p>
     </div>
     <div class="err" id="rErr" hidden></div>
   </div>
-  <p class="thanks" id="sheetThanks" hidden>ขอบคุณที่เล่าให้เราฟัง</p>
+  <p class="thanks" id="sheetThanks" hidden data-en="Thank you for telling us.">ขอบคุณที่เล่าให้เราฟัง</p>
 </div>
-<div class="saveov" id="saveov" hidden><div>กดค้างที่ภาพ แล้วเลือกบันทึกภาพ<br><small style="opacity:.75">ถ้าบันทึกไม่สำเร็จ ปิดแล้วกดบันทึกภาพเต็มใหม่ได้ แบบเดิมโหลดซ้ำไม่เสียสิทธิ์</small></div><img id="saveImg" alt="ภาพสำหรับบันทึก"><button class="btn alt" id="saveClose" type="button" style="width:auto">ปิด</button></div>
+<div class="saveov" id="saveov" hidden><div data-en="Press and hold the image, then choose Save Image&lt;br&gt;&lt;small style=&quot;opacity:.75&quot;&gt;If saving fails, close this and tap Save full image again. Re-downloading the same design costs nothing.&lt;/small&gt;">กดค้างที่ภาพ แล้วเลือกบันทึกภาพ<br><small style="opacity:.75">ถ้าบันทึกไม่สำเร็จ ปิดแล้วกดบันทึกภาพเต็มใหม่ได้ แบบเดิมโหลดซ้ำไม่เสียสิทธิ์</small></div><img id="saveImg" alt="ภาพสำหรับบันทึก"><button class="btn alt" id="saveClose" type="button" style="width:auto" data-en="Close">ปิด</button></div>
+<script src="lang.js?v=202611195"></script>
 <script src="config.js?v=202611037"></script>
 <script src="calc.js?v=202611052"></script>
 <script src="compose.js?v=202611037"></script>
 <script src="qr.js?v=202611021"></script>
 <script src="pair-text.js?v=202611056"></script>
 <script src="row-star.js?v=202611057"></script>
-<script src="oracle.js?v=202611104"></script>
-<script src="shop.js?v=202611194"></script>
+<script src="oracle.js?v=202611195"></script>
+<script src="shop.js?v=202611195"></script>
 </body>
 </html>
