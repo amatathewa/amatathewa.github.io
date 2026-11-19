@@ -6,12 +6,13 @@ SITE = os.path.dirname(os.path.abspath(__file__))
 SRC = os.path.join(SITE, '..', 'fortune-web', 'tarot')
 V = time.strftime('%Y%m%d%H%M')
 for name in os.listdir(os.path.join(SRC, 'web')):
-    if not name.endswith(('.html', '.js')) or name.startswith('__') or '.bak' in name:
+    if not name.endswith(('.html', '.js', '.css')) or name.startswith('__') or '.bak' in name:
         continue
     s = io.open(os.path.join(SRC, 'web', name), encoding='utf-8').read()
     if name == 'index.html':
         s = s.replace("const V='';", "const V='%s';" % V)
     s = re.sub(r'src="(flow\.js|\.\./js/cards-data\.js)"', lambda m: 'src="%s?v=%s"' % (m.group(1), V), s)
+    s = s.replace('href="paper.css"', 'href="paper.css?v=%s"' % V)
     io.open(os.path.join(SITE, 'tarot', 'web', name), 'w', encoding='utf-8', newline='').write(s)
 shutil.copy(os.path.join(SRC, 'js', 'cards-data.js'), os.path.join(SITE, 'tarot', 'js', 'cards-data.js'))
 msg = (sys.argv[1] if len(sys.argv) > 1 else 'อัปเดตเว็บ') + ' (รุ่น ' + V + ')\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>'

@@ -1,0 +1,93 @@
+/* ธีมกระดาษสาหมึกจีน ให้เข้าชุดกับหน้าแรก (ณัทกร 20 พ.ย. 2569)
+   ทำงานเฉพาะตอน <html class="paper"> · เปิดทดลองด้วย ?paper=1 (จำไว้ในแท็บนี้) · ?paper=0 กลับแบบเดิม */
+html.paper{--gold:#9e2b20;--gold-light:#9e2b20;--ivory:#14110e;--dim:rgba(20,17,14,.62);--line:rgba(20,17,14,.16);--paper:#f2eadb;--inkbtn:#14110e;color-scheme:light}
+html.paper,html.paper body{background:var(--paper)!important;color:#14110e}
+html.paper iframe{background:var(--paper)!important}
+
+/* ฉากหลังทุกหน้า = กระดาษสา + เมฆหมึกมุมล่าง (เมฆจากภาพองค์พ่อหน้าแรก) */
+html.paper .bg,html.paper .bgin,html.paper .bgfrom,html.paper .fromPick .bgfrom[hidden]{
+  inset:0!important;top:0!important;bottom:0!important;left:0!important;right:0!important;height:auto!important;
+  background:#f2eadb url("../ภาพพื้นหลัง/paper-desktop.jpg") center bottom/cover no-repeat!important;
+  transform:none!important;animation:none!important;-webkit-mask-image:none!important;mask-image:none!important;filter:none!important}
+@media(max-width:700px){html.paper .bg,html.paper .bgin,html.paper .bgfrom,html.paper .fromPick .bgfrom[hidden]{background-image:url("../ภาพพื้นหลัง/paper-mobile.jpg")!important}}
+html.paper .veil,html.paper .shade,html.paper .bgfrom::after{display:none!important}
+html.paper .bg::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.3;background-image:radial-gradient(rgba(0,0,0,.08) 1px,transparent 1px);background-size:3px 3px;mix-blend-mode:multiply}
+
+/* ตัวอักษร: หัวเว็บแบบหน้าแรก · หัวข้อหมึกดำ เน้นแดงชาด */
+html.paper .brand{font:500 15px/1 Trirong,serif;letter-spacing:.2em;color:#14110e}
+html.paper .brand::after{content:"อมตเทวา";display:block;font:400 12px "IBM Plex Sans Thai",sans-serif;letter-spacing:.12em;color:#9e2b20;margin-top:5px}
+html.paper .back{color:#14110e;border-bottom:1px solid #14110e!important;padding-bottom:1px}
+html.paper .kicker{font-family:"IBM Plex Sans Thai",sans-serif!important;font-weight:500;color:#9e2b20}
+html.paper h1{font-weight:500!important;color:#14110e}
+html.paper h1 em{color:#9e2b20}
+html.paper .lead,html.paper .hint,html.paper .desc,html.paper .cnt,html.paper .scrollhint{color:#4f453c}
+html.paper .no,html.paper .count,html.paper .cnt b,html.paper .pos b,html.paper .mp .no{color:#9e2b20}
+
+/* ปุ่ม: หลัก = หมึกดำทึบ · รอง = เส้นหมึกบนกระดาษ (เหมือนหน้าแรก) */
+html.paper .cta,html.paper .next,html.paper #go,html.paper .dock .cam{background:#14110e!important;color:#f4ecdd!important;border:1px solid #14110e!important;border-radius:2px;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;font-weight:500}
+html.paper .cta:hover,html.paper .next:hover,html.paper #go:hover,html.paper .dock .cam:hover{background:#3a302a!important}
+html.paper .cta::before,html.paper .cta::after{display:none}
+html.paper .btn:not(#go),html.paper .cam:not(.dock .cam),html.paper .dock .btn{background:rgba(242,234,219,.75)!important;color:#14110e!important;border:1px solid #14110e!important;border-radius:2px;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;font-weight:500}
+html.paper .btn:not(#go):hover,html.paper .dock .btn:hover{background:#f2eadb!important}
+html.paper .btn small{color:#4f453c}
+html.paper .dock .cam svg{color:#f4ecdd}
+
+/* ===== หน้าเลือกแบบ (spread) ===== */
+html.paper .grid{border-color:rgba(20,17,14,.22)}
+html.paper .tile+.tile{border-left-color:rgba(20,17,14,.1)}
+html.paper .tile:hover{background:rgba(20,17,14,.035)}
+html.paper .tile.sel{background:linear-gradient(0deg,rgba(158,43,32,.1),transparent 80%)}
+html.paper .tile.sel .nm{color:#9e2b20}
+html.paper .dg rect{stroke:#14110e}
+html.paper .tile.sel .dg rect{stroke:#9e2b20}
+html.paper .desc b{color:#14110e}
+html.paper .box{border-color:rgba(20,17,14,.5)}
+html.paper .box.on{background:#9e2b20;border-color:#9e2b20}
+html.paper .deck{border-color:rgba(20,17,14,.22)}
+html.paper .deck:hover{border-color:#9e2b20;background:rgba(20,17,14,.03)}
+html.paper .deck img,html.paper .dk-card img{box-shadow:0 6px 14px -4px rgba(60,40,20,.45)}
+html.paper .deck .dk{font-family:"IBM Plex Sans Thai";color:#9e2b20}
+html.paper .picker{background:rgba(242,234,219,.94)}
+html.paper .dk-card.on img{outline-color:#9e2b20}
+html.paper .dk-card.soon .ph{border-color:rgba(20,17,14,.35)}
+html.paper .ask input{background:rgba(255,252,245,.55);border-bottom-color:rgba(20,17,14,.35);color:#14110e}
+html.paper .ask input::placeholder{color:rgba(20,17,14,.45)}
+html.paper .ask input:focus{border-bottom-color:#9e2b20;background:rgba(255,252,245,.8)}
+html.paper .ask-note{color:rgba(20,17,14,.5)}
+@media(max-width:700px){html.paper .tile.sel::after{border-color:#9e2b20}html.paper .grid,html.paper .tile,html.paper .tile:nth-child(odd){border-color:rgba(20,17,14,.18)}}
+
+/* ===== สับไพ่ · ตัดไพ่ · เลือกไพ่ : เงาไพ่นุ่มลงบนกระดาษ ===== */
+html.paper .deck .halo{background:radial-gradient(ellipse,rgba(60,40,20,.22),transparent 70%)}
+html.paper .deck .sd{box-shadow:0 18px 36px -6px rgba(60,40,20,.45)}
+html.paper .pile .c1{box-shadow:0 16px 32px -6px rgba(60,40,20,.45)}
+html.paper .pile .ring{border-color:#9e2b20}
+html.paper .hint b{color:#9e2b20}
+html.paper .fc{box-shadow:-2px 3px 7px rgba(60,40,20,.35)}
+html.paper .fc:hover:not(.sel):not(.dim){filter:brightness(1.06)}
+html.paper .fc.sel{box-shadow:0 0 0 2px #9e2b20,0 0 18px rgba(158,43,32,.35)}
+html.paper .fc.dim{filter:grayscale(.5) opacity(.4)}
+html.paper .pile0{box-shadow:0 12px 26px -4px rgba(60,40,20,.45)}
+html.paper .switch{color:#4f453c;border-bottom-color:rgba(20,17,14,.3)}
+
+/* ===== ผลไพ่ ===== */
+html.paper .q{color:#4f453c}
+html.paper .pos{color:#14110e;text-shadow:none}
+html.paper .nm{color:#14110e;text-shadow:none}
+html.paper .nm small{color:#9e2b20}
+html.paper .face,html.paper .backs{box-shadow:0 18px 40px -8px rgba(60,40,20,.5)}
+html.paper .fly{box-shadow:0 0 0 2px #9e2b20,0 0 18px rgba(158,43,32,.35)}
+html.paper .mp{background:rgba(255,251,242,.62);border-color:rgba(20,17,14,.14);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+html.paper .mp h2{font-weight:500;color:#14110e}
+html.paper .mp .su{color:#9e2b20}
+html.paper .mp .rv{color:#9e2b20;border-color:rgba(158,43,32,.5)}
+html.paper .mp .lb{font-family:"IBM Plex Sans Thai"}
+html.paper .mp p{font-weight:400;color:#2a231d}
+html.paper .mp p.muted{color:#6b6056}
+html.paper .dock{background:linear-gradient(180deg,transparent,rgba(242,234,219,.95) 50%)}
+html.paper .camnote{color:#14110e;text-shadow:0 0 8px #f2eadb,0 0 3px #f2eadb}
+html.paper .saveov{background:rgba(242,234,219,.97)}
+html.paper .saveov p{color:#14110e}
+html.paper .saveov p b{color:#9e2b20}
+html.paper .saveov img{box-shadow:0 16px 40px -8px rgba(60,40,20,.5)}
+html.paper .saveov button{color:#14110e;border-color:#14110e}
+html.paper .saveov button.main{background:#14110e;color:#f4ecdd;border-color:#14110e}

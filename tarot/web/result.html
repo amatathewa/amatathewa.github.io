@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="th"><head><meta charset="utf-8"><script>/* มาจากหน้าเลือกไพ่: ซ่อนหัวข้อ/ช่องไพ่ + โชว์หินอ่อนตั้งแต่ภาพแรก ให้ต่อจากหน้าเลือกไพ่ไม่มีรอย */
+<html lang="th"><head><meta charset="utf-8"><script>/* ธีมกระดาษสา (ทดลอง): ?paper=1 เปิด · ?paper=0 ปิด · จำไว้ในแท็บนี้ */try{var _s=location.search;if(/[?&]paper=1/.test(_s))sessionStorage.setItem("tarot-paper","1");if(/[?&]paper=0/.test(_s))sessionStorage.removeItem("tarot-paper");if(sessionStorage.getItem("tarot-paper"))document.documentElement.classList.add("paper")}catch(e){}</script><script>/* มาจากหน้าเลือกไพ่: ซ่อนหัวข้อ/ช่องไพ่ + โชว์หินอ่อนตั้งแต่ภาพแรก ให้ต่อจากหน้าเลือกไพ่ไม่มีรอย */
 try{if(sessionStorage.getItem('tarot-fly')){const r=document.documentElement;r.classList.add('fromPick');
   const dk=new URLSearchParams(location.search).get('deck')==='sns'?'sns':'1909',mu=`../ภาพพื้นหลัง/marble-${dk}-blur.jpg`;
   r.style.setProperty('--marble',`url("${mu}")`);
@@ -121,7 +121,8 @@ h1 em{font-style:normal;color:var(--gold-light)}
   .cc .hero .kicker{display:none}.cc .row{margin-top:2vh!important;margin-bottom:auto!important;padding:0!important}}
 .cc .ccq{grid-area:1/1/2/4;align-self:center;justify-self:stretch;text-align:left;margin:0;padding-right:10px;max-width:none;font-style:normal;font-weight:300;color:var(--ivory);font-size:clamp(14px,calc(var(--w)*.21),22px);line-height:1.5;max-height:calc(var(--w)*1.66 + 24px);overflow:hidden}
 @media(max-width:700px){header{padding:18px 20px}h1{font-size:min(7vw,30px)}.scrollhint{margin-bottom:calc(3vh + 80px)}.mp{padding:20px}.mp p{font-size:15.5px}.dock{gap:8px}.dock .cam,.dock .btn{flex:1;width:auto;font-size:14px;padding:13px 4px}.dock .cam svg{display:none}}
-</style></head><body>
+</style><link rel="stylesheet" href="paper.css?v=202611200034">
+</head><body>
 <div class="bg" id="bg"></div><div class="shade"></div><div class="bgfrom" id="bgfrom" hidden></div>
 <header><a class="brand" href="/" target="_top" aria-label="กลับหน้าแรก AMATATHEWA">AMATATHEWA</a><div class="back" onclick="go('spread.html')">หน้าแรก</div></header>
 <section class="hero">
@@ -134,8 +135,8 @@ h1 em{font-style:normal;color:var(--gold-light)}
 <section class="read" id="read"></section>
 <div class="camnote" id="camnote"></div>
 <div class="dock" id="dock"><button class="cam" id="cam"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg><span>บันทึกภาพไพ่</span></button><div class="btn" id="again">สับใหม่</div><div class="btn" id="home">หน้าแรก</div></div>
-<script src="../js/cards-data.js?v=202611200021"></script>
-<script src="flow.js?v=202611200021"></script>
+<script src="../js/cards-data.js?v=202611200034"></script>
+<script src="flow.js?v=202611200034"></script>
 <script>
 let QTEXT='';try{QTEXT=(sessionStorage.getItem('tarot-q')||'').trim()}catch(e){}
 // เปิดต่อจากแอป LINE: คำถามมากับส่วนท้ายลิงก์ (#q=) ซึ่งไม่ถูกส่งไปที่เซิร์ฟเวอร์
@@ -191,6 +192,8 @@ function flips(t0){
   [...row.querySelectorAll('.slot')].forEach((s,i)=>setTimeout(()=>{s.querySelector('.frame').classList.add('flip');s.classList.add('done');
     setTimeout(()=>document.getElementById('mp'+i).classList.add('vis'),700)},t0+i*st));
   setTimeout(()=>{document.getElementById('sh').classList.add('show');document.getElementById('dock').classList.add('show')},t0+(n-1)*st+900); /* หลังคำทำนายใบสุดท้ายขึ้นครบ (พลิก + 0.7 วิ) */
+  // กด "สับใหม่" แล้วไปต่อทันที (ณัทกร 20 พ.ย. ว่าช้า): ให้กรอบโหลดฉากสับไพ่เตรียมไว้หลังไพ่พลิกครบ
+  if(IN_SHELL)setTimeout(()=>parent.postMessage({preload:['shuffle.html?'+new URLSearchParams(ST)]},location.origin),t0+(n-1)*st+1600);
 }
 // มาจากหน้าเลือกไพ่ (ณัทกรวางลำดับ): ① หลังไพ่ลอยเข้าช่องบนฉากหินอ่อน ② เปลี่ยนฉากเป็นท้องฟ้า หัวข้อโผล่ ③ พลิกไพ่
 let fly=null;try{fly=JSON.parse(sessionStorage.getItem('tarot-fly'));sessionStorage.removeItem('tarot-fly')}catch(e){}
@@ -246,7 +249,8 @@ async function saveImage(){
   btn.classList.add('busy');clearTimeout(note.t);note.textContent='กำลังสร้างภาพ…';note.classList.add('on');
   try{
     await Promise.all(['300 40px Trirong','200 40px Trirong','400 26px Jost','italic 400 40px "Bodoni Moda"','400 20px "IBM Plex Sans Thai"'].map(f=>document.fonts.load(f)));
-    const [bgI,...faces]=await Promise.all([loadImg(`../ภาพพื้นหลัง/dawn-${mob?'mobile':'desktop'}.jpg`),...pool.map(c=>loadImg(FACE[DECK](c.id)))]);
+    const PP=document.documentElement.classList.contains('paper'),IV=PP?'#14110e':'#F3EDE2',GO=PP?'#9e2b20':'#C99B3C',GL=PP?'#9e2b20':'#E8C987',RGB=PP?'20,17,14':'243,237,226';
+    const [bgI,...faces]=await Promise.all([loadImg(PP?'../ภาพพื้นหลัง/paper-mobile.jpg':`../ภาพพื้นหลัง/dawn-${mob?'mobile':'desktop'}.jpg`),...pool.map(c=>loadImg(FACE[DECK](c.id)))]);
     const W=1080,H=CC?1920:1350,cv=document.createElement('canvas');cv.width=W;cv.height=H;const x=cv.getContext('2d');
     // ขนาดไพ่ตามจำนวนใบ
     // ตัดคำถามเป็นบรรทัดก่อน (ตามคำไทย สระไม่หลุด ไม่เกิน 2 บรรทัด) เพื่อเว้นที่ให้พอ
@@ -259,20 +263,21 @@ async function saveImage(){
     // 10 ใบ: ขนาดไพ่คำนวณจากพื้นที่ที่เหลือใต้คำถาม (4 แถว · ป้ายชื่อตำแหน่งเหนือไพ่ 40px · เว้นแถว 16px)
     const CCT=278+QH+(QH?24:0)+20,CCW=CC?Math.min((W-160-3*gap)/4,((H-150-CCT-3*16-4*40)/4)*600/995):0,CCH=CCW*995/600;
     // ฉากหลัง = ภาพเดียวกับที่เห็นบนจอ · มือถือ (9:20) ตัดจากบน 28% · จอคอม (16:9) ตัดตรงกลางเต็มความสูง
-    if(mob){const sh=Math.min(bgI.height,bgI.width*H/W),sw=sh*W/H;x.drawImage(bgI,(bgI.width-sw)/2,Math.min(bgI.height*.28,bgI.height-sh),sw,sh,0,0,W,H)}
+    if(PP){const sw=Math.min(bgI.width,bgI.height*W/H),sh=sw*H/W;x.drawImage(bgI,(bgI.width-sw)/2,bgI.height-sh,sw,sh,0,0,W,H)}
+    else if(mob){const sh=Math.min(bgI.height,bgI.width*H/W),sw=sh*W/H;x.drawImage(bgI,(bgI.width-sw)/2,Math.min(bgI.height*.28,bgI.height-sh),sw,sh,0,0,W,H)}
     else{const sw=bgI.height*W/H;x.drawImage(bgI,(bgI.width-sw)/2,0,sw,bgI.height,0,0,W,H)}
     let g=x.createLinearGradient(0,0,0,H);
     g.addColorStop(0,'rgba(2,2,4,.92)');g.addColorStop(.2,'rgba(2,2,4,.25)');g.addColorStop(.72,'rgba(2,2,4,.25)');g.addColorStop(1,'rgba(2,2,4,.95)');
-    x.fillStyle=g;x.fillRect(0,0,W,H);
+    if(!PP){x.fillStyle=g;x.fillRect(0,0,W,H)}
     x.textAlign='center';x.textBaseline='alphabetic';
     // หัวภาพ
-    x.fillStyle='#F3EDE2';x.font='400 24px Jost';x.letterSpacing='10px';x.fillText('AMATATHEWA',W/2+5,92);
-    x.fillStyle='#C99B3C';x.font='400 22px Jost';x.fillText('YOUR READING',W/2+5,150);x.letterSpacing='0px';
-    const t1='ไพ่ของคุณ ',t2='เปิดแล้ว';x.font='200 56px Trirong';
+    x.fillStyle=IV;x.font=PP?'500 26px Trirong':'400 24px Jost';x.letterSpacing='10px';x.fillText('AMATATHEWA',W/2+5,92);
+    x.fillStyle=GO;x.font='400 22px Jost';x.fillText('YOUR READING',W/2+5,150);x.letterSpacing='0px';
+    const t1='ไพ่ของคุณ ',t2='เปิดแล้ว';x.font=PP?'400 56px Trirong':'200 56px Trirong';
     const w1=x.measureText(t1).width,w2=x.measureText(t2).width,tx=W/2-(w1+w2)/2;x.textAlign='left';
-    x.fillStyle='#F3EDE2';x.fillText(t1,tx,222);x.fillStyle='#E8C987';x.fillText(t2,tx+w1,222);x.textAlign='center';
+    x.fillStyle=IV;x.fillText(t1,tx,222);x.fillStyle=GL;x.fillText(t2,tx+w1,222);x.textAlign='center';
     // คำถาม (ถ้ามี) ใต้หัวข้อ: ตัวขาว ใหญ่ อ่านชัดบนมือถือ
-    if(QTEXT&&!CC){x.fillStyle='#F3EDE2';x.font=QFONT;qLines.forEach((l,i)=>x.fillText(l,W/2,354+i*QLH))}
+    if(QTEXT&&!CC){x.fillStyle=IV;x.font=QFONT;qLines.forEach((l,i)=>x.fillText(l,W/2,354+i*QLH))}
     // 10 ใบ: คำถามอยู่ในช่องว่างซ้ายของแถวบน (ข้างไพ่ใบที่ 10) ชิดซ้าย กึ่งกลางแนวตั้ง · ยาวค่อยลดขนาดจนพอดีช่อง
     if(QTEXT&&CC){const rx=W/2-(4*CCW+3*gap)/2,rw=3*CCW+2*gap-20,ry=CCT+40-36,rh=CCH+36;
       // เลือกขนาดใหญ่สุดที่พอดีช่อง และไม่ทิ้งคำโดดๆ ไว้บรรทัดสุดท้าย (บรรทัดท้ายต้องยาว ≥ 40% ของช่อง)
@@ -280,27 +285,27 @@ async function saveImage(){
         if(qLines.length>3||qLines.length*QLH>rh)continue;pick=fs;break} /* ขนาดเดียวกันทุกคำถาม เผื่อที่ไว้ 3 บรรทัด */
       if(pick){QFONT=`400 ${pick}px Trirong`;QLH=Math.round(pick*1.38);wrapQ(rw)}
       if(qLines.length*QLH>rh){const m=Math.max(1,Math.floor(rh/QLH));qLines.length=m;qLines[m-1]+='…'}
-      x.fillStyle='#F3EDE2';x.font=QFONT;x.textAlign='left';const y0=ry+(rh-qLines.length*QLH)/2+QLH*.78;
+      x.fillStyle=IV;x.font=QFONT;x.textAlign='left';const y0=ry+(rh-qLines.length*QLH)/2+QLH*.78;
       qLines.forEach((l,i)=>x.fillText(l,rx,y0+i*QLH));x.textAlign='center'} /* เว้นจากหัวข้อชัดๆ ระยะบรรทัดโปร่ง */
     // แถวไพ่
     const total=per*cw+(per-1)*gap,top0=cy-(rowsN*chh+(rowsN-1)*rowGap)/2;
     const cw0=cw,chh0=chh;
     pool.forEach((c,i)=>{
       const k=i%per,cw=CC?CCW:cw0,chh=CC?CCH:chh0,top=CC?CCT+40+(CC_AREA[i][0]-1)*(chh+56):top0,lx=CC?W/2-(4*cw+3*gap)/2+(CC_AREA[i][1]-1)*(cw+gap):W/2-total/2+k*(cw+gap),mx=lx+cw/2;
-      if(CC){x.fillStyle='rgba(243,237,226,.9)';x.font='400 22px "IBM Plex Sans Thai"';let t=String(i+1).padStart(2,'0')+' '+pos[i];while(x.measureText(t).width>cw+gap-4)t=t.slice(0,-2)+'…';x.fillText(t,mx,top-14)}
-      else{x.fillStyle='#C99B3C';x.font='italic 400 34px "Bodoni Moda"';x.fillText(String(i+1).padStart(2,'0'),mx,top-58);
-      x.fillStyle='rgba(243,237,226,.88)';x.font=`400 ${per>3?18:21}px "IBM Plex Sans Thai"`;x.fillText(pos[i],mx,top-24)}
-      x.save();x.shadowColor='rgba(0,0,0,.7)';x.shadowBlur=50;x.shadowOffsetY=20;
+      if(CC){x.fillStyle=`rgba(${RGB},.9)`;x.font='400 22px "IBM Plex Sans Thai"';let t=String(i+1).padStart(2,'0')+' '+pos[i];while(x.measureText(t).width>cw+gap-4)t=t.slice(0,-2)+'…';x.fillText(t,mx,top-14)}
+      else{x.fillStyle=GO;x.font='italic 400 34px "Bodoni Moda"';x.fillText(String(i+1).padStart(2,'0'),mx,top-58);
+      x.fillStyle=`rgba(${RGB},.88)`;x.font=`400 ${per>3?18:21}px "IBM Plex Sans Thai"`;x.fillText(pos[i],mx,top-24)}
+      x.save();x.shadowColor=PP?'rgba(60,40,20,.45)':'rgba(0,0,0,.7)';x.shadowBlur=PP?36:50;x.shadowOffsetY=PP?16:20;
       rrect(lx,top,cw,chh,cw*.055,x);x.fillStyle='#000';x.fill();x.restore();
       x.save();rrect(lx,top,cw,chh,cw*.055,x);x.clip();
       if(c.isRev){x.translate(lx+cw,top+chh);x.rotate(Math.PI);x.drawImage(faces[i],0,0,cw,chh)}else x.drawImage(faces[i],lx,top,cw,chh);
       x.restore();
-      if(!CC){x.fillStyle='#F3EDE2';x.font=`300 ${n>3?20:25}px Trirong`;x.fillText(c.name,mx,top+chh+44);
-      x.fillStyle='#C99B3C';x.font=`400 ${n>3?15:17}px "IBM Plex Sans Thai"`;x.fillText(c.suit+(c.isRev?' · กลับหัว':''),mx,top+chh+74)}
+      if(!CC){x.fillStyle=IV;x.font=`${PP?400:300} ${n>3?20:25}px Trirong`;x.fillText(c.name,mx,top+chh+44);
+      x.fillStyle=GO;x.font=`400 ${n>3?15:17}px "IBM Plex Sans Thai"`;x.fillText(c.suit+(c.isRev?' · กลับหัว':''),mx,top+chh+74)}
     });
     // ท้ายภาพ: วันที่แบบไทย
     const d=new Date(),dt=d.toLocaleDateString('th-TH',{day:'numeric',month:'long',year:'numeric'});
-    x.fillStyle='rgba(243,237,226,.55)';x.font='400 20px "IBM Plex Sans Thai"';x.fillText(dt,W/2,H-70);
+    x.fillStyle=`rgba(${RGB},.55)`;x.font='400 20px "IBM Plex Sans Thai"';x.fillText(dt,W/2,H-70);
     // เบราว์เซอร์ในแอป (LINE, Facebook, Instagram) ดาวน์โหลดไฟล์ไม่ได้ → โชว์ภาพเต็มจอ ให้กดค้างที่ภาพเพื่อบันทึก
     if(/Line\/|FBAN|FBAV|Instagram/i.test(navigator.userAgent)){
       const ov=document.createElement('div');ov.className='saveov';
