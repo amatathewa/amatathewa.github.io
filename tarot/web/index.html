@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="th"><head><meta charset="utf-8"><script>/* ธีมกระดาษสา (ทดลอง): ?paper=1 เปิด · ?paper=0 ปิด · จำไว้ในแท็บนี้ */try{var _s=location.search;if(/[?&]paper=1/.test(_s))sessionStorage.setItem("tarot-paper","1");if(/[?&]paper=0/.test(_s))sessionStorage.removeItem("tarot-paper");var _p=(_s.match(/[?&]pt=([abc])/)||[])[1];if(_p)sessionStorage.setItem("tarot-pt",_p);if(sessionStorage.getItem("tarot-paper"))document.documentElement.classList.add("paper")}catch(e){}</script><meta name="color-scheme" content="dark only">
+<html lang="th"><head><meta charset="utf-8"><script>/* ธีมกระดาษสา = ค่าเริ่มต้น (20 พ.ย. 2569) · ?paper=0 กลับธีมม่วงเดิม · ?paper=1 เปิดคืน · จำไว้ในแท็บนี้ */try{var _s=location.search;if(/[?&]paper=1/.test(_s))sessionStorage.setItem("tarot-paper","1");if(/[?&]paper=0/.test(_s))sessionStorage.setItem("tarot-paper","0");var _p=(_s.match(/[?&]pt=([abc])/)||[])[1];if(_p)sessionStorage.setItem("tarot-pt",_p);if(sessionStorage.getItem("tarot-paper")!=="0")document.documentElement.classList.add("paper")}catch(e){}</script><meta name="color-scheme" content="dark only">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>เปิดไพ่ทาโรต์ · AMATATHEWA</title>
 <meta name="description" content="เปิดไพ่ทาโรต์ออนไลน์ฟรีกับอมตเทวา ตั้งจิตให้นิ่ง เลือกไพ่ด้วยตัวเอง แล้วอ่านคำทำนายภาษาไทยได้ทันที">
@@ -17,14 +17,14 @@ iframe.cur{opacity:1;z-index:2}
 iframe.in{z-index:3;transition:opacity .25s ease}
 /* ฉากที่ไม่มีของเลื่อนต่อกัน (เริ่มสับไพ่ · ตัดไพ่): จางซ้อนช้าและนุ่มกว่า */
 iframe.in.soft{transition:opacity .75s cubic-bezier(.45,0,.25,1)}
-</style><link rel="stylesheet" href="paper.css?v=202611201548"><link rel="stylesheet" href="glass.css?v=202611201548"><script src="glass.js?v=202611201548" defer></script>
+</style><link rel="stylesheet" href="paper.css?v=202611201550"><link rel="stylesheet" href="glass.css?v=202611201550"><script src="glass.js?v=202611201550" defer></script>
 </head><body>
 <script>
 // cur = ฉากที่เห็นอยู่ · next = ฉากที่กำลังจะขึ้น · pre = ฉากที่โหลดเตรียมไว้ล่วงหน้า (ฉากกรีดไพ่ ตั้งแต่อยู่ฉากสับไพ่)
 let cur=null,next=null,pres={},timer=0,ask=0,st={};
 const O=location.origin;
 // รุ่นของเว็บ: สคริปต์ขึ้นเว็บใส่เลขให้ทุกครั้ง → ทุกฉากโหลดไฟล์รุ่นใหม่ ไม่ติดของเก่าที่มือถือจำไว้ (ในเครื่องว่างไว้)
-const V='202611201548';
+const V='202611201550';
 function mk(src){const f=document.createElement('iframe');f.src=V?src+(src.includes('?')?'&':'?')+'v='+V:src;f.dataset.src=src;document.body.appendChild(f);return f}
 function load(src,hand){
   if(pres[src]){next=pres[src];delete pres[src]}else next=mk(src);

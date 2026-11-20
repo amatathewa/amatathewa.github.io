@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="th"><head><meta charset="utf-8"><script>/* ธีมกระดาษสา (ทดลอง): ?paper=1 เปิด · ?paper=0 ปิด · จำไว้ในแท็บนี้ */try{var _s=location.search;if(/[?&]paper=1/.test(_s))sessionStorage.setItem("tarot-paper","1");if(/[?&]paper=0/.test(_s))sessionStorage.removeItem("tarot-paper");var _p=(_s.match(/[?&]pt=([abc])/)||[])[1];if(_p)sessionStorage.setItem("tarot-pt",_p);if(sessionStorage.getItem("tarot-paper")){var _h=document.documentElement;_h.classList.add("paper");}}catch(e){}</script><meta name="color-scheme" content="dark only">
+<html lang="th"><head><meta charset="utf-8"><script>/* ธีมกระดาษสา = ค่าเริ่มต้น (20 พ.ย. 2569) · ?paper=0 กลับธีมม่วงเดิม · ?paper=1 เปิดคืน · จำไว้ในแท็บนี้ */try{var _s=location.search;if(/[?&]paper=1/.test(_s))sessionStorage.setItem("tarot-paper","1");if(/[?&]paper=0/.test(_s))sessionStorage.setItem("tarot-paper","0");var _p=(_s.match(/[?&]pt=([abc])/)||[])[1];if(_p)sessionStorage.setItem("tarot-pt",_p);if(sessionStorage.getItem("tarot-paper")!=="0"){var _h=document.documentElement;_h.classList.add("paper");}}catch(e){}</script><meta name="color-scheme" content="dark only">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>สับไพ่ · AMATATHEWA</title>
 <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;1,6..96,400&family=IBM+Plex+Sans+Thai:wght@300;400;500&family=Jost:wght@400;500&family=Trirong:wght@200;300;400&display=swap" rel="stylesheet">
@@ -51,7 +51,7 @@ h1 em{font-style:normal;color:var(--gold-light)}
   .lead{font-size:13.5px}
   .btns{width:100%;gap:10px}.btn{flex:1;width:auto}
 }
-</style><link rel="stylesheet" href="paper.css?v=202611201548"><link rel="stylesheet" href="glass.css?v=202611201548"><script src="glass.js?v=202611201548" defer></script>
+</style><link rel="stylesheet" href="paper.css?v=202611201550"><link rel="stylesheet" href="glass.css?v=202611201550"><script src="glass.js?v=202611201550" defer></script>
 </head><body>
 <div class="stage">
   <div class="bg"></div><div class="veil"></div>
@@ -66,7 +66,7 @@ h1 em{font-style:normal;color:var(--gold-light)}
     <div class="btns"><div class="btn off" id="b1">ตัดไพ่<small>แบ่ง 3 กอง แล้วเรียงใหม่</small></div><div class="btn off" id="b2">กรีดไพ่<small>เลือกไพ่ทันที</small></div></div>
   </main>
 </div>
-<script src="flow.js?v=202611201548"></script>
+<script src="flow.js?v=202611201550"></script>
 <script>
 if(IN_SHELL)parent.postMessage({preload:['pick.html?'+new URLSearchParams(ST),'cut.html?'+new URLSearchParams(ST)]},location.origin); // โหลดฉากกรีดไพ่+ตัดไพ่เตรียมไว้ กดแล้วไปต่อได้ทันที
 
