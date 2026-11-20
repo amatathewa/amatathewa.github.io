@@ -12,7 +12,7 @@ for name in os.listdir(os.path.join(SRC, 'web')):
     if name == 'index.html':
         s = s.replace("const V='';", "const V='%s';" % V)
     s = re.sub(r'src="(flow\.js|\.\./js/cards-data\.js)"', lambda m: 'src="%s?v=%s"' % (m.group(1), V), s)
-    s = s.replace('href="paper.css"', 'href="paper.css?v=%s"' % V)
+    s = s.replace('href="paper.css"', 'href="paper.css?v=%s"' % V).replace('href="glass.css"', 'href="glass.css?v=%s"' % V).replace('src="glass.js"', 'src="glass.js?v=%s"' % V)
     io.open(os.path.join(SITE, 'tarot', 'web', name), 'w', encoding='utf-8', newline='').write(s)
 shutil.copy(os.path.join(SRC, 'js', 'cards-data.js'), os.path.join(SITE, 'tarot', 'js', 'cards-data.js'))
 msg = (sys.argv[1] if len(sys.argv) > 1 else 'อัปเดตเว็บ') + ' (รุ่น ' + V + ')\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>'
