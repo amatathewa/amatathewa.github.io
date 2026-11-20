@@ -1,11 +1,11 @@
-/* ชั้นลอยเคลือบกระจก (ทดลอง): ?glass=1 เปิด · ?glass=0 ปิด · ใช้คู่ธีมกระดาษ ?paper=1 · 20 พ.ย. 2569 */
+/* ชั้นลอยเคลือบกระจก = ค่าเริ่มต้น (20 พ.ย. 2569) · ?glass=0 ปิด · ?glass=1 เปิดคืน · ใช้คู่ธีมกระดาษ ?paper=1 · 20 พ.ย. 2569 */
 (function () {
   var H = document.documentElement;
   try {
     var s = location.search;
     if (/[?&]glass=1/.test(s)) sessionStorage.setItem('tarot-glass', '1');
-    if (/[?&]glass=0/.test(s)) sessionStorage.removeItem('tarot-glass');
-    if (!sessionStorage.getItem('tarot-glass') || !H.classList.contains('paper')) return;
+    if (/[?&]glass=0/.test(s)) sessionStorage.setItem('tarot-glass', '0');
+    if (sessionStorage.getItem('tarot-glass') === '0' || !H.classList.contains('paper')) return;
   } catch (e) { return; }
   H.classList.add('glass');
   // หน้าย่อยในกรอบ (สับไพ่ กรีดไพ่ ฯลฯ): ไม่สร้างฉากเอง ทำพื้นใส ให้เห็นฉากเดียวของหน้าหลักลอยต่อเนื่องทุกขั้น
