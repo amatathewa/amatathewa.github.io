@@ -193,7 +193,7 @@ function showOnlineLock() {
   const go = async () => {
     const p = $("m1").value; if (!p) return; $("err").textContent = "กำลังเปิด…"; $("go").disabled = true;
     try {
-      if (fileHandle) await filePerm();
+      if (fileHandle && !(await filePerm())) fileHandle = null;   // ไฟล์สำรองใช้ไม่ได้รอบนี้ → เปิดจากออนไลน์อย่างเดียว (ไม่ลบที่ผูกไว้)
       const sl = ub64(vmeta.salt), d = await deriveBoth(p, sl, vmeta.iter);
       const r = await vapi("/vault/open", {auth:d.auth, device:devId(), name:devName()});
       if (r.s !== 200) throw r.j.message || "เปิดไม่ได้ ลองใหม่อีกครั้ง";
@@ -242,9 +242,11 @@ async function idbGet(k) {
   return Promise.race([get, new Promise(res => setTimeout(() => res(null), 1500))]);  // กันหน้าค้างถ้าเบราว์เซอร์ไม่ตอบ
 }
 async function idbSet(k, v) { try { const db = await idb(); await new Promise(res => { const t = db.transaction("h", "readwrite"); v === null ? t.objectStore("h").delete(k) : t.objectStore("h").put(v, k); t.oncomplete = res; t.onerror = res; }); } catch (e) {} }
+// กันค้าง (แก้ 22 พ.ย. 2569): ไฟล์ที่ผูกไว้ใน Google Drive (G:) บางครั้งเบราว์เซอร์ถามสิทธิ์/เขียนไฟล์แล้วไม่ตอบเลย → หน้าค้าง "กำลังเปิด…" · เกินเวลาให้ถือว่าใช้ไฟล์ไม่ได้ แล้วไปต่อ
+function within(p, ms, fallback) { return Promise.race([p, new Promise(res => setTimeout(() => res(fallback), ms))]); }
 async function writeFile(blob) {
   if (!fileHandle) return true;
-  try { const w = await fileHandle.createWritable(); await w.write(blob); await w.close(); return true; } catch (e) { return false; }
+  return within((async () => { try { const w = await fileHandle.createWritable(); await w.write(blob); await w.close(); return true; } catch (e) { return false; } })(), 8000, false);
 }
 async function linkFile(create) {
   const opts = {types:[{description:"สมุดบัญชีอมตเทวา (เข้ารหัส)", accept:{"application/json":[".json"]}}]};
@@ -253,7 +255,7 @@ async function linkFile(create) {
 }
 async function filePerm() {
   if (!fileHandle) return false;
-  try { const o = {mode:"readwrite"}; if (await fileHandle.queryPermission(o) === "granted") return true; return await fileHandle.requestPermission(o) === "granted"; } catch (e) { return false; }
+  return within((async () => { try { const o = {mode:"readwrite"}; if (await fileHandle.queryPermission(o) === "granted") return true; return await fileHandle.requestPermission(o) === "granted"; } catch (e) { return false; } })(), 6000, false);
 }
 
 let saveT, pushing = false, pushAgain = false;
@@ -320,7 +322,10 @@ async function showLock(mode) {
     try {
       if (!isNew) {
         let blob = pendingBlob;
-        if (!blob && fileHandle) { if (!(await filePerm())) throw "สิทธิ์"; blob = await (await fileHandle.getFile()).text(); }
+        if (!blob && fileHandle) {
+          const fb = (await filePerm()) ? await within(fileHandle.getFile().then(f => f.text()).catch(() => null), 8000, null) : null;
+          if (fb) blob = fb; else if (!local) throw "สิทธิ์"; else fileHandle = null;   // ไฟล์ใน G: ไม่ตอบ → ใช้ฉบับในเครื่องนี้แทน
+        }
         if (!blob) blob = local;
         const r = await unseal(blob, p); key = r.k; salt = r.s; notes = null; setData(r.d);
         pendingBlob = null; store(VKEY, blob);
