@@ -79,6 +79,9 @@ textarea.hide{-webkit-text-security:disc}
 .tabs button.on{color:var(--night);border-bottom-color:var(--gold)}
 .when{font-size:13px;color:var(--muted);white-space:nowrap}
 .note textarea{font-size:18px;line-height:1.85;min-height:110px;background:#fff}
+.ntools{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px}
+.ntools .btn{padding:8px 14px;font-size:14.5px}
+.ntools .btn.rec{background:#fdf1e6;border-color:#e08a2e;color:#8a4a0c}
 .tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
 .tile{text-align:left;background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 18px;display:flex;flex-direction:column;gap:6px;min-height:118px;box-shadow:0 6px 18px -14px #3a2449;transition:transform .15s,border-color .15s}
 .tile:hover{border-color:var(--gold);transform:translateY(-2px)}
@@ -193,7 +196,6 @@ function showOnlineLock() {
   const go = async () => {
     const p = $("m1").value; if (!p) return; $("err").textContent = "กำลังเปิด…"; $("go").disabled = true;
     try {
-      if (fileHandle && !(await filePerm())) fileHandle = null;   // ไฟล์สำรองใช้ไม่ได้รอบนี้ → เปิดจากออนไลน์อย่างเดียว (ไม่ลบที่ผูกไว้)
       const sl = ub64(vmeta.salt), d = await deriveBoth(p, sl, vmeta.iter);
       const r = await vapi("/vault/open", {auth:d.auth, device:devId(), name:devName()});
       if (r.s !== 200) throw r.j.message || "เปิดไม่ได้ ลองใหม่อีกครั้ง";
@@ -284,17 +286,17 @@ function msg(s) { const el = $("saved"); if (!el) return; el.textContent = s; cl
 function esc(s) { return (s || "").replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;"); }
 function grow(t) { t.style.height = "auto"; t.style.height = t.scrollHeight + 2 + "px"; }
 
-function lockNow() { syncAuth = null; syncNew = null; key = null; data = null; notes = null; salt = null; clearTimeout(idleT); document.querySelectorAll(".ov").forEach(o => o.remove()); document.body.style.overflow = ""; showLock(); }
+function lockNow() { micStop(); syncAuth = null; syncNew = null; key = null; data = null; notes = null; salt = null; clearTimeout(idleT); document.querySelectorAll(".ov").forEach(o => o.remove()); document.body.style.overflow = ""; showLock(); }
 function bump() { clearTimeout(idleT); if (AL.on) idleT = setTimeout(lockNow, AL.min * 60000); }
 ["click","keydown","input"].forEach(ev => document.addEventListener(ev, () => { if (key) bump(); }));
 
 // เปิดสมุด: จากไฟล์ที่ผูกไว้ (ถ้ามี) → จากเครื่องนี้ · ถ้าไม่มีอะไรเลย ให้เลือกเปิดจากไฟล์หรือสร้างใหม่
 async function showLock(mode) {
-  fileHandle = fileHandle || await idbGet("file");
   if (ONLINE && !mode && !pendingBlob) {   // เปิดจากลิงก์: ถ้ามีสมุดออนไลน์แล้ว ใช้หน้าเปิดแบบออนไลน์
     try { vmeta = (await vapi("/vault/meta")).j; } catch (e) { vmeta = null; }
-    if (vmeta && vmeta.exists) return showOnlineLock();
+    if (vmeta && vmeta.exists) { fileHandle = null; return showOnlineLock(); }   // 22 พ.ย. 2569 ณัทกรขอ: บนเว็บดึงจากออนไลน์อย่างเดียว ไม่แตะไฟล์ Google Drive (ไม่ต้องรอ)
   }
+  fileHandle = fileHandle || await idbGet("file");
   const local = load(VKEY);
   mode = mode || (local || fileHandle || pendingBlob ? "open" : "start");
   document.body.classList.add("locked");
@@ -515,7 +517,27 @@ function sheet(c) {
   c.querySelectorAll("textarea").forEach(grow);
   document.body.style.overflow = "hidden";
 }
-function closeSheet() { document.querySelectorAll(".sheet").forEach(o => o.remove()); document.body.style.overflow = ""; if (key) render(); }
+// ใส่ข้อความตรงตำแหน่งเคอร์เซอร์ (ถ้าเลือกข้อความไว้ = แทนที่ส่วนนั้น)
+function insertAt(ta, s) {
+  const a = ta.selectionStart ?? ta.value.length, b = ta.selectionEnd ?? a;
+  ta.value = ta.value.slice(0, a) + s + ta.value.slice(b); ta.selectionStart = ta.selectionEnd = a + s.length;
+  ta.dispatchEvent(new Event("input")); ta.focus();
+}
+// พูดแทนพิมพ์: ใช้ระบบฟังเสียงของ Chrome (เสียงถูกส่งไปแปลงเป็นตัวหนังสือที่เซิร์ฟเวอร์ Google) · กดอีกครั้งเพื่อหยุด
+let rec = null;
+function micStop() { if (rec) { try { rec.stop(); } catch (e) {} } }
+function micToggle(ta, btn) {
+  if (rec) { micStop(); return; }
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { msg("เบราว์เซอร์นี้พิมพ์ด้วยเสียงไม่ได้ · บนมือถือใช้ปุ่มไมค์บนคีย์บอร์ดแทน"); return; }
+  const r = new SR(); rec = r; r.lang = "th-TH"; r.continuous = true; r.interimResults = false;
+  r.onresult = e => { for (let k = e.resultIndex; k < e.results.length; k++) if (e.results[k].isFinal) insertAt(ta, e.results[k][0].transcript.trim() + " "); };
+  r.onerror = e => msg(e.error === "not-allowed" ? "ต้องกดอนุญาตให้ใช้ไมค์ก่อน" : e.error === "network" ? "พิมพ์ด้วยเสียงต้องต่ออินเทอร์เน็ต" : e.error === "no-speech" ? "ไม่ได้ยินเสียง ลองกดใหม่แล้วพูดได้เลย" : "ไมค์หยุดทำงาน ลองกดใหม่");
+  r.onend = () => { if (rec === r) rec = null; btn.textContent = "🎤 พูดแทนพิมพ์"; btn.classList.remove("rec"); };
+  try { r.start(); } catch (e) { rec = null; msg("เปิดไมค์ไม่ได้ ลองใหม่"); return; }
+  btn.textContent = "● กำลังฟัง… กดเพื่อหยุด"; btn.classList.add("rec"); ta.focus();
+}
+function closeSheet() { micStop(); document.querySelectorAll(".sheet").forEach(o => o.remove()); document.body.style.overflow = ""; if (key) render(); }
 
 function openAcc(d, i) {
     const c = document.createElement("div"); c.className = "card";
@@ -575,12 +597,34 @@ function renderNotes() {
 function openNote(n, i) {
     const c = document.createElement("div"); c.className = "card note";
     c.innerHTML = `<div class="head"><input class="svc nt" data-k="t" value="${esc(n.t)}" placeholder="หัวข้อโน้ต"><span class="when">แก้ล่าสุด ${esc(n.u)}</span></div>
+    <div class="ntools"><button class="btn" data-n="copy">คัดลอก</button><button class="btn" data-n="paste">วาง</button><button class="btn" data-n="clear">ล้าง</button><button class="btn" data-n="mic">🎤 พูดแทนพิมพ์</button></div>
     <div class="f"><textarea data-k="b" rows="3" placeholder="เขียนได้ยาวตามต้องการ หรือจดสั้นๆ ก็ได้">${esc(n.b)}</textarea></div>
     <div class="foot"><button class="del" data-del>ลบโน้ตนี้</button></div>`;
     c.querySelectorAll("[data-k]").forEach(el => el.addEventListener("input", () => {
       n[el.dataset.k] = el.value; n.u = today(); c.querySelector(".when").textContent = "แก้ล่าสุด " + n.u; save();
       if (el.tagName === "TEXTAREA") grow(el);
+      if (el.dataset.k === "b" && cleared !== null && el.value) { cleared = null; clr.textContent = "ล้าง"; }
     }));
+    // ปุ่มโน้ต (22 พ.ย. 2569 ณัทกรขอ): คัดลอก · วาง · ล้าง (เอาคืนได้) · พูดแทนพิมพ์
+    const ta = c.querySelector('[data-k="b"]'), clr = c.querySelector('[data-n="clear"]'); let cleared = null;
+    c.querySelector('[data-n="copy"]').onclick = async () => {
+      const sel = ta.value.slice(ta.selectionStart, ta.selectionEnd), v = sel || ta.value;
+      if (!v) { msg("ยังไม่มีข้อความให้คัดลอก"); return; }
+      try { await navigator.clipboard.writeText(v); msg(sel ? "คัดลอกส่วนที่เลือกแล้ว" : "คัดลอกทั้งโน้ตแล้ว"); }
+      catch (e) { ta.focus(); if (!sel) ta.select(); msg("คัดลอกอัตโนมัติไม่ได้ เลือกข้อความไว้ให้แล้ว กด Ctrl+C"); }
+    };
+    c.querySelector('[data-n="paste"]').onclick = async () => {
+      try { const v = await navigator.clipboard.readText(); if (!v) { msg("ไม่มีข้อความที่คัดลอกไว้"); return; } insertAt(ta, v); msg("วางแล้ว"); }
+      catch (e) { ta.focus(); msg("ต้องกดอนุญาตให้อ่านข้อความที่คัดลอกก่อน หรือกด Ctrl+V ในช่องโน้ต"); }
+    };
+    clr.onclick = () => {
+      if (cleared !== null) { ta.value = cleared; cleared = null; clr.textContent = "ล้าง"; ta.dispatchEvent(new Event("input")); msg("เอาข้อความคืนแล้ว"); return; }
+      if (!ta.value) return;
+      cleared = ta.value; ta.value = ""; ta.dispatchEvent(new Event("input")); clr.textContent = "↩ เอาคืน"; ta.focus();
+      msg("ล้างแล้ว · กด ↩ เอาคืน ถ้าเผลอกด");
+    };
+    const mb = c.querySelector('[data-n="mic"]');
+    mb.onclick = () => micToggle(ta, mb);
     c.querySelector("[data-del]").onclick = () => askPw(`ใส่รหัสหลักเพื่อยืนยันการลบโน้ต "${esc(n.t) || "ไม่มีหัวข้อ"}"`, async p => {
       try { await unseal(load(VKEY), p); } catch (e) { msg("รหัสหลักไม่ถูกต้อง · ยังไม่ได้ลบ"); return; }
       notes.splice(i, 1); save(); closeSheet(); msg("ลบโน้ตแล้ว");
