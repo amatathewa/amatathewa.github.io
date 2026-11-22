@@ -79,6 +79,7 @@ textarea.hide{-webkit-text-security:disc}
 .tabs button.on{color:var(--night);border-bottom-color:var(--gold)}
 .when{font-size:13px;color:var(--muted);white-space:nowrap}
 .note textarea{font-size:18px;line-height:1.85;min-height:110px;background:#fff}
+.ro{background:#fdf9ec;border:1px solid #e6d49a;color:#6b5210;border-radius:12px;padding:12px 16px;margin:0 0 14px;font-size:15px;line-height:1.6}
 .ntools{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px}
 .ntools .btn{padding:8px 14px;font-size:14.5px}
 .ntools .btn.rec{background:#fdf1e6;border-color:#e08a2e;color:#8a4a0c}
@@ -166,6 +167,8 @@ const $ = id => document.getElementById(id);
 const ONLINE = /^https?:$/.test(location.protocol) && /(^|\.)amatathewa\.com$|^localhost$/.test(location.hostname);
 const VAPI = location.hostname === "localhost" ? location.origin + "/api" : "https://amatathewa-wallpaper.amatathewa.workers.dev";
 let syncAuth = null, syncVer = 0, syncNew = null, vmeta = null;
+// ไม่มีเน็ต (22 พ.ย. 2569): เปิดฉบับล่าสุดที่จำไว้ในเครื่องนี้ ดูได้อย่างเดียว · กันข้อมูลที่แก้ตอนออฟไลน์โดนฉบับบนเว็บทับหาย
+let READONLY = false;
 const devId = () => { let d = load("amatathewa-device"); if (!d) { d = b64(crypto.getRandomValues(new Uint8Array(32))); store("amatathewa-device", d); } return d; };
 const devName = () => /iPhone|iPad/.test(navigator.userAgent) ? "ไอโฟน" : /Android/.test(navigator.userAgent) ? "มือถือแอนดรอยด์" : /Windows/.test(navigator.userAgent) ? "คอม Windows" : "เครื่องอื่น";
 async function deriveBoth(pw, s, iter) {
@@ -205,6 +208,24 @@ function showOnlineLock() {
     } catch (e) { $("err").textContent = typeof e === "string" ? e : "เปิดไม่ได้ ตรวจอินเทอร์เน็ตแล้วลองใหม่"; if ($("go")) $("go").disabled = false; }
   };
   $("go").onclick = go; $("other").onclick = pickFile;
+  $("peek").onclick = () => { const i = $("m1"), show = i.type === "password"; i.type = show ? "text" : "password"; $("peek").textContent = show ? "🙈 ซ่อน" : "👁 ดูที่พิมพ์"; };
+  $("m1").onkeydown = e => { if (e.key === "Enter") go(); };
+  $("m1").focus();
+}
+
+function showOfflineLock() {
+  document.body.classList.add("locked");
+  $("app").innerHTML = `<div class="lock"><img src="${LOGO}" alt=""><h1>สมุดบัญชีออนไลน์</h1><div class="tag">AMATATHEWA · PRIVATE</div>
+  <p>📴 ตอนนี้ไม่มีอินเทอร์เน็ต<br>เปิดฉบับล่าสุดที่จำไว้ในเครื่องนี้ได้ · ดูและคัดลอกได้ แต่แก้ไม่ได้</p>
+  <input id="m1" type="password" placeholder="รหัสหลัก" autocomplete="off">
+  <button class="peek" id="peek">👁 ดูที่พิมพ์</button><button class="go" id="go">เปิดดู (ไม่มีเน็ต)</button><div class="err" id="err"></div>
+  <button class="peek" id="retry">🔄 เน็ตกลับมาแล้ว ลองใหม่</button></div>`;
+  const go = async () => {
+    const p = $("m1").value; if (!p) return; $("err").textContent = "กำลังเปิด…";
+    try { const r = await unseal(load(VKEY), p); key = r.k; salt = r.s; notes = null; setData(r.d); READONLY = true; bump(); showBook(); }
+    catch (e) { $("err").textContent = "รหัสหลักไม่ถูกต้อง"; }
+  };
+  $("go").onclick = go; $("retry").onclick = () => location.reload();
   $("peek").onclick = () => { const i = $("m1"), show = i.type === "password"; i.type = show ? "text" : "password"; $("peek").textContent = show ? "🙈 ซ่อน" : "👁 ดูที่พิมพ์"; };
   $("m1").onkeydown = e => { if (e.key === "Enter") go(); };
   $("m1").focus();
@@ -265,6 +286,7 @@ function save() {
   clearTimeout(saveT);
   saveT = setTimeout(async () => {
     if (!key) return;
+    if (READONLY) { msg("ไม่มีเน็ต · ดูได้อย่างเดียว ยังไม่ได้บันทึก"); return; }
     const blob = await seal(), ok = store(VKEY, blob), fok = await writeFile(blob);
     // ส่งขึ้นออนไลน์ทีละรอบ (แก้บัค 5 พ.ย.: พิมพ์ต่อระหว่างเน็ตช้า เคยส่งซ้อนจนชนกับตัวเอง) · พิมพ์เพิ่มระหว่างรอ = ส่งต่ออีกรอบด้วยข้อมูลล่าสุด
     if (syncAuth && pushing) { pushAgain = true; return; }
@@ -286,15 +308,17 @@ function msg(s) { const el = $("saved"); if (!el) return; el.textContent = s; cl
 function esc(s) { return (s || "").replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;"); }
 function grow(t) { t.style.height = "auto"; t.style.height = t.scrollHeight + 2 + "px"; }
 
-function lockNow() { micStop(); syncAuth = null; syncNew = null; key = null; data = null; notes = null; salt = null; clearTimeout(idleT); document.querySelectorAll(".ov").forEach(o => o.remove()); document.body.style.overflow = ""; showLock(); }
+function lockNow() { micStop(); READONLY = false; syncAuth = null; syncNew = null; key = null; data = null; notes = null; salt = null; clearTimeout(idleT); document.querySelectorAll(".ov").forEach(o => o.remove()); document.body.style.overflow = ""; showLock(); }
 function bump() { clearTimeout(idleT); if (AL.on) idleT = setTimeout(lockNow, AL.min * 60000); }
 ["click","keydown","input"].forEach(ev => document.addEventListener(ev, () => { if (key) bump(); }));
 
 // เปิดสมุด: จากไฟล์ที่ผูกไว้ (ถ้ามี) → จากเครื่องนี้ · ถ้าไม่มีอะไรเลย ให้เลือกเปิดจากไฟล์หรือสร้างใหม่
 async function showLock(mode) {
   if (ONLINE && !mode && !pendingBlob) {   // เปิดจากลิงก์: ถ้ามีสมุดออนไลน์แล้ว ใช้หน้าเปิดแบบออนไลน์
-    try { vmeta = (await vapi("/vault/meta")).j; } catch (e) { vmeta = null; }
+    let net = true;
+    try { const r = await within(vapi("/vault/meta"), 8000, null); if (!r) throw 0; vmeta = r.j; } catch (e) { vmeta = null; net = false; }
     if (vmeta && vmeta.exists) { fileHandle = null; return showOnlineLock(); }   // 22 พ.ย. 2569 ณัทกรขอ: บนเว็บดึงจากออนไลน์อย่างเดียว ไม่แตะไฟล์ Google Drive (ไม่ต้องรอ)
+    if (!net && load(VKEY)) return showOfflineLock();
   }
   fileHandle = fileHandle || await idbGet("file");
   const local = load(VKEY);
@@ -368,7 +392,7 @@ async function pickFile() {
 }
 function updState() {
   const s = $("st"); if (!s) return;
-  s.innerHTML = "🔓 เปิดอยู่<br>" + (syncAuth ? "☁️ ซิงก์กับมือถือแล้ว" + (fileHandle ? " · สำรองลงไฟล์ " + esc(fileHandle.name) : "") : fileHandle ? "บันทึกลงไฟล์ " + esc(fileHandle.name) : "เก็บในเครื่องนี้เท่านั้น · กด 💾 ผูกไฟล์สมุด");
+  s.innerHTML = "🔓 เปิดอยู่<br>" + (READONLY ? "📴 ไม่มีเน็ต · ดูได้อย่างเดียว" :syncAuth ? "☁️ ซิงก์กับมือถือแล้ว" + (fileHandle ? " · สำรองลงไฟล์ " + esc(fileHandle.name) : "") : fileHandle ? "บันทึกลงไฟล์ " + esc(fileHandle.name) : "เก็บในเครื่องนี้เท่านั้น · กด 💾 ผูกไฟล์สมุด");
 }
 
 function showBook() {
@@ -443,6 +467,12 @@ function showBook() {
     if (syncAuth) { const d = await deriveBoth(p1, salt); key = d.k; syncNew = {auth:d.auth, salt:b64(salt)}; } else key = await derive(p1, salt);
     save(); msg("เปลี่ยนรหัสหลักแล้ว · อย่าลืมจดรหัสใหม่");
   }));
+  if (READONLY) {   // ไม่มีเน็ต: ซ่อนปุ่มที่แก้ข้อมูล เหลือดู/คัดลอก/ล็อก/ดาวน์โหลดสำรอง/พิมพ์
+    ["add", "sort", "cm", "im", "lf", "sy"].forEach(id => { if ($(id)) $(id).style.display = "none"; });
+    const b = document.createElement("div"); b.className = "ro";
+    b.innerHTML = "📴 <b>ไม่มีอินเทอร์เน็ต · ดูได้อย่างเดียว</b><br>นี่คือฉบับล่าสุดที่จำไว้ในเครื่องนี้ ดูและคัดลอกรหัสได้ · อยากแก้ ให้รอเน็ตกลับมาแล้วเปิดลิงก์ใหม่";
+    $("list").before(b);
+  }
   render(); updState();
 }
 
@@ -470,12 +500,12 @@ function render() {
   $("add").textContent = view === "notes" ? "＋ เพิ่มโน้ต" : "＋ เพิ่มบัญชี";
   $("sort").textContent = sortMode ? "✓ จัดลำดับเสร็จ" : "↕ จัดลำดับ";
   $("sort").classList.toggle("primary", sortMode);
-  document.querySelector(".hint").textContent = sortMode
+  document.querySelector(".hint").textContent = READONLY ? "กดกล่องเพื่อดูรายละเอียดและคัดลอกรหัส" : sortMode
     ? "โหมดจัดลำดับ · ลากกล่องไปวางที่ใหม่ หรือกด ◀ ▶ เพื่อเลื่อนทีละช่อง · เสร็จแล้วกด ✓ จัดลำดับเสร็จ"
     : "ทุกอย่างเข้ารหัสก่อนบันทึก · ลากกล่องเพื่อสลับตำแหน่งได้ · ใช้เสร็จกดล็อกสมุดทุกครั้ง";
   if (view === "notes") return renderNotes();
   const L = $("list"); L.innerHTML = "";
-  if (!data.length) { L.innerHTML = '<div class="empty">ยังไม่มีบัญชี · กด ＋ เพิ่มบัญชี เพื่อเริ่มจด</div>'; return; }
+  if (!data.length) { L.innerHTML = '<div class="empty">ยังไม่มีบัญชี' + (READONLY ? "" : " · กด ＋ เพิ่มบัญชี เพื่อเริ่มจด") + '</div>'; return; }
   const g = document.createElement("div"); g.className = "tiles"; L.appendChild(g);
   data.forEach((d, i) => {
     const t = document.createElement("button"); t.className = "tile";
@@ -489,7 +519,7 @@ function render() {
 let dragFrom = null, sortMode = false;
 function move(arr, from, to) { const [x] = arr.splice(from, 1); arr.splice(to, 0, x); }
 function wire(t, arr, i, open) {
-  t.draggable = true;
+  t.draggable = !READONLY;
   t.onclick = () => { if (!sortMode) open(); };
   t.addEventListener("dragstart", e => { dragFrom = i; t.classList.add("dragging"); e.dataTransfer.effectAllowed = "move"; });
   t.addEventListener("dragend", () => { dragFrom = null; document.querySelectorAll(".tile").forEach(x => x.classList.remove("dragging", "over")); });
@@ -511,6 +541,10 @@ function wire(t, arr, i, open) {
 function sheet(c) {
   const o = document.createElement("div"); o.className = "ov sheet";
   o.innerHTML = '<div class="panel"><div class="sbar"><button class="btn" data-close>✕ ปิด</button></div></div>';
+  if (READONLY) {   // ไม่มีเน็ต: ช่องทั้งหมดอ่านได้อย่างเดียว ปุ่มลบ/วาง/ล้าง/ไมค์/สลับ 2 ขั้นตอน ซ่อน
+    c.querySelectorAll("input,textarea").forEach(x => x.readOnly = true);
+    c.querySelectorAll('[data-del],[data-t],[data-n="paste"],[data-n="clear"],[data-n="mic"]').forEach(x => x.style.display = "none");
+  }
   o.querySelector(".panel").appendChild(c); document.body.appendChild(o);
   o.querySelector("[data-close]").onclick = closeSheet;
   o.onclick = e => { if (e.target === o) closeSheet(); };
@@ -584,7 +618,7 @@ function openAcc(d, i) {
 
 function renderNotes() {
   const L = $("list"); L.innerHTML = "";
-  if (!notes.length) { L.innerHTML = '<div class="empty">ยังไม่มีโน้ต · กด ＋ เพิ่มโน้ต เพื่อเริ่มจด</div>'; return; }
+  if (!notes.length) { L.innerHTML = '<div class="empty">ยังไม่มีโน้ต' + (READONLY ? "" : " · กด ＋ เพิ่มโน้ต เพื่อเริ่มจด") + '</div>'; return; }
   const g = document.createElement("div"); g.className = "tiles"; L.appendChild(g);
   notes.forEach((n, i) => {
     const t = document.createElement("button"); t.className = "tile note-t";
@@ -632,6 +666,8 @@ function openNote(n, i) {
     sheet(c);
 }
 
+// จำหน้าสมุดไว้ในเครื่อง ให้เปิดลิงก์ได้ตอนไม่มีเน็ต (เฉพาะเปิดจากเว็บ · ไฟล์ในเครื่องไม่ต้อง)
+if (ONLINE && "serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
 if (!window.crypto || !crypto.subtle) $("app").innerHTML = '<div class="wrap">เบราว์เซอร์นี้เข้ารหัสไม่ได้ กรุณาเปิดไฟล์ด้วย Chrome</div>';
 else showLock();
 </script></body></html>
