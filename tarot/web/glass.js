@@ -203,8 +203,11 @@
     [].forEach.call(document.querySelectorAll('iframe'), hookFrame);
     new MutationObserver(function (ms) { ms.forEach(function (m) { [].forEach.call(m.addedNodes, function (x) { if (x.tagName === 'IFRAME') hookFrame(x); }); }); }).observe(document.body, { childList: true });
     auto(); // ลองเปิดทันทีตอนเข้าหน้า
-    // สลับไปแอปอื่น = หยุดชั่วคราว · กลับมา = เล่นต่อเฉพาะถ้าตอนออกไปกำลังเล่นอยู่
+    // มือถือ: สลับไปแอปอื่น = หยุดชั่วคราว · กลับมา = เล่นต่อเฉพาะถ้าตอนออกไปกำลังเล่นอยู่
+    // คอม: เพลงเล่นต่อแม้สลับแท็บ/หน้าต่าง (ณัทกร 22 พ.ย. 2569) — ไม่หยุดเลย
+    var MOBILE = window.matchMedia && matchMedia('(hover: none) and (pointer: coarse)').matches;
     document.addEventListener('visibilitychange', function () {
+      if (!MOBILE) return;
       if (document.hidden) { wasPlaying = playing; if (playing) { tracks.forEach(function (tr) { tr.a.pause(); }); playing = false; paint(); } }
       else if (wasPlaying && want) { wasPlaying = false; play(); }
     });
