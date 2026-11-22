@@ -177,7 +177,7 @@
     b.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M9 18V5l11-2v13"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="17.5" cy="16" r="2.5"/></svg><i></i><i></i><i></i>';
     function paint() { b.classList.toggle('play', playing); b.setAttribute('aria-label', playing ? 'ปิดเพลง' : 'เปิดเพลง'); }
     b.addEventListener('click', function (e) {
-      e.stopPropagation(); e.preventDefault();
+      e.stopPropagation(); e.preventDefault(); needResume = false;
       if (playing) { want = false; stop(); } else { want = true; play(); }
       try { localStorage.setItem('tarot-music', want ? 'on' : 'off'); } catch (er) {}
     });
@@ -196,7 +196,26 @@
     }
     var EV = ['pointerdown', 'pointerup', 'touchend', 'click', 'keydown'];  // มือถือนับการแตะตอนยกนิ้ว (pointerup/touchend)
     // บางเครื่องยอมเล่นเพลงตอนเข้าหน้า แต่ระบบเสียงยังพักอยู่ (เงียบ) → แตะครั้งไหนก็ปลุกระบบเสียงให้ดัง ถ้ายังอยากฟัง
-    function wake() {}
+    // เสียงอื่นแทรก (เช่น ดูสตอรี่ที่มีเพลง) → ระบบมือถือสั่งหยุดเพลงเรา · พอเสียงนั้นจบ ให้กลับมาเล่นต่อเอง (ณัทกร 22 พ.ย. 2569)
+    // เล่นต่อเฉพาะถ้ายังอยากฟัง (want) และไม่ได้กดปิดเอง · ถ้าเครื่องไม่ยอมเล่นเอง จะเล่นต่อตอนแตะจอครั้งถัดไป
+    var needResume = false;
+    tracks.forEach(function (tr, i) {
+      tr.a.addEventListener('pause', function () {
+        if (playing && i === cur && !xfading && !tr.a.ended) { playing = false; needResume = !!MOBILE; paint(); }  // คอม: โดนกดหยุดจากปุ่มสื่อของเครื่อง = ตั้งใจหยุด ไม่เปิดเอง
+      });
+    });
+    function tryResume() {
+      if (!want || !needResume || playing || document.hidden) return;
+      var tr = tracks[cur]; setVol(tr, 0);
+      var p = tr.a.play();
+      if (p && p.then) p.then(function () { if (!want || !needResume) { tr.a.pause(); return; } needResume = false; playing = true; paint(); setVol(tr, VOL, 1.5); }).catch(function () {});
+    }
+    function wake(e) {
+      if (e && e.target && e.target.closest && e.target.closest('.gmusic')) return;
+      tryResume();
+    }
+    setInterval(tryResume, 2000);
+    window.addEventListener('focus', tryResume); window.addEventListener('pageshow', tryResume);
     function hook(doc) { try { EV.forEach(function (ev) { doc.addEventListener(ev, auto, true); doc.addEventListener(ev, wake, true); }); } catch (e) {} }
     hook(document);
     function hookFrame(f) { function h() { try { hook(f.contentDocument); } catch (e) {} } f.addEventListener('load', h); h(); }
@@ -208,8 +227,8 @@
     var MOBILE = window.matchMedia && matchMedia('(hover: none) and (pointer: coarse)').matches;
     document.addEventListener('visibilitychange', function () {
       if (!MOBILE) return;
-      if (document.hidden) { wasPlaying = playing; if (playing) { tracks.forEach(function (tr) { tr.a.pause(); }); playing = false; paint(); } }
-      else if (wasPlaying && want) { wasPlaying = false; play(); }
+      if (document.hidden) { if (playing) { playing = false; needResume = true; paint(); tracks.forEach(function (tr) { tr.a.pause(); }); } }
+      else tryResume();
     });
   }
   var HAS_MUSIC = true; // เพลงชุดใหม่ แต่งด้วย ElevenLabs 20 พ.ย. (ชุด FreePD เก่าโละทิ้งแล้ว)
