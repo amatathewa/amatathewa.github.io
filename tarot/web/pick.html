@@ -1,5 +1,8 @@
 <!doctype html>
-<html lang="th"><head><meta charset="utf-8"><script>/* ธีมกระดาษสา = ค่าเริ่มต้น (20 พ.ย. 2569) · ?paper=0 กลับธีมม่วงเดิม · ?paper=1 เปิดคืน · จำไว้ในแท็บนี้ */try{var _s=location.search;if(/[?&]paper=1/.test(_s))sessionStorage.setItem("tarot-paper","1");if(/[?&]paper=0/.test(_s))sessionStorage.setItem("tarot-paper","0");var _p=(_s.match(/[?&]pt=([abc])/)||[])[1];if(_p)sessionStorage.setItem("tarot-pt",_p);if(sessionStorage.getItem("tarot-paper")!=="0"){var _h=document.documentElement;_h.classList.add("paper");}}catch(e){}</script><script>/* เปิดในกรอบ (index.html): รอกรอบสั่ง "show" (ฉากนี้ขึ้นจอแล้ว) ก่อนเริ่มแอนิเมชัน · เปิดหน้านี้ตรงๆ: เริ่มเลย */
+<html lang="th"><head>
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/icon/icon-192.png">
+<link rel="apple-touch-icon" href="/assets/icon/apple-touch-icon.png"><meta charset="utf-8"><script>/* ธีมกระดาษสา = ค่าเริ่มต้น (20 พ.ย. 2569) · ?paper=0 กลับธีมม่วงเดิม · ?paper=1 เปิดคืน · จำไว้ในแท็บนี้ */try{var _s=location.search;if(/[?&]paper=1/.test(_s))sessionStorage.setItem("tarot-paper","1");if(/[?&]paper=0/.test(_s))sessionStorage.setItem("tarot-paper","0");var _p=(_s.match(/[?&]pt=([abc])/)||[])[1];if(_p)sessionStorage.setItem("tarot-pt",_p);if(sessionStorage.getItem("tarot-paper")!=="0"){var _h=document.documentElement;_h.classList.add("paper");}}catch(e){}</script><script>/* เปิดในกรอบ (index.html): รอกรอบสั่ง "show" (ฉากนี้ขึ้นจอแล้ว) ก่อนเริ่มแอนิเมชัน · เปิดหน้านี้ตรงๆ: เริ่มเลย */
 window.__inShell=parent!==window;window.__shown=!window.__inShell;window.__showCbs=[];
 addEventListener('message',e=>{if(e.data==='show'&&!window.__shown){window.__shown=true;window.__showCbs.splice(0).forEach(f=>f())}});
 function onShow(cb,ms){let done=false;const go=()=>{if(!done){done=true;cb()}};if(window.__shown)go();else{window.__showCbs.push(go);if(ms&&!window.__inShell)setTimeout(go,ms)}} // ในกรอบไม่ใช้ตัวสำรองนับเวลา: ฉากที่โหลดเตรียมไว้นานๆ จะเผลอเล่นแอนิเมชันไปก่อนขึ้นจอ
@@ -53,7 +56,7 @@ h1 em{font-style:normal;color:var(--gold-light)}
 .wait .fc{opacity:0}
 .pile0{position:absolute;border-radius:7%/4.2%;background:center/cover;box-shadow:0 14px 30px rgba(0,0,0,.55);transform-origin:bottom center}
 @media(max-width:700px){header{padding:18px 20px}h1{font-size:min(7vw,30px)}.switch{left:20px;bottom:1.6vh}}
-</style><link rel="stylesheet" href="paper.css?v=202611221055"><link rel="stylesheet" href="glass.css?v=202611221055"><script src="glass.js?v=202611221055" defer></script>
+</style><link rel="stylesheet" href="paper.css?v=202611221422"><link rel="stylesheet" href="glass.css?v=202611221422"><script src="glass.js?v=202611221422" defer></script>
 </head><body>
 <div class="stage">
   <div class="bg" id="bg"></div><div class="veil"></div><div class="bgin" id="bgin"></div>
@@ -65,7 +68,7 @@ h1 em{font-style:normal;color:var(--gold-light)}
     <div class="bar fadein"><div class="cnt">เลือกแล้ว<b id="n">0</b>/ <span id="need">3</span> ใบ</div><div class="btn off" id="go">เปิดไพ่</div></div>
   </main>
 </div>
-<script src="flow.js?v=202611221055"></script>
+<script src="flow.js?v=202611221422"></script>
 <script>
 const NEED=SPREADS[ST.sp].length;
 document.getElementById('bg').style.backgroundImage=`url("${D.marble}")`;
