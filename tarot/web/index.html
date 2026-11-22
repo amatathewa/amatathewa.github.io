@@ -20,14 +20,14 @@ iframe.cur{opacity:1;z-index:2}
 iframe.in{z-index:3;transition:opacity .25s ease}
 /* ฉากที่ไม่มีของเลื่อนต่อกัน (เริ่มสับไพ่ · ตัดไพ่): จางซ้อนช้าและนุ่มกว่า */
 iframe.in.soft{transition:opacity .75s cubic-bezier(.45,0,.25,1)}
-</style><link rel="stylesheet" href="paper.css?v=202611221438"><link rel="stylesheet" href="glass.css?v=202611221438"><script src="glass.js?v=202611221438" defer></script>
+</style><link rel="stylesheet" href="paper.css?v=202611221712"><link rel="stylesheet" href="glass.css?v=202611221712"><script src="glass.js?v=202611221712" defer></script>
 </head><body>
 <script>
 // cur = ฉากที่เห็นอยู่ · next = ฉากที่กำลังจะขึ้น · pre = ฉากที่โหลดเตรียมไว้ล่วงหน้า (ฉากกรีดไพ่ ตั้งแต่อยู่ฉากสับไพ่)
 let cur=null,next=null,pres={},timer=0,ask=0,st={};
 const O=location.origin;
 // รุ่นของเว็บ: สคริปต์ขึ้นเว็บใส่เลขให้ทุกครั้ง → ทุกฉากโหลดไฟล์รุ่นใหม่ ไม่ติดของเก่าที่มือถือจำไว้ (ในเครื่องว่างไว้)
-const V='202611221438';
+const V='202611221712';
 function mk(src){const f=document.createElement('iframe');f.src=V?src+(src.includes('?')?'&':'?')+'v='+V:src;f.dataset.src=src;document.body.appendChild(f);return f}
 function load(src,hand){
   if(pres[src]){next=pres[src];delete pres[src]}else next=mk(src);
