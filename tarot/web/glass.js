@@ -140,9 +140,10 @@
   // คุมเสียงผ่าน Web Audio (ไอโฟนไม่ยอมให้ปรับ volume ของ <audio> ตรงๆ) · จางเข้า-ออกตอนต่อเพลง
   // กติกากันบั๊ก: ปิดเองแล้วต้องไม่เปิดเองอีก (เดิมแตะหน้าจอแล้วเพลงกลับมาดัง) · แตะหน้าจอครั้งแรกเปิดเพลงได้เฉพาะตอนยังไม่เคยกดปิด
   function music() {
-    var LIST = ['../music/p1.mp3?v=1', '../music/p2.mp3?v=1'], VOL = .42, XF = 2.5;
+    // p1 ตัดหัวเงียบ 3 วิ (v=2) · p3 = ทุ่งแฟนตาซีตะวันออก 176 วิ (ณัทกร 22 พ.ย. 2569 "เพลินมาก")
+    var LIST = ['../music/p1.mp3?v=2', '../music/p2.mp3?v=1', '../music/p3.mp3?v=1'], VOL = .42, XF = 2.5;
     var want = true; try { want = localStorage.getItem('tarot-music') !== 'off'; } catch (e) {}
-    var tracks = LIST.map(function (u) { var a = new Audio(u); a.preload = 'auto'; a.setAttribute('playsinline', ''); return { a: a, ft: 0 }; });
+    var tracks = LIST.map(function (u, i) { var a = new Audio(u); a.preload = i ? 'metadata' : 'auto';  /* เพลงถัดไปค่อยโหลดตอนเพลงก่อนเริ่ม (ประหยัดเน็ตมือถือ) */ a.setAttribute('playsinline', ''); return { a: a, ft: 0 }; });
     var cur = 0, playing = false, wasPlaying = false, xfading = false;
     // คุมเสียงด้วย <audio> ธรรมดา (เลิกใช้ Web Audio 20 พ.ย.: บนไอโฟน Web Audio โดนปุ่มปิดเสียงข้างเครื่องปิดไปด้วย → ณัทกรว่าเงียบกริบ)
     // ค่อยๆ ดัง/เบาด้วยการปรับ volume ทีละนิด (ไอโฟนไม่ยอมให้ปรับ volume → จะดังเต็มที่ ไม่ค่อยๆ จาง แต่ได้ยินแน่นอน)
@@ -164,6 +165,7 @@
     }
     // ต่อเพลงถัดไปก่อนเพลงเดิมจบ XF วินาที (จางซ้อนกัน ไม่เงียบกลางทาง)
     tracks.forEach(function (tr, i) {
+      tr.a.addEventListener('playing', function () { var nx = tracks[(i + 1) % tracks.length]; if (nx.a.preload !== 'auto') { nx.a.preload = 'auto'; try { nx.a.load(); } catch (e) {} } });
       tr.a.addEventListener('timeupdate', function () {
         if (!playing || i !== cur || xfading || !tr.a.duration) return;
         if (tr.a.currentTime > tr.a.duration - XF) {
