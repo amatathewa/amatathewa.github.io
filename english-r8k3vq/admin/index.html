@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>แอดมิน Squad English</title>
+<style>
+:root{--bg:#10131c;--panel:#1a1f2e;--line:#2c3550;--text:#f4efe4;--muted:#a9b0c4;--gold:#ffc93c;--mint:#5fe0a6;--red:#ff5a4e;--sky:#62b6ff;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.6 "Leelawadee UI","Tahoma",sans-serif;padding:20px 16px 60px}
+main{max-width:860px;margin:0 auto}
+h1{font-size:24px;margin:0 0 4px;color:var(--gold)}
+.sub{color:var(--muted);margin:0 0 20px}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:18px}
+input{font:inherit;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:#0c0f17;color:var(--text);width:100%}
+button{font:inherit;font-weight:600;padding:9px 14px;border-radius:10px;border:1px solid var(--line);background:#273049;color:var(--text);cursor:pointer}
+button.main{background:var(--gold);color:#10131c;border-color:var(--gold)}
+button.danger{color:var(--red)}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.row input{flex:1;min-width:180px}
+.err{color:var(--red);min-height:1.4em}
+.u{border-top:1px solid var(--line);padding:14px 0;display:grid;gap:6px}
+.u:first-child{border-top:0}
+.code{font:700 20px Consolas,monospace;letter-spacing:.08em;color:var(--mint)}
+.off .code{color:var(--muted);text-decoration:line-through}
+.meta{color:var(--muted);font-size:14px}
+.new{background:#16241f;border:1px solid var(--mint);border-radius:12px;padding:14px;margin-top:14px;white-space:pre-wrap}
+</style>
+</head>
+<body>
+<main>
+<h1>แอดมิน Squad English</h1>
+<p class="sub">ออกรหัสส่วนตัวให้ผู้เรียน · ดูว่าเรียนถึงไหน · ปิดรหัสได้ทุกเมื่อ</p>
+
+<section class="box" id="login">
+  <p>ใส่รหัสแอดมินร้าน (ตัวเดียวกับหน้าแอดมินวอลเปเปอร์)</p>
+  <div class="row"><input id="key" type="password" autocomplete="off"><button class="main" id="go">เข้า</button></div>
+  <p class="err" id="loginErr"></p>
+</section>
+
+<div id="home" hidden>
+  <section class="box">
+    <b>เพิ่มผู้เรียน</b>
+    <div class="row" style="margin-top:8px"><input id="name" placeholder="ชื่อผู้เรียน เช่น พี่แม้ว" maxlength="40"><button class="main" id="add">ออกรหัส</button></div>
+    <p class="err" id="addErr"></p>
+    <div id="newBox"></div>
+  </section>
+  <section class="box"><div class="row" style="justify-content:space-between"><b>ผู้เรียนทั้งหมด</b><span><button id="reload">รีเฟรช</button> <button id="out">ออกจากระบบ</button></span></div><div id="list" style="margin-top:8px"></div></section>
+</div>
+</main>
+<script>
+const API='https://amatathewa-wallpaper.amatathewa.workers.dev'
+const LINK=location.origin+location.pathname.replace(/admin\/?(index\.html)?$/,'')
+const $=id=>document.getElementById(id)
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))
+const fmt=c=>c.slice(0,4)+'-'+c.slice(4)
+const when=t=>t?new Date(t).toLocaleString('th-TH',{dateStyle:'medium',timeStyle:'short'}):'ยังไม่เคยเข้า'
+const note=(name,code)=>`สวัสดีครับ ${name}\nเว็บเรียนอังกฤษ Squad English\nลิงก์: ${LINK}\nรหัสส่วนตัว: ${fmt(code)}\n(ใส่ครั้งเดียว เครื่องจะจำไว้ · เรียนได้ทั้งคอมและมือถือ ความคืบหน้าตามไปด้วย)`
+let key=''
+try{key=localStorage.getItem('amt-admin')||''}catch{}
+async function api(post){
+  const r=await fetch(API+'/admin/eng',post?{method:'POST',headers:{'X-Admin-Key':key,'Content-Type':'application/json'},body:JSON.stringify(post)}:{headers:{'X-Admin-Key':key}})
+  const j=await r.json().catch(()=>({}))
+  if(r.status===401){logout();$('loginErr').textContent='รหัสแอดมินไม่ถูกต้อง';throw new Error('401')}
+  if(!r.ok)throw new Error(j.message||'ทำไม่สำเร็จ')
+  return j
+}
+async function load(){
+  if(!key)return
+  let j;try{j=await api()}catch(e){if(e.message!=='401')$('loginErr').textContent='เชื่อมต่อไม่ได้: '+e.message;return}
+  $('login').hidden=true;$('home').hidden=false
+  $('list').innerHTML=j.users.length?j.users.map(u=>`<div class="u ${u.active?'':'off'}">
+    <div class="row" style="justify-content:space-between"><b>${esc(u.name)}</b><span class="code">${fmt(u.code)}</span></div>
+    <div class="meta">จบแล้ว ${u.done}/12 บท · สอบใหญ่ ${u.big==null?'ยังไม่สอบ':u.big+'/20'} · เข้าล่าสุด ${when(u.last)}${u.active?'':' · <b style="color:var(--red)">ปิดรหัสอยู่</b>'}</div>
+    <div class="row"><button data-copy="${u.id}">คัดลอกข้อความส่ง</button><button data-t="${u.id}">${u.active?'ปิดรหัส':'เปิดรหัส'}</button><button class="danger" data-d="${u.id}">ลบ</button></div></div>`).join(''):'<p class="meta">ยังไม่มีผู้เรียน</p>'
+  const byId=Object.fromEntries(j.users.map(u=>[u.id,u]))
+  $('list').querySelectorAll('[data-copy]').forEach(b=>b.onclick=()=>{const u=byId[b.dataset.copy];copy(note(u.name,u.code),b)})
+  $('list').querySelectorAll('[data-t]').forEach(b=>b.onclick=async()=>{await api({action:'toggle',id:b.dataset.t});load()})
+  $('list').querySelectorAll('[data-d]').forEach(b=>b.onclick=async()=>{const u=byId[b.dataset.d];if(b.dataset.sure){await api({action:'delete',id:u.id});load()}else{b.dataset.sure=1;b.textContent='กดอีกครั้งเพื่อลบ '+u.name}})
+}
+function copy(t,b){navigator.clipboard.writeText(t).then(()=>{const o=b.textContent;b.textContent='คัดลอกแล้ว ✓';setTimeout(()=>b.textContent=o,1500)}).catch(()=>prompt('คัดลอกข้อความนี้',t))}
+function logout(){try{localStorage.removeItem('amt-admin')}catch{};key='';$('home').hidden=true;$('login').hidden=false}
+$('go').onclick=()=>{key=$('key').value.trim();try{localStorage.setItem('amt-admin',key)}catch{};$('loginErr').textContent='';load()}
+$('key').onkeydown=e=>{if(e.key==='Enter')$('go').click()}
+$('out').onclick=logout
+$('reload').onclick=load
+$('add').onclick=async()=>{const name=$('name').value.trim();$('addErr').textContent='';if(!name){$('addErr').textContent='ใส่ชื่อก่อน';return}
+  try{const j=await api({action:'create',name});$('name').value='';const t=note(name,j.code)
+    $('newBox').innerHTML=`<div class="new">${esc(t)}</div><div class="row" style="margin-top:8px"><button class="main" id="cpNew">คัดลอกข้อความนี้ส่งให้${esc(name)}</button></div>`
+    $('cpNew').onclick=()=>copy(t,$('cpNew'));load()}catch(e){if(e.message!=='401')$('addErr').textContent=e.message}}
+load()
+</script>
+</body>
+</html>
